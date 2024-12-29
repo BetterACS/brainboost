@@ -1,3 +1,4 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:brainboost/component/navbar.dart';
@@ -54,7 +55,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 23, 70, 162),
+      backgroundColor: AppColors.primaryBackground,
       appBar: AppBar(
         title: const Text(""),
         elevation: 0,
@@ -67,13 +68,11 @@ class _HomePageState extends State<HomePage> {
             child: Center(
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
-                  // Profile Section
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 0, 38, 84),
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: const Row(
@@ -101,7 +100,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Title Section
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -115,7 +113,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Image Section with PageView
                   SizedBox(
                     height: 300,
                     width: 300,
@@ -151,11 +148,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  // Play Button
                   ElevatedButton.icon(
-                    onPressed: () {
-                      // Handle play
-                    },
+                    onPressed: () {},
                     icon: SvgPicture.asset(
                       'assets/images/game.svg',
                       width: 35,
@@ -170,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 31, 109, 172),
+                      foregroundColor: AppColors.buttonText,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 25,
                         vertical: 10,
@@ -178,8 +172,8 @@ class _HomePageState extends State<HomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      side: const BorderSide(
-                        color: Color.fromARGB(255, 12, 55, 90),
+                      side: BorderSide(
+                        color: AppColors.buttonBorder,
                         width: 2,
                       ),
                     ),
@@ -194,13 +188,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Scoreboard Section
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.only(top: 20),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 0, 38, 84),
+                      color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
@@ -257,61 +250,66 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // Positioned Buttons
           if (_showButtons)
             Positioned(
               bottom: 90,
               left: 20,
               right: 20,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle "Re-version"
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 19, 66, 105),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.buttonText,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: const Text("Re version"),
                       ),
-                    ),
-                    child: const Text("Re version"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle "Add Lecture"
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 19, 66, 105),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Handle "Add Lecture"
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.buttonText,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: const Text("Add Lecture"),
                       ),
-                    ),
-                    child: const Text("Add Lecture"),
-                    
+                    ],
                   ),
-                    const SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   ElevatedButton.icon(
                     onPressed: () {
-                      // Handle Play
                     },
-                     icon: SvgPicture.asset(
+                    icon: SvgPicture.asset(
                       'assets/images/game.svg',
                       width: 35,
                       height: 35,
                     ),
                     label: const Text(
                       "Play",
-                      style: TextStyle(fontSize: 20 )
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: AppColors.buttonText,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 240, 239, 240),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
-                      ),))
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:brainboost/page/Homepage.dart';
-import 'package:brainboost/page/Game.dart';
+import 'package:brainboost/page/Mygames.dart';
+import 'package:brainboost/page/Gamescreen.dart';
 import 'package:brainboost/page/History.dart';
 import 'package:brainboost/page/Profile.dart';
 
@@ -29,3 +29,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

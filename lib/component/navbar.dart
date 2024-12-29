@@ -1,3 +1,4 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -28,7 +29,7 @@ class Navbar extends StatelessWidget {
         ),
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          currentIndex: _getCurrentIndex(context),
+          currentIndex: SelectedIndex(context),
           onTap: (index) {
             String targetRoute = _getRouteFromIndex(index);
             if (ModalRoute.of(context)?.settings.name != targetRoute) {
@@ -36,25 +37,25 @@ class Navbar extends StatelessWidget {
             }
           },
           items: [
-            _buildNavItem(
+            Itemnavbar(
               assetPath: 'assets/images/home.svg',
               label: '',
-              isSelected: _getCurrentIndex(context) == 0,
+              isSelected: SelectedIndex(context) == 0,
             ),
-            _buildNavItem(
+            Itemnavbar(
               assetPath: 'assets/images/game.svg',
               label: '',
-              isSelected: _getCurrentIndex(context) == 1,
+              isSelected: SelectedIndex(context) == 1,
             ),
-            _buildNavItem(
+            Itemnavbar(
               assetPath: 'assets/images/history.svg',
               label: '',
-              isSelected: _getCurrentIndex(context) == 2,
+              isSelected: SelectedIndex(context) == 2,
             ),
-            _buildNavItem(
+            Itemnavbar(
               assetPath: 'assets/images/profile.svg',
               label: '',
-              isSelected: _getCurrentIndex(context) == 3,
+              isSelected: SelectedIndex(context) == 3,
             ),
           ],
         ),
@@ -62,12 +63,12 @@ class Navbar extends StatelessWidget {
     );
   }
 
-  int _getCurrentIndex(BuildContext context) {
+  int SelectedIndex(BuildContext context) {
     String? routeName = ModalRoute.of(context)?.settings.name ?? '/home';
-    return _getIndexFromRoute(routeName);
+    return Routetoindex(routeName);
   }
 
-  int _getIndexFromRoute(String routeName) {
+  int Routetoindex(String routeName) {
     switch (routeName) {
       case '/home':
         return 0;
@@ -97,7 +98,7 @@ class Navbar extends StatelessWidget {
     }
   }
 
-  BottomNavigationBarItem _buildNavItem({
+  BottomNavigationBarItem Itemnavbar({
     required String assetPath,
     required String label,
     required bool isSelected,
@@ -109,17 +110,15 @@ class Navbar extends StatelessWidget {
             assetPath,
             width: 34,
             height: 34,
-            color: isSelected
-                ? const Color.fromARGB(255, 18, 112, 194) // สีเมื่อเลือก
-                : const Color.fromARGB(255, 14, 53, 87), 
+            color: isSelected ? AppColors.activeColor : AppColors.inactiveColor,
           ),
-          if (isSelected) 
+          if (isSelected)
             Container(
               margin: const EdgeInsets.only(top: 4),
               height: 3,
               width: 30,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 15, 80, 138), 
+                color: AppColors.activeColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
