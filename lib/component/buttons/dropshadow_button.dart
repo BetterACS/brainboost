@@ -8,7 +8,7 @@ class DropShadowButton extends StatelessWidget {
 
   final Color backgroundColor;
   final Color shadowColor;
-  // Child widget for the button
+  // Child widget for custom content.
   final Widget child;
 
   const DropShadowButton({
@@ -23,11 +23,12 @@ class DropShadowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use Inkwell for custom button behavior.
     return InkWell(
-
       onTap: onPressed,
       child: Stack(
         children: [
+          // Shadow
           Container(
             width: width,
             height: height,
@@ -36,15 +37,17 @@ class DropShadowButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
+
+          // Main button
           Container(
-              width: width, // Explicit width matching the main button
-              height: height - 8, // Explicit height matching the main button
-              decoration: BoxDecoration(
-                color: backgroundColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(child: child) // Center the child widget,
-              ),
+            width: width,
+            height: height - 8,
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(child: child)
+          ),
         ],
       ),
     );

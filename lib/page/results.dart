@@ -62,7 +62,6 @@ class ResultsPage extends StatelessWidget {
 
               // Padding from Improvement Text
               const Spacer(),
-              // _buildButtons(),
               
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -105,7 +104,6 @@ class ResultsPage extends StatelessWidget {
               // Padding from BOTTOM
               const SizedBox(height: 10),
               
-              
             ],
           ),
         ),
@@ -118,7 +116,7 @@ class ResultsPage extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Transform.translate(
-          offset: const Offset(0, 110), // Shifts down by 20 pixels
+          offset: const Offset(0, 110),
           child: const ShadowEllipse(
             width: 280,
             height: 160,
@@ -127,8 +125,8 @@ class ResultsPage extends StatelessWidget {
         const Center(
           child: Image(
             image: AssetImage('assets/icons/trophy.png'),
-            width: 238, // Adjust size as needed
-            height: 262, // Adjust size as needed
+            width: 238,
+            height: 262,
             fit: BoxFit.contain,
           ),
         )
@@ -180,7 +178,7 @@ class ResultsPage extends StatelessWidget {
   Widget _buildImprovementText() {
     return ConstrainedBox(
       constraints:
-          const BoxConstraints(maxWidth: 250), // Adjust width as needed
+          const BoxConstraints(maxWidth: 250),
       child: const Text(
         'You scored 20% more than the previous time.',
         textAlign: TextAlign.center,
@@ -189,28 +187,6 @@ class ResultsPage extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-    );
-  }
-
-  Widget _buildButtons() {
-    return Row(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.home),
-          onPressed: () {
-            // Handle home button press
-          },
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: ElevatedButton(
-            child: const Text('Play again'),
-            onPressed: () {
-              // Handle play again button press
-            },
-          ),
-        ),
-      ],
     );
   }
 }

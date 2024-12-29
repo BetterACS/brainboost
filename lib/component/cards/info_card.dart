@@ -25,6 +25,7 @@ class InfoCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Top
           Padding(
             padding: const EdgeInsets.only(top: 4, bottom: 0),
             child: Text(
@@ -36,6 +37,7 @@ class InfoCard extends StatelessWidget {
               ),
             ),
           ),
+          // Main container
           Container(
             margin: const EdgeInsets.all(5),
             padding: const EdgeInsets.symmetric(
@@ -45,6 +47,8 @@ class InfoCard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
             ),
+
+            // Content
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
