@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'Brain Boost',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: const Color(0xFF1a237e),
+        scaffoldBackgroundColor: const Color(0xECF5FF),
       ),
       home: const CreateGameScreen(),
     );
@@ -22,95 +22,6 @@ class MyApp extends StatelessWidget {
 
 class CreateGameScreen extends StatelessWidget {
   const CreateGameScreen({super.key});
-
-  void _showUploadDialog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          height: 400,
-          decoration: const BoxDecoration(
-            color: Color(0xFF1a237e),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Text(
-                  'Upload your files',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter your game name',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                margin: const EdgeInsets.all(20),
-                padding: const EdgeInsets.all(30),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 2, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: [
-                    const Icon(Icons.cloud_upload_outlined, color: Colors.white, size: 50),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Add file picker logic here
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF1a237e),
-                      ),
-                      child: const Text('Browse files'),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF1a237e),
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                    ),
-                    child: const Text('Create'),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +80,14 @@ class CreateGameScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   GestureDetector(
-                    onTap: () => _showUploadDialog(context),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UploadFileScreen(),
+                        ),
+                      );
+                    },
                     child: Container(
                       width: 150,
                       height: 150,
@@ -216,6 +134,76 @@ class CreateGameScreen extends StatelessWidget {
             label: 'Profile',
           ),
         ],
+      ),
+    );
+  }
+}
+
+class UploadFileScreen extends StatelessWidget {
+  const UploadFileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Upload File'),
+        backgroundColor: const Color(0xFF1a237e),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            const TextField(
+              decoration: InputDecoration(
+                hintText: 'Enter your game name',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(30),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.white, width: 2, style: BorderStyle.solid),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  const Icon(Icons.cloud_upload_outlined, color: Colors.black, size: 50),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add file picker logic here
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF1a237e),
+                    ),
+                    child: const Text('Browse files'),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF1a237e),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+                child: const Text('Create'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
