@@ -1,130 +1,139 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class Navbar extends StatelessWidget {
-  const Navbar({super.key});
+  const Navbar({
+    required this.navigationShell,
+    Key? key,
+  }) : super(key: key ?? const ValueKey<String>('Navbar'));
+
+  /// The [StatefulNavigationShell] widget is used to define the app's main content. (e.g. [HomePage], [ProfilePage], [SettingsPage])
+  final StatefulNavigationShell navigationShell;
+
+  /// The [_handleTap] function is used to handle the tap event on the bottom navigation bar.
+  VoidCallback _handleTap(int index) {
+    // Original code from the tutorial.
+    // navigationShell.goBranch!(index);z
+    // return navigationShell.goBranch != null
+    //     ? () => navigationShell.goBranch!(index)
+    //     : () {};
+
+    if (navigationShell.goBranch != null) 
+      navigationShell.goBranch!(index);
+    
+    return () {};
+  }
 
   @override
   Widget build(BuildContext context) {
+    /// The [Container] widget is used to contain the [BottomNavigationBar] widget. (Design purpose)
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, -2),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
+
+        /// The [BottomNavigationBar] widget is used to define the bottom navigation bar.
         child: BottomNavigationBar(
+          onTap: _handleTap, // Handle the tap event on the bottom navigation bar.
           type: BottomNavigationBarType.fixed,
-          currentIndex: SelectedIndex(context),
-          onTap: (index) {
-            String targetRoute = _getRouteFromIndex(index);
-            if (ModalRoute.of(context)?.settings.name != targetRoute) {
-              Navigator.pushReplacementNamed(context, targetRoute);
-            }
-          },
-          items: [
-            Itemnavbar(
-              assetPath: 'assets/images/home.svg',
-              label: '',
-              isSelected: SelectedIndex(context) == 0,
-            ),
-            Itemnavbar(
-              assetPath: 'assets/images/game.svg',
-              label: '',
-              isSelected: SelectedIndex(context) == 1,
-            ),
-            Itemnavbar(
-              assetPath: 'assets/images/history.svg',
-              label: '',
-              isSelected: SelectedIndex(context) == 2,
-            ),
-            Itemnavbar(
-              assetPath: 'assets/images/profile.svg',
-              label: '',
-              isSelected: SelectedIndex(context) == 3,
-            ),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          currentIndex: navigationShell.currentIndex,
+
+          /// Generate the bottom navigation bar items based on the [destinations] list.
+          items: <BottomNavigationBarItem>[
+            for (int i = 0; i < destinations.length; i++)
+              BottomNavigationBarItem(
+
+                /// Active icon.
+                activeIcon: Column(
+                  children: [
+                    SvgPicture.asset(
+                      destinations[i].assetPath,
+                      width: 34,
+                      height: 34,
+                      color: AppColors.activeColor,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 4),
+                      height: 3,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        color: AppColors.activeColor,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ],
+                ),
+
+                /// Inactive icon. (Default)
+                icon: SvgPicture.asset(
+                  destinations[i].assetPath,
+                  width: 34,
+                  height: 34,
+                  color: AppColors.inactiveColor,
+                ),
+                label: destinations[i].label,
+              )
           ],
         ),
       ),
     );
   }
-
-  int SelectedIndex(BuildContext context) {
-    String? routeName = ModalRoute.of(context)?.settings.name ?? '/home';
-    return Routetoindex(routeName);
-  }
-
-  int Routetoindex(String routeName) {
-    switch (routeName) {
-      case '/home':
-        return 0;
-      case '/game':
-        return 1;
-      case '/history':
-        return 2;
-      case '/profile':
-        return 3;
-      default:
-        return 0;
-    }
-  }
-
-  String _getRouteFromIndex(int index) {
-    switch (index) {
-      case 0:
-        return '/home';
-      case 1:
-        return '/game';
-      case 2:
-        return '/history';
-      case 3:
-        return '/profile';
-      default:
-        return '/home';
-    }
-  }
-
-  BottomNavigationBarItem Itemnavbar({
-    required String assetPath,
-    required String label,
-    required bool isSelected,
-  }) {
-    return BottomNavigationBarItem(
-      icon: Column(
-        children: [
-          SvgPicture.asset(
-            assetPath,
-            width: 34,
-            height: 34,
-            color: isSelected ? AppColors.activeColor : AppColors.inactiveColor,
-          ),
-          if (isSelected)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              height: 3,
-              width: 30,
-              decoration: BoxDecoration(
-                color: AppColors.activeColor,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-        ],
-      ),
-      label: label,
-    );
-  }
 }
+
+class ItemNAVBar extends NavigationDestination {
+  ItemNAVBar({
+    super.key,
+    required this.assetPath,
+    required this.label,
+    required this.isSelected,
+  }) : super(
+    icon: SvgPicture.asset(
+      assetPath,
+      width: 34,
+      height: 34,
+      color: isSelected ? AppColors.activeColor : AppColors.inactiveColor,
+    ),
+    // label: label,
+    label: label,
+    selectedIcon: SvgPicture.asset(
+      assetPath,
+      width: 34,
+      height: 34,
+      color: AppColors.activeColor,
+    ),
+  );
+
+  final String assetPath;
+  final bool isSelected;
+  final String label;
+}
+
+
+class Destination {
+  const Destination({
+    required this.assetPath,
+    required this.label,
+  });
+
+  final String assetPath;
+  final String label;
+}
+
+final destinations = [
+  const Destination(assetPath: 'assets/images/home.svg', label: 'home'),
+  const Destination(assetPath: 'assets/images/game.svg', label: 'games'),
+  const Destination(assetPath: 'assets/images/history.svg', label: 'history'),
+  const Destination(assetPath: 'assets/images/profile.svg', label: 'profile'),
+];

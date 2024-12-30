@@ -1,4 +1,3 @@
-import 'package:brainboost/component/navbar.dart';
 import 'package:flutter/material.dart';
 
 class History extends StatelessWidget {
@@ -13,7 +12,6 @@ class History extends StatelessWidget {
       body: const Center(
         child: Text('History'),
       ),
-      bottomNavigationBar: const Navbar(),
     );
   }
 }

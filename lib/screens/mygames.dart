@@ -1,16 +1,15 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:brainboost/component/navbar.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class MyGames extends StatefulWidget {
+  const MyGames({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MyGames> createState() => _MyGamesState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MyGamesState extends State<MyGames> {
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
 
@@ -315,7 +314,7 @@ class _HomePageState extends State<HomePage> {
             ),
         ],
       ),
-      bottomNavigationBar: Navbar(),
+      // bottomNavigationBar: Navbar(),
     );
   }
 }
