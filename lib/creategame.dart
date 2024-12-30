@@ -26,7 +26,7 @@ class CreateGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1a237e),
+      backgroundColor: const Color(0xFFECF5FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -73,7 +73,7 @@ class CreateGameScreen extends StatelessWidget {
                   const Text(
                     'Create new game',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -91,17 +91,12 @@ class CreateGameScreen extends StatelessWidget {
                     child: Container(
                       width: 150,
                       height: 150,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 2,
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/Add.png'),
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 50,
-                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -173,7 +168,16 @@ class UploadFileScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.cloud_upload_outlined, color: Colors.black, size: 50),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/uplode.png'),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
