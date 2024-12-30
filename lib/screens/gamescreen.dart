@@ -1,5 +1,4 @@
 import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/component/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -133,7 +132,7 @@ class Game extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const Navbar(),
+      // bottomNavigationBar: const Navbar(),
     );
   }
 }
