@@ -307,8 +307,8 @@ class UploadFileScreen extends StatelessWidget {
                 children: [
                   Image.asset(
                     'assets/images/uplode.png',
-                    width: 50,
-                    height: 50,
+                    width: 200,
+                    height: 200,
                     color: Colors.white,
                   ),
                   const SizedBox(height: 16),
