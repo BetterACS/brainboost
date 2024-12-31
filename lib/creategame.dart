@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' show pi;
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +39,7 @@ class CreateGameScreen extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 20),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.blue[700],
+              color: const Color(0xFF1a237e),
               borderRadius: BorderRadius.circular(30),
             ),
             child: const Row(
@@ -64,39 +65,78 @@ class CreateGameScreen extends StatelessWidget {
               ],
             ),
           ),
-          // Plus Button Section
+          // Main Content Section
           Expanded(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Create new game',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  // Dotted circle with plus icon
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFF1a237e),
+                        width: 2,
+                        style: BorderStyle.none,
+                      ),
+                    ),
+                    child: CustomPaint(
+                      painter: DashedCirclePainter(
+                        color: const Color(0xFF1a237e),
+                        strokeWidth: 2,
+                        gapSize: 5,
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.add,
+                          size: 40,
+                          color: Color(0xFF1a237e),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UploadFileScreen(),
+                  // Create game button
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const UploadFileScreen(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1a237e),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                      );
-                    },
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/Add.png'),
-                          fit: BoxFit.cover,
-                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/game.png',
+                            width: 24,
+                            height: 24,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Create new game',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -110,6 +150,7 @@ class CreateGameScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF1a237e),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white.withOpacity(0.6),
+        currentIndex: 1,
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
@@ -132,6 +173,46 @@ class CreateGameScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class DashedCirclePainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double gapSize;
+
+  DashedCirclePainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.gapSize,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    
+    double startAngle = 0;
+    const sweepAngle = pi / 18;
+    
+    while (startAngle < pi * 2) {
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        paint,
+      );
+      startAngle += sweepAngle + (pi / 18);
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class UploadFileScreen extends StatelessWidget {
