@@ -221,45 +221,97 @@ class UploadFileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1a237e),
       appBar: AppBar(
-        title: const Text('Upload File'),
-        backgroundColor: const Color(0xFF1a237e),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Create game',
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: const CircleAvatar(
+              backgroundImage: AssetImage('assets/images/profile.jpg'),
+            ),
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      body: Container(
+        padding: const EdgeInsets.all(24),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const TextField(
+            const SizedBox(height: 16),
+            const Center(
+              child: Text(
+                'Upload your files',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Center(
+              child: Text(
+                'File should be .pdf',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Game name',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
               decoration: InputDecoration(
                 hintText: 'Enter your game name',
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Container(
-              margin: const EdgeInsets.all(20),
-              padding: const EdgeInsets.all(30),
+              width: double.infinity,
+              padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2, style: BorderStyle.solid),
-                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.white30,
+                  width: 2,
+                  style: BorderStyle.solid,
+                ),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 children: [
-                  Container(
+                  Image.asset(
+                    'assets/images/uplode.png',
                     width: 50,
                     height: 50,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/uplode.png'),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       // Add file picker logic here
@@ -267,12 +319,26 @@ class UploadFileScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF1a237e),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                     ),
-                    child: const Text('Browse files'),
+                    child: const Text(
+                      'Browse files',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
+            const Spacer(),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -282,13 +348,47 @@ class UploadFileScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: const Color(0xFF1a237e),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: const Text('Create'),
+                child: const Text(
+                  'Create',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFF1a237e),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(0.6),
+        currentIndex: 1,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.gamepad),
+            label: 'Games',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }
