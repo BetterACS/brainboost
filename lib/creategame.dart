@@ -212,4 +212,156 @@ class DashedCirclePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDe
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class UploadFileScreen extends StatelessWidget {
+  const UploadFileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF1a237e),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Create game',
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: const CircleAvatar(
+              backgroundImage: AssetImage('assets/images/profile.jpg'),
+            ),
+          ),
+        ],
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            const Center(
+              child: Text(
+                'Upload your files',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Center(
+              child: Text(
+                'File should be .pdf',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Game name',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Enter your game name',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white30,
+                  width: 2,
+                  style: BorderStyle.solid,
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Image.asset(
+                'assets/images/Upload.png',
+                width: 200,
+                height: 200,
+                color: Colors.white,
+              ),
+            ),
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF1a237e),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Create',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFF1a237e),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(0.6),
+        currentIndex: 1,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.gamepad),
+            label: 'Games',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+}
