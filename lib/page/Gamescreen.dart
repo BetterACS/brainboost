@@ -1,6 +1,6 @@
-import 'package:brainboost/component/navbar.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' show pi;
+import 'package:brainboost/component/navbar.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CreateGameScreen extends StatelessWidget {
   const CreateGameScreen({super.key});
@@ -12,13 +12,14 @@ class CreateGameScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        toolbarHeight: 60,
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const ProfileSection(),
           const SizedBox(height: 30),
-          const MainContentSection(),
+          const MainContent(),
         ],
       ),
       bottomNavigationBar: const Navbar(),
@@ -31,87 +32,107 @@ class ProfileSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1a237e),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 18,
-              backgroundImage: AssetImage('assets/images/profile.jpg'),
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1a237e),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 22,
+                backgroundImage: AssetImage('assets/images/profile.jpg'),
+              ),
             ),
-          ),
-          SizedBox(width: 10),
-          Text(
-            'Mon Chinawat',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            SizedBox(width: 10),
+            Text(
+              "Mon Chinawat",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-class MainContentSection extends StatelessWidget {
-  const MainContentSection({super.key});
+class MainContent extends StatelessWidget {
+  const MainContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const DottedCircle(),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UploadFileScreen(),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1a237e),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+    return Center(
+      child: Column(
+        children: [
+          const Text(
+            "Create New Game",
+            style: TextStyle(
+              color: Color(0xFF1a237e),
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/icons/game.png',
-                width: 24,
-                height: 24,
-                color: Colors.white,
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Create new game',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          const SizedBox(height: 20),
+          const DottedCircle(),
+          const SizedBox(height: 20),
+          const Text(
+            "Learn more about Lecture?",
+            style: TextStyle(
+              color: Color(0xFF1a237e),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
-      ],
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const UploadFileScreen(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1a237e),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset(
+                  'assets/images/game.svg',
+                  width: 24,
+                  height: 24,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Create Summary',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -121,27 +142,30 @@ class DottedCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: const Color(0xFF1a237e),
-          width: 2,
-          style: BorderStyle.none,
-        ),
-      ),
-      child: CustomPaint(
-        painter: DashedCirclePainter(
-          color: const Color(0xFF1a237e),
-          strokeWidth: 2,
-          gapSize: 5,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UploadFileScreen(),
+          ),
+        );
+      },
+      child: Container(
+        width: 150,
+        height: 150,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: const Color(0xFF1a237e),
+            width: 3,
+            style: BorderStyle.solid,
+          ),
         ),
         child: const Center(
           child: Icon(
             Icons.add,
-            size: 40,
+            size: 50,
             color: Color(0xFF1a237e),
           ),
         ),
@@ -150,53 +174,13 @@ class DottedCircle extends StatelessWidget {
   }
 }
 
-class DashedCirclePainter extends CustomPainter {
-  final Color color;
-  final double strokeWidth;
-  final double gapSize;
-
-  DashedCirclePainter({
-    required this.color,
-    required this.strokeWidth,
-    required this.gapSize,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-
-    double startAngle = 0;
-    const sweepAngle = pi / 18;
-
-    while (startAngle < pi * 2) {
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        startAngle,
-        sweepAngle,
-        false,
-        paint,
-      );
-      startAngle += sweepAngle + (pi / 18);
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
-
 class UploadFileScreen extends StatelessWidget {
   const UploadFileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFECF5FF), 
+      backgroundColor: const Color(0xFFECF5FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -219,7 +203,7 @@ class UploadFileScreen extends StatelessWidget {
       ),
       body: Container(
         decoration: const BoxDecoration(
-          color: Color(0xFF092866), 
+          color: Color(0xFF092866),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -330,11 +314,10 @@ class UploadFileScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white, 
-                            foregroundColor: const Color(0xFF1746A2), 
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF1746A2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -363,8 +346,8 @@ class UploadFileScreen extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFABABAB), 
-                      foregroundColor: const Color(0xFFE5E5E5), 
+                      backgroundColor: const Color(0xFFABABAB),
+                      foregroundColor: const Color(0xFFE5E5E5),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
