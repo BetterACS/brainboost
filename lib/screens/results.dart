@@ -1,6 +1,8 @@
 import 'package:brainboost/component/cards/info_card.dart';
 import 'package:brainboost/component/buttons/dropshadow_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:brainboost/router/routes.dart';
 
 const correctAnswersColor = Color.fromRGBO(32, 94, 216, 1);
 const wrongAnswersColor = Color.fromRGBO(223, 69, 69, 1);
@@ -33,7 +35,16 @@ class ShadowEllipse extends StatelessWidget {
 }
 
 class ResultsPage extends StatelessWidget {
-  const ResultsPage({super.key});
+  const ResultsPage({
+    super.key,
+    required this.correct,
+    required this.wrong,
+    required this.time,
+  });
+
+  final int correct;
+  final int wrong;
+  final String time;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +65,7 @@ class ResultsPage extends StatelessWidget {
 
               // Padding from Congratulations Text
               const SizedBox(height: 30),
-              _buildScoreRow(),
+              _buildScoreRow(correct, wrong, time),
 
               // Padding from Score Row
               const SizedBox(height: 20),
@@ -71,9 +82,7 @@ class ResultsPage extends StatelessWidget {
                     height: 64,
                     backgroundColor: const Color(0xFFCCDBFA),
                     shadowColor: const Color(0xFF95A5C6),
-                    onPressed: () {
-                      print('Go to home');
-                    },
+                    onPressed: () => context.go(Routes.homePage),
                     child: const Icon(
                       Icons.home,
                       color: Color(0xFF7184AC),
@@ -86,9 +95,7 @@ class ResultsPage extends StatelessWidget {
                     height: 64,
                     backgroundColor: const Color(0xFF205ED8),
                     shadowColor: const Color(0xFF1746A2),
-                    onPressed: () {
-                      print('Play Again');
-                    },
+                    onPressed: () => context.go(Routes.playGamePage),
                     child: const Text(
                       "Play Again",
                       style: TextStyle(
@@ -103,7 +110,6 @@ class ResultsPage extends StatelessWidget {
 
               // Padding from BOTTOM
               const SizedBox(height: 10),
-              
             ],
           ),
         ),
@@ -149,25 +155,25 @@ class ResultsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreRow() {
-    return const Row(
+  Widget _buildScoreRow(int correct, int wrong, String time) {
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InfoCard(
           title: 'Correct',
-          value: '16',
+          value: correct.toString(),
           icon: Icons.check,
           cardColor: correctAnswersColor,
         ),
         InfoCard(
           title: 'Wrong',
-          value: '14',
+          value: wrong.toString(),
           icon: Icons.curtains_closed_rounded,
           cardColor: wrongAnswersColor,
         ),
         InfoCard(
           title: 'Time',
-          value: '10:00',
+          value: time,
           icon: Icons.access_time,
           cardColor: timeColor,
         )
