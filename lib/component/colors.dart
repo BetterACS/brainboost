@@ -14,5 +14,23 @@ class AppColors {
   static const Color activeColor = Color.fromARGB(255, 18, 112, 194);
   static const Color inactiveColor = Color.fromARGB(255, 14, 53, 87);
   static const Color errorIcon = Colors.red;
-
+  static const Color accentBackground = Color(0xFFECF5FF);
+  static const Color gradient1 = Color(0xFF092866);
+  static const Color gradient2 = Color(0xFF205ED8);
+  static const LinearGradient circleGradient = LinearGradient(
+    colors: [
+      gradient1,
+      gradient2,
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+  static const LinearGradient buttonGradient = LinearGradient(
+    colors: [
+      gradient1,
+      gradient2,
+    ],
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+  );
 }

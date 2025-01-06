@@ -3,7 +3,6 @@ import 'package:brainboost/component/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
 class Game extends StatelessWidget {
   const Game({super.key});
 
@@ -24,8 +23,8 @@ class Game extends StatelessWidget {
                 const SizedBox(height: 20),
                 Center(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: AppColors.containerBackground,
                       borderRadius: BorderRadius.circular(50),
@@ -98,8 +97,7 @@ class Game extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       ElevatedButton.icon(
-                        onPressed: () {
-                        },
+                        onPressed: () {},
                         icon: SvgPicture.asset(
                           'assets/images/game.svg',
                           color: AppColors.primaryBackground,

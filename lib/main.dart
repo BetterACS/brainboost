@@ -3,6 +3,7 @@ import 'package:brainboost/page/Mygames.dart';
 import 'package:brainboost/page/Gamescreen.dart';
 import 'package:brainboost/page/History.dart';
 import 'package:brainboost/page/Profile.dart';
+import 'package:brainboost/page/Home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,14 +20,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/home', 
+      initialRoute: '/home',
       routes: {
-        '/home': (context) => const HomePage(),
+        '/mygames': (context) => const HomePage(),
         '/game': (context) => const Game(),
         '/history': (context) => const History(),
         '/profile': (context) => const Profile(),
+        '/home': (context) => const Home(),
       },
     );
   }
 }
-
