@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/navbar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:brainboost/component/colors.dart';
 
 class CreateGameScreen extends StatelessWidget {
   const CreateGameScreen({super.key});
@@ -10,7 +11,7 @@ class CreateGameScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFECF5FF),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.appBarBackground,
         elevation: 0,
         toolbarHeight: 60,
       ),
@@ -36,7 +37,7 @@ class ProfileSection extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFF1a237e),
+          color: AppColors.primaryBackground,
           borderRadius: BorderRadius.circular(50),
         ),
         child: const Row(
@@ -44,7 +45,7 @@ class ProfileSection extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.white,
               child: CircleAvatar(
                 radius: 22,
                 backgroundImage: AssetImage('assets/images/profile.jpg'),
@@ -54,7 +55,7 @@ class ProfileSection extends StatelessWidget {
             Text(
               "Mon Chinawat",
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -77,18 +78,18 @@ class MainContent extends StatelessWidget {
           const Text(
             "Create New Game",
             style: TextStyle(
-              color: Color(0xFF1a237e),
+              color: AppColors.primaryBackground,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 20),
-          const DottedCircle(),
+          const UploadCircleButton(),
           const SizedBox(height: 20),
           const Text(
             "Learn more about Lecture?",
             style: TextStyle(
-              color: Color(0xFF1a237e),
+              color: AppColors.primaryBackground,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -104,7 +105,7 @@ class MainContent extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1a237e),
+              backgroundColor: AppColors.primaryBackground,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -117,13 +118,13 @@ class MainContent extends StatelessWidget {
                   'assets/images/game.svg',
                   width: 24,
                   height: 24,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
                 const SizedBox(width: 8),
                 const Text(
                   'Create Summary',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -137,8 +138,8 @@ class MainContent extends StatelessWidget {
   }
 }
 
-class DottedCircle extends StatelessWidget {
-  const DottedCircle({super.key});
+class UploadCircleButton extends StatelessWidget {
+  const UploadCircleButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +158,7 @@ class DottedCircle extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: const Color(0xFF1a237e),
+            color: AppColors.primaryBackground,
             width: 3,
             style: BorderStyle.solid,
           ),
@@ -166,7 +167,7 @@ class DottedCircle extends StatelessWidget {
           child: Icon(
             Icons.add,
             size: 50,
-            color: Color(0xFF1a237e),
+            color: AppColors.primaryBackground,
           ),
         ),
       ),
@@ -182,15 +183,15 @@ class UploadFileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFECF5FF),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.appBarBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF092866)),
+          icon: Icon(Icons.arrow_back, color: AppColors.containerBackground),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Create game',
-          style: TextStyle(color: Color(0xFF092866)),
+          style: TextStyle(color: AppColors.containerBackground),
         ),
         actions: [
           Container(
@@ -202,9 +203,9 @@ class UploadFileScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF092866),
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: AppColors.containerBackground,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
           ),
@@ -216,11 +217,11 @@ class UploadFileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
-                const Center(
+                Center(
                   child: Text(
                     'Upload your files',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -230,16 +231,16 @@ class UploadFileScreen extends StatelessWidget {
                   child: Text(
                     'File should be .pdf',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: AppColors.white.withOpacity(0.7),
                       fontSize: 14,
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Game name',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -247,7 +248,7 @@ class UploadFileScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -261,7 +262,7 @@ class UploadFileScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'Enter your game name',
                       hintStyle: TextStyle(
-                        color: const Color(0xFF092866).withOpacity(0.5),
+                        color: AppColors.containerBackground.withOpacity(0.5),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -281,7 +282,7 @@ class UploadFileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
+                        color: AppColors.white.withOpacity(0.2),
                         width: 2,
                         style: BorderStyle.solid,
                       ),
@@ -300,15 +301,15 @@ class UploadFileScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.2),
+                              color: AppColors.white.withOpacity(0.2),
                               width: 2,
                               style: BorderStyle.solid,
                             ),
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.cloud_upload_outlined,
-                            color: Colors.white,
+                            color: AppColors.white,
                             size: 48,
                           ),
                         ),
@@ -316,8 +317,8 @@ class UploadFileScreen extends StatelessWidget {
                         ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF1746A2),
+                            backgroundColor: AppColors.buttonBackground,
+                            foregroundColor: AppColors.buttonForeground,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
