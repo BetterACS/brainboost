@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'dart:ui';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/page/History.dart';
 import 'package:flutter/material.dart';
+import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/navbar.dart';
 
 class Home extends StatefulWidget {
@@ -70,53 +72,61 @@ class _HomeState extends State<Home> {
                     });
                   },
                   children: [
-                    // Element 1
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: AppColors.circleGradient,
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "Success rate",
-                              style: TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                    // Circular Chart Page
+                    Center(
+                      child: SizedBox(
+                        height: 300,
+                        width: 300,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CustomPaint(
+                              size: const Size(290, 290),
+                              painter: CircularChartPainter(70),
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              "70%",
-                              style: TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              "out of 17 questions",
-                              style: TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 14,
-                              ),
+                            const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Success rate",
+                                  style: TextStyle(
+                                    color: AppColors.buttonText,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  "70%",
+                                  style: TextStyle(
+                                    color: AppColors.buttonText,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  "out of 17 questions",
+                                  style: TextStyle(
+                                    color: AppColors.buttonText,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
                     ),
-                    // Element 2
+
+                    // Recent Game Page
                     Stack(
                       alignment: Alignment.center,
                       children: [
                         Container(
                           height: 300,
                           width: 300,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: AppColors.circleGradient,
                           ),
@@ -211,102 +221,143 @@ class _HomeState extends State<Home> {
                 }),
               ),
               const SizedBox(height: 20),
-
               // Buttons Section
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      height: 70,
-                      width: 200,
-                      decoration: const BoxDecoration(
-                        gradient: AppColors.buttonGradient,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(48),
-                          topLeft: Radius.circular(12),
-                          bottomLeft: Radius.circular(12),
-                          bottomRight: Radius.circular(12),
-                        ),
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: -10,
-                            left: -12,
-                            child: Transform.rotate(
-                              angle: 25 * 3.14159 / 180,
-                              child: const Icon(
-                                Icons.games_rounded,
-                                color: AppColors.accentBackground,
-                                size: 54,
-                              ),
-                            ),
-                          ),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: AppColors.textPrimary,
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                              ),
-                              child: const Text(
-                                "Create Game",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    // Create Game Button
+                    _buildButton(
+                      icon: Icons.games_rounded,
+                      text: "Create Game",
+                      onPressed: () {},
                     ),
-                    Container(
-                      height: 70,
-                      width: 200,
-                      decoration: const BoxDecoration(
-                        gradient: AppColors.buttonGradient,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(48),
-                          topLeft: Radius.circular(12),
-                          bottomLeft: Radius.circular(12),
-                          bottomRight: Radius.circular(12),
-                        ),
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: -10,
-                            left: -12,
-                            child: Transform.rotate(
-                              angle: 25 * 3.14159 / 180,
-                              child: const Icon(
-                                Icons.summarize,
-                                color: AppColors.accentBackground,
-                                size: 54,
-                              ),
-                            ),
+                    // Create Summary Button
+                    _buildButton(
+                      icon: Icons.summarize,
+                      text: "Create Summary",
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+              ),
+              // History Section
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "History",
+                          style: TextStyle(
+                            color: AppColors.gradient1,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: AppColors.textPrimary,
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                              ),
-                              child: const Text(
-                                "Create Summary",
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const History()),
+                            );
+                          },
+                          child: const Row(
+                            children: [
+                              Text(
+                                "View all",
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  color: AppColors.gray2,
+                                  fontSize: 14,
                                 ),
                               ),
-                            ),
+                              SizedBox(width: 5),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: AppColors.gray2,
+                                size: 14,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    // History List
+                    Column(
+                      children: List.generate(2, (index) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 80,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                  color: AppColors.gray,
+                                  borderRadius: BorderRadius.circular(8),
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                      index == 0
+                                          ? 'assets/images/photomain.png'
+                                          : 'assets/images/photomain.png',
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      index == 0
+                                          ? "World war 2"
+                                          : "Object oriented..",
+                                      style: const TextStyle(
+                                        color: AppColors.gradient1,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    const Text(
+                                      "16 Nov 2024",
+                                      style: TextStyle(
+                                        color: AppColors.gray2,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  print("Play pressed");
+                                },
+                                icon: const Icon(
+                                  Icons.play_circle_fill,
+                                  color: AppColors.neutralBackground,
+                                  size: 50,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -318,6 +369,110 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: Navbar(),
     );
   }
+
+  Widget _buildButton({
+    required IconData icon,
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      height: 70,
+      width: 200,
+      decoration: const BoxDecoration(
+        gradient: AppColors.buttonGradient,
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(48),
+          topLeft: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: -10,
+            left: -12,
+            child: Transform.rotate(
+              angle: 25 * pi / 180,
+              child: Icon(
+                icon,
+                color: AppColors.accentBackground,
+                size: 54,
+              ),
+            ),
+          ),
+          Center(
+            child: ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: AppColors.textPrimary,
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              child: Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CircularChartPainter extends CustomPainter {
+  final double percentage;
+
+  CircularChartPainter(this.percentage);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double strokeWidth = 27;
+    final double radius = size.width / 2 - strokeWidth / 2;
+
+    final Rect rect = Rect.fromCircle(
+      center: Offset(size.width / 2, size.height / 2),
+      radius: radius,
+    );
+
+    final Paint backgroundPaint = Paint()
+      ..color = const Color(0xFFC2C2C2)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+
+    // สีของแผนภูมิ (Gradient)
+    final Paint foregroundPaint = Paint()
+      ..shader = AppColors.circleGradient.createShader(rect)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    // วาดวงกลมพื้นหลัง
+    canvas.drawCircle(
+      Offset(size.width / 2, size.height / 2),
+      radius,
+      backgroundPaint,
+    );
+
+    // วาดวงกลมที่แสดงเปอร์เซ็นต์
+    double sweepAngle = 2 * pi * (percentage / 100);
+    canvas.drawArc(
+      Rect.fromCircle(
+        center: Offset(size.width / 2, size.height / 2),
+        radius: radius,
+      ),
+      0,
+      sweepAngle,
+      false,
+      foregroundPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
 class _MouseScrollBehavior extends ScrollBehavior {
@@ -329,7 +484,7 @@ class _MouseScrollBehavior extends ScrollBehavior {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: Home(),
   ));
 }
