@@ -14,5 +14,6 @@ class AppColors {
   static const Color activeColor = Color.fromARGB(255, 18, 112, 194);
   static const Color inactiveColor = Color.fromARGB(255, 14, 53, 87);
   static const Color errorIcon = Colors.red;
+  static const Color unselectedText = Color(0xFFB0B8C5);
 
 }
