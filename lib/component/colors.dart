@@ -20,4 +20,25 @@ class AppColors {
   static const Color screenBackground = Color(0xFFECF5FF);
   static const Color createButtonBackground = Color(0xFFABABAB);
   static const Color createButtonForeground = Color(0xFFE5E5E5);
+
+
+  // Quiz button colors.
+  static const Color borderQuizOption = Color(0xFFD6D6D6);
+  static const Color borderQuizSelectedOption = Colors.blue;
+  static const Color borderQuizCorrectOption = Colors.green;
+  static const Color borderQuizIncorrectOption = Colors.red;
+  static const Color borderQuizNonSelectedOption = Color(0xFFD6D6D6);
+
+  static const Color backgroundQuizOption = Colors.white;
+  static const Color backgroundQuizSelectedOption = Color(0xFFE4F4FF);
+  static const Color backgroundQuizCorrectOption = Color(0xFFDCFFCF);
+  static const Color backgroundQuizIncorrectOption = Color(0xFFFF9EA0);
+  static const Color backgroundQuizNonSelectedOption = Colors.white;
+
+  static const Color textQuizOption = Colors.black87;
+  static const Color textQuizSelectedOption = Colors.blue;
+  static const Color textQuizCorrectOption = Color(0xFF229749);
+  static const Color textQuizIncorrectOption = Color(0xFFCF1717);
+  static const Color textQuizNonSelectedOption = Colors.black87;
+
 }

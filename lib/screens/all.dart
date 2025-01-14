@@ -7,3 +7,4 @@ export 'mygames.dart';
 // export 'result_screen.dart';
 export 'results.dart';
 export 'game_quiz.dart';
+export 'game_screen.dart';

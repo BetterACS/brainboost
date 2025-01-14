@@ -28,7 +28,7 @@ final router = GoRouter(
 
     GoRoute(
       path: Routes.playGamePage,
-      builder: (context, state) => const QuizScreen()
+      builder: (context, state) => const GameWrapper()
     ),
 
 
