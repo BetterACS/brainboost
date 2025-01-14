@@ -23,11 +23,11 @@ class AppColors {
 
 
   // Quiz button colors.
-  static const Color borderQuizOption = Color(0xFFD6D6D6);
+  static const Color borderQuizOption = Color(0xFFB0B0B0);
   static const Color borderQuizSelectedOption = Colors.blue;
   static const Color borderQuizCorrectOption = Colors.green;
   static const Color borderQuizIncorrectOption = Colors.red;
-  static const Color borderQuizNonSelectedOption = Color(0xFFD6D6D6);
+  static const Color borderQuizNonSelectedOption = Color(0xFFB0B0B0);
 
   static const Color backgroundQuizOption = Colors.white;
   static const Color backgroundQuizSelectedOption = Color(0xFFE4F4FF);
@@ -40,5 +40,8 @@ class AppColors {
   static const Color textQuizCorrectOption = Color(0xFF229749);
   static const Color textQuizIncorrectOption = Color(0xFFCF1717);
   static const Color textQuizNonSelectedOption = Colors.black87;
-
+  
+  // Games Screen components
+  static const Color gameScreenBackground = Color(0xFFF0F7FF);
+  static const Color progressBar = Color(0xFFE9E9E9);
 }
