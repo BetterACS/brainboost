@@ -39,7 +39,7 @@ class History extends StatelessWidget {
               ),
               child: const TabBar(
                 labelColor: AppColors.buttonText, 
-                unselectedLabelColor: AppColors.unselectedText, 
+                unselectedLabelColor: AppColors.unselectedTab, 
                 indicatorColor: AppColors.buttonText, 
                 indicatorWeight: 3.0,
                 tabs: [
