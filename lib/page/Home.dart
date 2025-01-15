@@ -158,7 +158,7 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Padding(
-              padding: EdgeInsets.only(bottom: 30),
+              padding: EdgeInsets.only(bottom: 35),
             ),
             const Text(
               "Recent Game",
@@ -168,7 +168,7 @@ class _HomeState extends State<Home> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             const Text(
               "World War 2",
               style: TextStyle(
@@ -176,20 +176,20 @@ class _HomeState extends State<Home> {
                 fontSize: 14,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             ClipRRect(
               borderRadius: BorderRadius.circular(150),
               child: Image.asset(
                 'assets/images/photomain.png',
-                height: 150,
-                width: 150,
+                height: 140,
+                width: 160,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return const Icon(Icons.error, size: 80, color: Colors.red);
                 },
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             const Text(
               "70 / 100",
               style: TextStyle(
@@ -200,7 +200,7 @@ class _HomeState extends State<Home> {
             ),
             const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.only(top: 4),
+              padding: const EdgeInsets.only(top: 0),
               child: ElevatedButton(
                 onPressed: () {
                   print("Replay pressed");
@@ -209,11 +209,19 @@ class _HomeState extends State<Home> {
                   backgroundColor: AppColors.buttonBackground,
                   foregroundColor: AppColors.neutralBackground,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   elevation: 5,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
                 ),
-                child: const Text("Replay"),
+                child: const Text(
+                  "Replay",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
               ),
             ),
           ],
