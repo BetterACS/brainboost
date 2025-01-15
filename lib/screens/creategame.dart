@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/navbar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:brainboost/component/colors.dart';
 
+// หน้าสร้างเกมใหม่
 class CreateGameScreen extends StatelessWidget {
   const CreateGameScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFECF5FF),
+      backgroundColor: const Color(0xFFECF5FF), // สีพื้นหลังหลักของแอป
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: AppColors.appBarBackground,
+        elevation: 0, 
         toolbarHeight: 60,
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const ProfileSection(),
+          const ProfileSection(), // แสดงโปรไฟล์ผู้ใช้
           const SizedBox(height: 30),
-          const MainContent(),
+          const MainContent(), // แสดงส่วนสร้างเกมใหม่
         ],
       ),
-      bottomNavigationBar: const Navbar(),
     );
   }
 }
 
+// แสดงโปรไฟล์ผู้ใช้
 class ProfileSection extends StatelessWidget {
   const ProfileSection({super.key});
 
@@ -36,15 +37,16 @@ class ProfileSection extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFF1a237e),
-          borderRadius: BorderRadius.circular(50),
+          color: AppColors.primaryBackground,
+          borderRadius: BorderRadius.circular(50), // ทำให้กรอบมีมุมมน
         ),
         child: const Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min, // ให้ความกว้างพอดีกับเนื้อหา
           children: [
+            // รูปโปรไฟล์แบบวงกลมซ้อนกัน
             CircleAvatar(
               radius: 25,
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.white, // สีขอบนอก
               child: CircleAvatar(
                 radius: 22,
                 backgroundImage: AssetImage('assets/images/profile.jpg'),
@@ -54,7 +56,7 @@ class ProfileSection extends StatelessWidget {
             Text(
               "Mon Chinawat",
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -66,6 +68,7 @@ class ProfileSection extends StatelessWidget {
   }
 }
 
+// ส่วนเนื้อหาสร้างเกมใหม่
 class MainContent extends StatelessWidget {
   const MainContent({super.key});
 
@@ -77,25 +80,27 @@ class MainContent extends StatelessWidget {
           const Text(
             "Create New Game",
             style: TextStyle(
-              color: Color(0xFF1a237e),
+              color: AppColors.primaryBackground,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 20),
-          const DottedCircle(),
+          const UploadCircleButton(), // ปุ่มวงกลมสำหรับอัพโหลด
           const SizedBox(height: 20),
           const Text(
             "Learn more about Lecture?",
             style: TextStyle(
-              color: Color(0xFF1a237e),
+              color: AppColors.primaryBackground,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 10),
+          // ปุ่มสร้าง Summary พร้อมไอคอน
           ElevatedButton(
             onPressed: () {
+              // นำทางไปยังหน้า UploadFileScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -104,7 +109,7 @@ class MainContent extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1a237e),
+              backgroundColor: AppColors.primaryBackground,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -113,17 +118,18 @@ class MainContent extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // ไอคอนเกม
                 SvgPicture.asset(
                   'assets/images/game.svg',
                   width: 24,
                   height: 24,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
                 const SizedBox(width: 8),
                 const Text(
                   'Create Summary',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -137,13 +143,15 @@ class MainContent extends StatelessWidget {
   }
 }
 
-class DottedCircle extends StatelessWidget {
-  const DottedCircle({super.key});
+// ปุ่มวงกลมสำหรับอัพโหลดพร้อมเครื่องหมายบวก
+class UploadCircleButton extends StatelessWidget {
+  const UploadCircleButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // เมื่อกดจะนำทางไปยังหน้า UploadFileScreen
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -157,16 +165,15 @@ class DottedCircle extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: const Color(0xFF1a237e),
+            color: AppColors.primaryBackground,
             width: 3,
-            style: BorderStyle.solid,
           ),
         ),
         child: const Center(
           child: Icon(
             Icons.add,
             size: 50,
-            color: Color(0xFF1a237e),
+            color: AppColors.primaryBackground,
           ),
         ),
       ),
@@ -174,6 +181,7 @@ class DottedCircle extends StatelessWidget {
   }
 }
 
+// หน้าอัพโหลดไฟล์
 class UploadFileScreen extends StatelessWidget {
   const UploadFileScreen({super.key});
 
@@ -182,29 +190,21 @@ class UploadFileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFECF5FF),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.appBarBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF092866)),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: AppColors.containerBackground),
+          onPressed: () => Navigator.pop(context), // ปุ่มกลับ
         ),
-        title: const Text(
+        title: Text(
           'Create game',
-          style: TextStyle(color: Color(0xFF092866)),
+          style: TextStyle(color: AppColors.containerBackground),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            child: const CircleAvatar(
-              backgroundImage: AssetImage('assets/images/profile.jpg'),
-            ),
-          ),
-        ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF092866),
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: AppColors.containerBackground,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
           ),
@@ -215,12 +215,12 @@ class UploadFileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
-                const Center(
+                // ส่วนหัวข้อและคำอธิบาย
+                Center(
                   child: Text(
                     'Upload your files',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -230,16 +230,17 @@ class UploadFileScreen extends StatelessWidget {
                   child: Text(
                     'File should be .pdf',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: AppColors.white.withOpacity(0.7),
                       fontSize: 14,
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                // ส่วนกรอกชื่อเกม
+                Text(
                   'Game name',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -247,21 +248,14 @@ class UploadFileScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: 'Enter your game name',
                       hintStyle: TextStyle(
-                        color: const Color(0xFF092866).withOpacity(0.5),
+                        color: AppColors.containerBackground.withOpacity(0.5),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -275,49 +269,43 @@ class UploadFileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+                // พื้นที่สำหรับอัพโหลดไฟล์
                 Expanded(
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
+                        color: AppColors.white.withOpacity(0.2),
                         width: 2,
-                        style: BorderStyle.solid,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // ไอคอนอัพโหลด
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.2),
+                              color: AppColors.white.withOpacity(0.2),
                               width: 2,
-                              style: BorderStyle.solid,
                             ),
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.cloud_upload_outlined,
-                            color: Colors.white,
+                            color: AppColors.white,
                             size: 48,
                           ),
                         ),
                         const SizedBox(height: 16),
+                        // ปุ่มเลือกไฟล์
                         ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF1746A2),
+                            backgroundColor: AppColors.buttonBackground,
+                            foregroundColor: AppColors.buttonForeground,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -339,6 +327,7 @@ class UploadFileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+                // ปุ่มสร้างเกม
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -367,7 +356,7 @@ class UploadFileScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const Navbar(),
+      // bottomNavigationBar: const Navbar(),
     );
   }
 }

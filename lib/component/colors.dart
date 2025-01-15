@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  // Original colors
   static const Color primaryBackground = Color(0xFF1746A2);
   static const Color appBarBackground = Colors.transparent;
   static const Color containerBackground = Color(0xFF002654);
@@ -16,4 +17,8 @@ class AppColors {
   static const Color errorIcon = Colors.red;
   static const Color unselectedTab = Color(0xFFB0B8C5);
 
+  // Additional colors from the CreateGameScreen
+  static const Color screenBackground = Color(0xFFECF5FF);
+  static const Color createButtonBackground = Color(0xFFABABAB);
+  static const Color createButtonForeground = Color(0xFFE5E5E5);
 }

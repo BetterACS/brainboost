@@ -1,7 +1,5 @@
-
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/navbar.dart';
-
 import 'package:flutter/material.dart';
 
 class History extends StatelessWidget {
@@ -10,37 +8,37 @@ class History extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-  length: 3,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: Text(
             'History',
             style: TextStyle(
-              color: AppColors.buttonText, 
+              color: AppColors.buttonText,
               fontWeight: FontWeight.bold,
             ),
           ),
           backgroundColor: Colors.white,
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48.0), 
+            preferredSize: const Size.fromHeight(48.0),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border(
                   bottom: BorderSide(
-                    color: Colors.grey, 
-                    width: 0.5, 
+                    color: Colors.grey,
+                    width: 0.5,
                   ),
                 ),
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(18.0), 
-                  bottomRight: Radius.circular(18.0), 
+                  bottomLeft: Radius.circular(18.0),
+                  bottomRight: Radius.circular(18.0),
                 ),
               ),
               child: const TabBar(
-                labelColor: AppColors.buttonText, 
-                unselectedLabelColor: AppColors.unselectedTab, 
-                indicatorColor: AppColors.buttonText, 
+                labelColor: AppColors.buttonText,
+                unselectedLabelColor: AppColors.unselectedTab,
+                indicatorColor: AppColors.buttonText,
                 indicatorWeight: 3.0,
                 tabs: [
                   Tab(text: 'All'),
@@ -58,11 +56,10 @@ class History extends StatelessWidget {
             _buildSummarizeTab(),
           ],
         ),
-        bottomNavigationBar: const Navbar(),
+        // bottomNavigationBar: const Navbar(),
       ),
     );
   }
-
 
   Widget _buildAllTab() {
     return ListView(
@@ -113,7 +110,7 @@ class History extends StatelessWidget {
           imagePath: 'assets/images/photomain3.png',
           isDownload: false,
         ),
-                _buildHistoryItem(
+        _buildHistoryItem(
           title: "Sofeware Enigine..",
           date: "11 Dec 2024",
           imagePath: 'assets/images/photomain3.png',
@@ -136,7 +133,6 @@ class History extends StatelessWidget {
       ],
     );
   }
-
 
   Widget _buildHistoryItem({
     required String title,
@@ -161,7 +157,6 @@ class History extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-        
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.asset(
@@ -185,7 +180,7 @@ class History extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 22.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.buttonText, 
+                    color: AppColors.buttonText,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -212,13 +207,12 @@ class History extends StatelessWidget {
               ],
             ),
           ),
-       
           Container(
             width: 50,
             height: 50,
             decoration: const BoxDecoration(
-              color: Color(0xFF0066FF), 
-              shape: BoxShape.circle, 
+              color: Color(0xFF0066FF),
+              shape: BoxShape.circle,
             ),
             child: IconButton(
               onPressed: () {
@@ -230,7 +224,7 @@ class History extends StatelessWidget {
               },
               icon: Icon(
                 isDownload ? Icons.download : Icons.play_arrow,
-                color: Colors.white, 
+                color: Colors.white,
                 size: 29,
               ),
             ),
