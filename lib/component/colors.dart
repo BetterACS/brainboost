@@ -21,6 +21,8 @@ class AppColors {
   static const Color gray = Color(0xFFD9D9D9);
   static const Color gray2 = Color(0xFFAAAAAA);
   static const Color gray3 = Color(0xFFC2C2C2);
+  static const Color backgroundDarkmode = Color(0xFF262626);
+  static const Color accentDarkmode = Color(0xFF1F1F21);
 
   static const LinearGradient circleGradient = LinearGradient(
     colors: [
