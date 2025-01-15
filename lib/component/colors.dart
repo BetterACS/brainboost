@@ -15,6 +15,7 @@ class AppColors {
   static const Color activeColor = Color.fromARGB(255, 18, 112, 194);
   static const Color inactiveColor = Color.fromARGB(255, 14, 53, 87);
   static const Color errorIcon = Colors.red;
+  static const Color unselectedTab = Color(0xFFB0B8C5);
 
   // Additional colors from the CreateGameScreen
   static const Color screenBackground = Color(0xFFECF5FF);
