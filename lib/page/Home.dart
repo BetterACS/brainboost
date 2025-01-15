@@ -491,9 +491,3 @@ class _MouseScrollBehavior extends ScrollBehavior {
         PointerDeviceKind.mouse,
       };
 }
-
-void main() {
-  runApp(const MaterialApp(
-    home: Home(),
-  ));
-}
