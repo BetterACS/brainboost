@@ -1,9 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:brainboost/page/History.dart';
+import 'package:brainboost/screens/history.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/component/navbar.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -39,7 +38,6 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      bottomNavigationBar: Navbar(),
     );
   }
 
