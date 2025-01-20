@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:brainboost/component/colors.dart';
 class UploadFileScreen extends StatelessWidget {
   const UploadFileScreen({super.key});
