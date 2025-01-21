@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   /// See all the routes in [router/routes.dart].
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    routerConfig: router,
-    debugShowCheckedModeBanner: false,
-  );
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+      );
 }

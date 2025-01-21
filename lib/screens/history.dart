@@ -1,5 +1,5 @@
 import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/component/navbar.dart';
+// import 'package:brainboost/component/navbar.dart';
 import 'package:flutter/material.dart';
 
 class History extends StatelessWidget {
