@@ -67,6 +67,9 @@ class _MyGamesState extends State<MyGames> {
         children: [
           SingleChildScrollView(
             controller: _scrollController,
+            physics: _currentPage == titles.length - 1
+                ? const ClampingScrollPhysics ()
+                : const BouncingScrollPhysics(),
             child: Center(
               child: Column(
                 children: <Widget>[
@@ -128,8 +131,10 @@ class _MyGamesState extends State<MyGames> {
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.easeInOut,
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 0, 38, 84),
+                          decoration: BoxDecoration(
+                            color: index == imagePaths.length - 1
+                                ? Colors.transparent
+                                : const Color.fromARGB(255, 0, 38, 84),
                             shape: BoxShape.circle,
                           ),
                           child: ClipRRect(
@@ -246,64 +251,69 @@ class _MyGamesState extends State<MyGames> {
                         ),
                       ],
                     ),
-                  const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.only(top: 20),
-                    decoration: BoxDecoration(
-                      color: AppColors.cardBackground,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
+                  if (_currentPage != titles.length - 1)
+                    Column(
                       children: [
-                        const Text(
-                          "Scoreboard",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(top: 20),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBackground,
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          height: 120,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: List.generate(5, (index) {
-                                return const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  child: Column(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor: Colors.white,
-                                        child: CircleAvatar(
-                                          radius: 22,
-                                          backgroundImage: AssetImage(
-                                              'assets/images/profile.jpg'),
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Scoreboard",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                height: 120,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: List.generate(5, (index) {
+                                      return const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 8),
+                                        child: Column(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 25,
+                                              backgroundColor: Colors.white,
+                                              child: CircleAvatar(
+                                                radius: 22,
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/profile.jpg'),
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Text(
+                                              "82",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        "82",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
+                                      );
+                                    }),
                                   ),
-                                );
-                              }),
-                            ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
                   const SizedBox(height: 400),
                 ],
               ),
