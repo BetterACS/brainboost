@@ -12,7 +12,10 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'My Profile',
-          style: TextStyle(color: AppColors.buttonText),
+          style: TextStyle(
+            color: AppColors.buttonText,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: AppColors.accentBackground,
         elevation: 0,
@@ -21,7 +24,7 @@ class ProfilePage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            margin: const EdgeInsets.only(top: 110),
+            margin: const EdgeInsets.only(top: 80),
             decoration: const BoxDecoration(
               color: Color(0xFF002D72),
               borderRadius: BorderRadius.only(
@@ -35,8 +38,7 @@ class ProfilePage extends StatelessWidget {
               _buildProfileHeader(),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 8), 
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
                   children: [
                     _buildOptionsList(context),
                     const SizedBox(height: 20),
@@ -60,7 +62,7 @@ class ProfilePage extends StatelessWidget {
           bottomRight: Radius.circular(30),
         ),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Column(
         children: [
           Stack(
@@ -72,12 +74,12 @@ class ProfilePage extends StatelessWidget {
               ),
               CircleAvatar(
                 radius: 16,
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.buttonText,
                 child: IconButton(
                   icon: const Icon(
                     Icons.camera_alt,
                     size: 16,
-                    color: Colors.blue,
+                    color: Colors.white,
                   ),
                   onPressed: () {},
                 ),
@@ -110,7 +112,7 @@ class ProfilePage extends StatelessWidget {
   Widget _buildOptionsList(BuildContext context) {
     return Container(
       width: 380,
-      height: 280,
+      height: 300,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -124,29 +126,49 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildOption(
             icon: Icons.edit,
             title: "Edit Profile",
             onTap: () => context.push(Routes.settingsPage),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           _buildOption(
             icon: Icons.settings,
             title: "Setting",
             onTap: () => context.push(Routes.settingsPage),
           ),
-          const SizedBox(height: 16), 
+          const SizedBox(height: 20),
           _buildOption(
             icon: Icons.palette,
             title: "Theme",
-            trailing: const Text(
-              "Light Open",
-              style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+            trailing: RichText(
+              text: const TextSpan(
+                children: [
+                  TextSpan(
+                    text: "Light ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
+                  ),
+                  TextSpan(
+                    text: "Open",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: Color(0xFF9E9E9E),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
             ),
             onTap: () => context.push(Routes.settingsPage),
           ),
-          const SizedBox(height: 16), 
+          const SizedBox(height: 20),
           _buildOption(
             icon: Icons.support,
             title: "Support",
@@ -159,40 +181,39 @@ class ProfilePage extends StatelessWidget {
 
   // Individual Option
   Widget _buildOption({
-  required IconData icon,
-  required String title,
-  Widget? trailing,
-  required VoidCallback onTap,
-}) {
-  return InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(8), 
-    child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color(0xFF2B3A67), size: 24),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold, 
-                color: Color(0xFF2B3A67),
+    required IconData icon,
+    required String title,
+    Widget? trailing,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Row(
+          children: [
+            Icon(icon, color: const Color(0xFF2B3A67), size: 24),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
-          ),
-          if (trailing != null) trailing,
-          const SizedBox(width: 8),
-          const Icon(Icons.arrow_forward_ios,
-              size: 16, color: Color(0xFF9E9E9E)),
-        ],
+            if (trailing != null) trailing,
+            const SizedBox(width: 8),
+            const Icon(Icons.arrow_forward_ios,
+                size: 16, color: Color(0xFF9E9E9E)),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   //Log Out Button
   Widget _buildLogOutButton(BuildContext context) {
@@ -211,69 +232,78 @@ class ProfilePage extends StatelessWidget {
           builder: (context) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(9),
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    'assets/images/alert.png',
-                    height: 150,
-                    width: 150,
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Are you sure you want to log out?",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+              backgroundColor: Colors.white,
+              content: SizedBox(
+                width: 350,
+                height: 360,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/alert.png',
+                      height: 200,
+                      width: 180,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.red,
-                            side: const BorderSide(color: Colors.red),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop(); 
-                          },
-                          child: const Text("Cancel"),
-                        ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Are you sure you want to log out?",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.errorIcon,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop(); 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Logged Out Successfully!"),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.red,
+                              side: const BorderSide(
+                                color: Colors.red,
+                                width: 2,
                               ),
-                            );
-                          },
-                          child: const Text(
-                            "Log Out",
-                            style: TextStyle(color: Colors.white),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Cancel"),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.errorIcon,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Logged Out Successfully!"),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Log Out",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -281,8 +311,9 @@ class ProfilePage extends StatelessWidget {
       },
       child: const Text(
         "Log Out",
-        style: TextStyle(fontSize: 16,
-        fontWeight: FontWeight.bold, 
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
