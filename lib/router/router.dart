@@ -26,6 +26,32 @@ final router = GoRouter(
       builder: (context, state) => const SettingsPage()
     ),
 
+    GoRoute(
+      path: Routes.playGamePage,
+      builder: (context, state) => const GameWrapper()
+    ),
+
+
+    // GoRoute(
+    //   path: Routes.resultPage,
+    //   builder: (context, state) => ResultScreen(score: state.pathParameters['score'] as int)
+    // ),
+
+    GoRoute(
+      path: Routes.resultPage,
+      builder: (context, state) {
+        // correct, wrong, time
+        // Map<String, int> args = state.extra as Map<String, int>;
+        final extra = state.extra as Map<String, dynamic>?;
+        return ResultsPage(
+          correct: extra?['correct'] as int? ?? 0,
+          wrong: extra?['wrong'] as int? ?? 0,
+          time: extra?['time'] as String? ?? '',
+        );
+      }
+    ),
+
+
     /// Navigation Shell
     /// This is a special route that allows you to define a layout for your app.
     StatefulShellRoute.indexedStack(
