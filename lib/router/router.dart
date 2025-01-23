@@ -64,7 +64,7 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.homePage,
-              builder: (context, state) => const HomePage(), 
+              builder: (context, state) => const Home(), 
             ),
           ],
         ),

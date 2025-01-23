@@ -290,8 +290,7 @@ class _MyGamesState extends State<MyGames> {
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton.icon(
-                    onPressed: () {
-                    },
+                    onPressed: () {},
                     icon: SvgPicture.asset(
                       'assets/images/game.svg',
                       width: 35,
