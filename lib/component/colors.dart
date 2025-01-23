@@ -5,8 +5,6 @@ class AppColors {
   static const Color primaryBackground = Color(0xFF1746A2);
   static const Color accentBackground = Color(0xFFECF5FF);
   static const Color neutralBackground = Color(0xFF205ED8);
-  static const Color accentBackground = Color(0xFFECF5FF);
-  static const Color neutralBackground = Color(0xFF205ED8);
   static const Color appBarBackground = Colors.transparent;
   static const Color containerBackground = Color(0xFF002654);
   static const Color white = Colors.white;
