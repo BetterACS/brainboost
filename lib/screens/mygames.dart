@@ -2,6 +2,8 @@ import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/screens/creategame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:brainboost/router/routes.dart';
 
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
@@ -211,7 +213,7 @@ class _MyGamesState extends State<MyGames> {
                     Column(
                       children: [
                         ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () => context.push(Routes.playGamePage),
                           icon: SvgPicture.asset(
                             'assets/images/game.svg',
                             width: 35,
