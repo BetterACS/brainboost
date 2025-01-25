@@ -10,7 +10,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: Routes.homePage,
+  initialLocation: '/home-wrapper',
   
   /// Define routes here.
   routes: [
@@ -21,6 +21,19 @@ final router = GoRouter(
     ///   builder: (context, state) => const SimplePage(),
     /// ),
     /// 
+    GoRoute(
+      path: '/home-wrapper',
+      builder: (context, state) => const LoadingHomeWrapper()
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => Login()
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => Signup()
+    ),
+
     GoRoute(
       path: Routes.settingsPage,
       builder: (context, state) => const SettingsPage()
