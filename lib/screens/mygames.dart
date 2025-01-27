@@ -10,15 +10,12 @@ class MyGames extends StatefulWidget {
 }
 
 class _MyGamesState extends State<MyGames> {
-  final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
-
-  bool _showButtons = false;
   int _currentPage = 0;
 
   final List<String> titles = [
     "Software Engineering",
-    "Cybersecurity",
+    "Cybersecurity", 
     "Data Science",
   ];
 
@@ -28,292 +25,234 @@ class _MyGamesState extends State<MyGames> {
     'assets/images/photomain3.png',
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 200 && !_showButtons) {
-        setState(() {
-          _showButtons = true;
-        });
-      } else if (_scrollController.offset <= 200 && _showButtons) {
-        setState(() {
-          _showButtons = false;
-        });
-      }
-    });
-  }
+  final List<String> descriptions = [
+    "Learn coding principles and software development techniques",
+    "Explore network security and ethical hacking strategies", 
+    "Master data analysis and machine learning algorithms"
+  ];
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _pageController.dispose();
     super.dispose();
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryBackground,
-      appBar: AppBar(
-        title: const Text(""),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            controller: _scrollController,
-            child: Center(
-              child: Column(
+      backgroundColor: AppColors.accentBackground,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.cardBackground,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Colors.white,
-                          child: CircleAvatar(
-                            radius: 22,
-                            backgroundImage:
-                                AssetImage('assets/images/profile.jpg'),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "Mon Chinawat",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                  const CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.white,
+                    child: CircleAvatar(
+                      radius: 14,
+                      backgroundImage: AssetImage('assets/images/profile.jpg'),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text(
-                      titles[_currentPage],
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    height: 300,
-                    width: 300,
-                    child: PageView.builder(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentPage = index;
-                        });
-                      },
-                      itemCount: imagePaths.length,
-                      itemBuilder: (context, index) {
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut,
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 0, 38, 84),
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(150),
-                            child: Image.asset(
-                              imagePaths[index],
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error,
-                                    size: 80, color: Colors.red);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      'assets/images/game.svg',
-                      width: 35,
-                      height: 35,
-                    ),
-                    label: const Text(
-                      "Play",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.buttonText,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 25,
-                        vertical: 10,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      side: BorderSide(
-                        color: AppColors.buttonBorder,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
+                  const SizedBox(width: 8),
                   const Text(
-                    "You have played 2 days ago",
+                    "Mon Chinawat",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
-                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.only(top: 20),
-                    decoration: BoxDecoration(
-                      color: AppColors.cardBackground,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Scoreboard",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          height: 120,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: List.generate(5, (index) {
-                                return const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  child: Column(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor: Colors.white,
-                                        child: CircleAvatar(
-                                          radius: 22,
-                                          backgroundImage: AssetImage(
-                                              'assets/images/profile.jpg'),
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        "82",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 400),
                 ],
               ),
             ),
-          ),
-          if (_showButtons)
-            Positioned(
-              bottom: 90,
-              left: 20,
-              right: 20,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.buttonText,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: const Text("Re version"),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle "Add Lecture"
+            
+            const SizedBox(height: 10),
+            
+            Text(
+              titles[_currentPage],
+              style: const TextStyle(
+                color: AppColors.containerBackground,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            
+            const SizedBox(height: 5),
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                descriptions[_currentPage],
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.containerBackground,
+                  fontSize: 14,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 10),
+            
+            SizedBox(
+              height: 180,
+              width: 180,
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
+                itemCount: imagePaths.length,
+                itemBuilder: (context, index) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFD9D9D9),
+                      shape: BoxShape.circle,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Image.asset(
+                        imagePaths[index],
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.error, size: 60, color: Colors.red);
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.buttonText,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: const Text("Add Lecture"),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      'assets/images/game.svg',
-                      width: 35,
-                      height: 35,
-                    ),
-                    label: const Text(
-                      "Play",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: AppColors.buttonText,
                       ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 240, 239, 240),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
-        ],
+            
+            const SizedBox(height: 20),
+            
+            ElevatedButton.icon(
+              onPressed: () {},
+              icon: SvgPicture.asset(
+                'assets/images/game.svg',
+                width: 25,
+                height: 25,
+                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              ),
+              label: const Text(
+                "Play",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.neutralBackground,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                side: BorderSide(
+                  color: AppColors.neutralBackground,
+                  width: 2,
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 10),
+            
+            const Text(
+              "You have played 2 days ago",
+              style: TextStyle(
+                color: AppColors.containerBackground,
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            
+            const SizedBox(height: 40), // เพิ่มระยะห่างตรงนี้
+            
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: const BoxDecoration(
+                  color: AppColors.cardBackground,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20),
+                    bottom: Radius.zero,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Scoreboard",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 60,
+                      child: Center(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const CircleAvatar(
+                                    radius: 16,
+                                    backgroundColor: Colors.white,
+                                    child: CircleAvatar(
+                                      radius: 14,
+                                      backgroundImage:
+                                          AssetImage('assets/images/profile.jpg'),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  const Text(
+                                    "82",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      // bottomNavigationBar: Navbar(),
     );
   }
 }
