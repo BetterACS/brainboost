@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:brainboost/screens/history.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/component/cards/profile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -26,7 +27,7 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 50),
-              _buildProfileSection(),
+              const ProfileContainer(),
               const SizedBox(height: 20),
               _buildPageView(),
               const SizedBox(height: 20),
@@ -37,38 +38,6 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildProfileSection() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.neutralBackground,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 25,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 22,
-              backgroundImage: AssetImage('assets/images/profile.jpg'),
-            ),
-          ),
-          SizedBox(width: 10),
-          Text(
-            "Mon Chinawat",
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
       ),
     );
   }

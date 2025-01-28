@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/component/cards/profile.dart';  // เพิ่ม import นี้
 
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
@@ -70,41 +71,12 @@ class _MyGamesState extends State<MyGames> {
           SingleChildScrollView(
             controller: _scrollController,
             physics: _currentPage == titles.length - 1
-                ? const ClampingScrollPhysics ()
+                ? const ClampingScrollPhysics()
                 : const BouncingScrollPhysics(),
             child: Center(
               child: Column(
                 children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.cardBackground,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Colors.white,
-                          child: CircleAvatar(
-                            radius: 22,
-                            backgroundImage:
-                                AssetImage('assets/images/profile.jpg'),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "Mon Chinawat",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const ProfileContainer(), // แทนที่ Container เดิมด้วย ProfileContainer
                   const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
