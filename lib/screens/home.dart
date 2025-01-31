@@ -3,6 +3,9 @@ import 'dart:ui';
 import 'package:brainboost/screens/history.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/screens/creategame.dart';  
+// import 'package:brainboost/screens/createsummary.dart'; 
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -246,26 +249,37 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildActionButtons() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildButton(
-            icon: Icons.games_rounded,
-            text: "Create Game",
-            onPressed: () {},
-          ),
-          _buildButton(
-            icon: Icons.summarize,
-            text: "Create Summary",
-            onPressed: () {},
-          ),
-        ],
-      ),
-    );
-  }
+ Widget _buildActionButtons() {
+  return Padding(
+    padding: const EdgeInsets.only(top: 20),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildButton(
+          icon: Icons.games_rounded,
+          text: "Create Game",
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CreateGameScreen()),
+            );
+          },
+        ),
+        _buildButton(
+          icon: Icons.summarize,
+          text: "Create Summary",
+          onPressed: () {
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => const CreateSummary()),
+            // );
+          },
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildHistorySection() {
     return Padding(
@@ -381,11 +395,19 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildButton({
-    required IconData icon,
-    required String text,
-    required VoidCallback onPressed,
-  }) {
-    return Container(
+  required IconData icon,
+  required String text,
+  required VoidCallback onPressed,
+}) {
+  return InkWell(
+    onTap: onPressed,
+    borderRadius: const BorderRadius.only(
+      topRight: Radius.circular(48),
+      topLeft: Radius.circular(12),
+      bottomLeft: Radius.circular(12),
+      bottomRight: Radius.circular(12),
+    ),
+    child: Container(
       height: 70,
       width: 200,
       decoration: const BoxDecoration(
@@ -412,25 +434,20 @@ class _HomeState extends State<Home> {
             ),
           ),
           Center(
-            child: ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: AppColors.textPrimary,
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-              ),
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white,
               ),
             ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
 class CircularChartPainter extends CustomPainter {

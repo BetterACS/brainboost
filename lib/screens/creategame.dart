@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:async';
 
 // หน้าสร้างเกมใหม่
 class CreateGameScreen extends StatelessWidget {
@@ -12,7 +14,7 @@ class CreateGameScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFECF5FF), // สีพื้นหลังหลักของแอป
       appBar: AppBar(
         backgroundColor: AppColors.appBarBackground,
-        elevation: 0, 
+        elevation: 0,
         toolbarHeight: 60,
       ),
       body: ListView(
@@ -181,22 +183,54 @@ class UploadCircleButton extends StatelessWidget {
   }
 }
 
-// หน้าอัพโหลดไฟล์
-class UploadFileScreen extends StatelessWidget {
+
+
+class UploadFileScreen extends StatefulWidget {
   const UploadFileScreen({super.key});
+
+  @override
+  State<UploadFileScreen> createState() => _UploadFileScreenState();
+}
+
+class _UploadFileScreenState extends State<UploadFileScreen> {
+  String? fileName; // เก็บชื่อไฟล์
+  bool isUploading = false; // เช็คสถานะการอัพโหลด
+  bool uploadSuccess = false; // เช็คว่าการอัพโหลดสำเร็จไหม
+
+  Future<void> pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      setState(() {
+        fileName = result.files.single.name; // ได้ชื่อไฟล์ที่เลือก
+        isUploading = true; // เริ่มอัพโหลด
+      });
+
+      // จำลองการอัพโหลดไฟล์ (ใช้ Future.delayed แทน API จริง)
+      await Future.delayed(const Duration(seconds: 2));
+
+      setState(() {
+        isUploading = false;
+        uploadSuccess = true; // อัพโหลดสำเร็จ
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFECF5FF),
       appBar: AppBar(
-        backgroundColor: AppColors.appBarBackground,
+        backgroundColor:  AppColors.appBarBackground,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.containerBackground),
+          icon: const Icon(Icons.arrow_back, color: AppColors.containerBackground),
           onPressed: () => Navigator.pop(context), // ปุ่มกลับ
         ),
-        title: Text(
+        title: const Text(
           'Create game',
           style: TextStyle(color: AppColors.containerBackground),
         ),
@@ -209,154 +243,157 @@ class UploadFileScreen extends StatelessWidget {
             topRight: Radius.circular(30),
           ),
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ส่วนหัวข้อและคำอธิบาย
-                Center(
-                  child: Text(
-                    'Upload your files',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    'File should be .pdf',
-                    style: TextStyle(
-                      color: AppColors.white.withOpacity(0.7),
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // ส่วนกรอกชื่อเกม
-                Text(
-                  'Game name',
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Center(
+                child: Text(
+                  'Upload your files',
                   style: TextStyle(
-                    color: AppColors.white,
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const Center(
+                child: Text(
+                  'File should be .pdf',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Game name',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: 'Enter your game name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                height: 220,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.white70,
+                    width: 2,
+                  ),
+                  color: Colors.transparent,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.cloud_upload_outlined,
+                      color: Colors.white,
+                      size: 88,
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: pickFile,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue.shade900,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        'Browse files',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (fileName != null) ...[
+                Text(
+                  'File: $fileName',
+                  style: const TextStyle(
+                    color: Colors.white,
                     fontSize: 16,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter your game name',
-                      hintStyle: TextStyle(
-                        color: AppColors.containerBackground.withOpacity(0.5),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // พื้นที่สำหรับอัพโหลดไฟล์
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.white.withOpacity(0.2),
-                        width: 2,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // ไอคอนอัพโหลด
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.white.withOpacity(0.2),
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Icon(
-                            Icons.cloud_upload_outlined,
-                            color: AppColors.white,
-                            size: 48,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        // ปุ่มเลือกไฟล์
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.buttonBackground,
-                            foregroundColor: AppColors.buttonForeground,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                          ),
-                          child: const Text(
-                            'Browse files',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // ปุ่มสร้างเกม
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFABABAB),
-                      foregroundColor: const Color(0xFFE5E5E5),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Create',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+                isUploading
+                    ? const LinearProgressIndicator(
+                        backgroundColor: Colors.white30,
+                        color: Colors.green,
+                      )
+                    : uploadSuccess
+                        ? Row(
+                            children: const [
+                              Text(
+                                "Upload complete!",
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Icon(Icons.check_circle, color: Colors.green),
+                            ],
+                          )
+                        : Container(),
               ],
-            ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: uploadSuccess ? () {} : null, // ปุ่มกดได้เมื่ออัพโหลดเสร็จ
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        uploadSuccess ? Colors.blue.shade900 : Colors.grey,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Create',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-      // bottomNavigationBar: const Navbar(),
     );
   }
 }
