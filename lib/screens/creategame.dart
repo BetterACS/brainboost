@@ -184,6 +184,7 @@ class UploadCircleButton extends StatelessWidget {
   }
 }
 
+//ส่วนอัพไฟล์
 class UploadFileScreen extends StatefulWidget {
   const UploadFileScreen({super.key});
 
@@ -192,9 +193,9 @@ class UploadFileScreen extends StatefulWidget {
 }
 
 class _UploadFileScreenState extends State<UploadFileScreen> {
-  String? fileName; // เก็บชื่อไฟล์
-  bool isUploading = false; // เช็คสถานะการอัพโหลด
-  bool uploadSuccess = false; // เช็คว่าการอัพโหลดสำเร็จไหม
+  String? fileName; // ชื่อไฟล์
+  bool isUploading = false; // เช็คสถานะอัพโหลด
+  bool uploadSuccess = false; // เช็คอัพโหลดสำเร็จ
 
   Future<void> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -348,9 +349,13 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                 ),
                 const SizedBox(height: 8),
                 isUploading
-                    ? const LinearProgressIndicator(
-                        backgroundColor: Colors.white30,
-                        color: Colors.green,
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: const LinearProgressIndicator(
+                          backgroundColor: Color(0xFFE9E9E9),
+                          color: Colors.green,
+                          minHeight: 10,
+                        ),
                       )
                     : uploadSuccess
                         ? Row(
@@ -378,7 +383,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                         if (uploadSuccess) {
                           return Colors.white;
                         }
-                        return const Color(0xFFE5E5E5); 
+                        return const Color(0xFFE5E5E5);
                       },
                     ),
                     foregroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -421,14 +426,14 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       builder: (context) => const CreatingDialog(),
     );
 
-    // จำลองโหลด 
+    // จำลองโหลด
     await Future.delayed(const Duration(seconds: 3));
 
     // เปลี่ยน True / false เอาไว้เทสว่าสำเร็จมั้ย
     // bool isSuccess = false;
     bool isSuccess = true;
 
-    Navigator.pop(context); 
+    Navigator.pop(context);
 
     showDialog(
       context: context,
@@ -451,29 +456,36 @@ class CreatingDialog extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    const CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.grey,
+                    Positioned(
+                      bottom: -15,
+                      child: Container(
+                        width: 200,
+                        height: 160,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE9E9E9),
+                          borderRadius: BorderRadius.circular(80),
+                        ),
+                      ),
                     ),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(12),
                       child: Image.asset(
                         'assets/images/file.png',
-                        width: 60,
-                        height: 60,
+                        width: 200,
+                        height: 160,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 50),
                 const Text(
                   "Creating",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
@@ -489,20 +501,21 @@ class CreatingDialog extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14),
                 ),
-                const SizedBox(height: 20),
-                LinearProgressIndicator(
-                  backgroundColor: Colors.grey.shade300,
-                  color: Colors.blue.shade800,
-                  minHeight: 6,
-                ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 30),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    backgroundColor: Color(0xFFE9E9E9),
+                    color: Colors.blue.shade800,
+                    minHeight: 10,
+                  ),
+                )
               ],
             ),
           ),
-          // ปุ่มปิด
           Positioned(
-            top: 8,
-            right: 8,
+            top: 5,
+            right: 5,
             child: IconButton(
               icon: const Icon(Icons.close, color: Color(0xFF838383)),
               onPressed: () {
