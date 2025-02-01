@@ -1,3 +1,4 @@
+import 'package:brainboost/screens/mygames.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:brainboost/component/colors.dart';
@@ -183,8 +184,6 @@ class UploadCircleButton extends StatelessWidget {
   }
 }
 
-
-
 class UploadFileScreen extends StatefulWidget {
   const UploadFileScreen({super.key});
 
@@ -205,16 +204,16 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
 
     if (result != null) {
       setState(() {
-        fileName = result.files.single.name; // ได้ชื่อไฟล์ที่เลือก
+        fileName = result.files.single.name; // ชื่อไฟล์
         isUploading = true; // เริ่มอัพโหลด
       });
 
-      // จำลองการอัพโหลดไฟล์ (ใช้ Future.delayed แทน API จริง)
+      // จำลองอัพไฟล์
       await Future.delayed(const Duration(seconds: 2));
 
       setState(() {
         isUploading = false;
-        uploadSuccess = true; // อัพโหลดสำเร็จ
+        uploadSuccess = true; // อัพโหลดเสร็จ
       });
     }
   }
@@ -224,10 +223,11 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFECF5FF),
       appBar: AppBar(
-        backgroundColor:  AppColors.appBarBackground,
+        backgroundColor: AppColors.appBarBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.containerBackground),
+          icon: const Icon(Icons.arrow_back,
+              color: AppColors.containerBackground),
           onPressed: () => Navigator.pop(context), // ปุ่มกลับ
         ),
         title: const Text(
@@ -340,7 +340,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
               const SizedBox(height: 16),
               if (fileName != null) ...[
                 Text(
-                  'File: $fileName',
+                  '$fileName',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -371,14 +371,31 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: uploadSuccess ? () {} : null, // ปุ่มกดได้เมื่ออัพโหลดเสร็จ
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        uploadSuccess ? Colors.blue.shade900 : Colors.grey,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  onPressed: uploadSuccess ? () => createGame(context) : null,
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (states) {
+                        if (uploadSuccess) {
+                          return Colors.white;
+                        }
+                        return const Color(0xFFE5E5E5); 
+                      },
+                    ),
+                    foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (states) {
+                        if (uploadSuccess) {
+                          return AppColors.primaryBackground;
+                        }
+                        return const Color(0xFFABABAB);
+                      },
+                    ),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                   child: const Text(
@@ -393,6 +410,410 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void createGame(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const CreatingDialog(),
+    );
+
+    // จำลองโหลด 
+    await Future.delayed(const Duration(seconds: 3));
+
+    // เปลี่ยน True / false เอาไว้เทสว่าสำเร็จมั้ย
+    // bool isSuccess = false;
+    bool isSuccess = true;
+
+    Navigator.pop(context); 
+
+    showDialog(
+      context: context,
+      builder: (context) => isSuccess ? SuccessDialog() : ErrorDialog(),
+    );
+  }
+}
+
+// Pop-up creating
+class CreatingDialog extends StatelessWidget {
+  const CreatingDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.grey,
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: Image.asset(
+                        'assets/images/file.png',
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Creating",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Please wait while we",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  "generate game for you!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 20),
+                LinearProgressIndicator(
+                  backgroundColor: Colors.grey.shade300,
+                  color: Colors.blue.shade800,
+                  minHeight: 6,
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
+          // ปุ่มปิด
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Color(0xFF838383)),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UploadFileScreen()),
+                );
+              },
+              tooltip: 'Close',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Pop-up success
+
+class SuccessDialog extends StatelessWidget {
+  const SuccessDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      backgroundColor: Colors.white,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // วงกลมใหญ่สุด
+                    Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF20BF4D).withOpacity(0.25),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    // วงกลมกลาง
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF20BF4D).withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    // วงกลมเล็กสุด
+                    Container(
+                      width: 90,
+                      height: 90,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF20BF4D),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.check,
+                          color: Colors.white, size: 48),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  "Success!",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  "Your game has been created successfully",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const SizedBox(height: 28),
+                // ปุ่ม Start Playing
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MyGames()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF20BF4D),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      "Start Playing",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                // ปุ่ม View My Games
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MyGames()),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF20BF4D),
+                      side: const BorderSide(color: Color(0xFF20BF4D)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      "View My Games",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ปุ่มปิด
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Color(0xFF838383)),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UploadFileScreen()),
+                );
+              },
+              tooltip: 'Close',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Pop-up error
+
+class ErrorDialog extends StatelessWidget {
+  const ErrorDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      backgroundColor: Colors.white,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // วงกลมใหญ่สุด
+                    Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE04545).withOpacity(0.25),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    // วงกลมกลาง
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE04545).withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    // วงกลมเล็กสุด
+                    Container(
+                      width: 90,
+                      height: 90,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFE04545),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.close,
+                          color: Colors.white, size: 48),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  "Oops!",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  "Something went wrong\nPlease try again or upload a new file.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => const CreatingDialog(),
+                      );
+
+                      Future.delayed(const Duration(seconds: 3), () {
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (context) => SuccessDialog(),
+                        );
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text("Try Again",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UploadFileScreen(),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text("Edit File",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ปุ่มปิด
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Color(0xFF838383)),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UploadFileScreen()),
+                );
+              },
+              tooltip: 'Close',
+            ),
+          ),
+        ],
       ),
     );
   }
