@@ -150,20 +150,10 @@ class UploadFileScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Center(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: AppColors.white.withOpacity(0.2),
-                                        width: 2,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.cloud_upload_outlined,
-                                      color: AppColors.white,
-                                      size: 48,
-                                    ),
+                                  child: Icon(
+                                    Icons.cloud_upload_outlined,
+                                    color: AppColors.white,
+                                    size: 48, // ขนาดของไอคอน
                                   ),
                                 ),
                                 const SizedBox(height: 12),
