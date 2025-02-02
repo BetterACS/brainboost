@@ -3,6 +3,7 @@ import 'package:brainboost/component/buttons/dropshadow_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/component/colors.dart';
 
 const correctAnswersColor = Color.fromRGBO(32, 94, 216, 1);
 const wrongAnswersColor = Color.fromRGBO(223, 69, 69, 1);
@@ -139,22 +140,28 @@ class ResultsPage extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildCongratulationsText() {
-    return const Column(
-      children: [
-        Text(
-          'Congrats!',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+Widget _buildCongratulationsText() {
+  return Column(
+    children: [
+      Text(
+        'Congrats!',
+        style: TextStyle(
+          fontSize: 32, 
+          fontWeight: FontWeight.bold,
+         color: AppColors.cardBackground, // ใช้สีจากไฟล์ colors.dart
         ),
-        Text(
-          'You are the best!',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      ),
+      Text(
+        'You are the best!',
+        style: TextStyle(
+          fontSize: 32, 
+          fontWeight: FontWeight.bold,
+          color: AppColors.cardBackground, // ใช้สีอีกสีจากไฟล์ colors.dart
         ),
-      ],
-    );
-  }
-
+      ),
+    ],
+  );
+}
   Widget _buildScoreRow(int correct, int wrong, String time) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -162,13 +169,13 @@ class ResultsPage extends StatelessWidget {
         InfoCard(
           title: 'Correct',
           value: correct.toString(),
-          icon: Icons.check,
+          icon: Icons.check_circle_rounded,
           cardColor: correctAnswersColor,
         ),
         InfoCard(
           title: 'Wrong',
           value: wrong.toString(),
-          icon: Icons.curtains_closed_rounded,
+          icon: Icons.cancel_rounded,
           cardColor: wrongAnswersColor,
         ),
         InfoCard(
@@ -191,6 +198,7 @@ class ResultsPage extends StatelessWidget {
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
+          color: AppColors.cardBackground,
         ),
       ),
     );
