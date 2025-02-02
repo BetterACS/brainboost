@@ -70,13 +70,14 @@ class _MyGamesState extends State<MyGames> {
           SingleChildScrollView(
             controller: _scrollController,
             physics: _currentPage == titles.length - 1
-                ? const ClampingScrollPhysics ()
+                ? const ClampingScrollPhysics()
                 : const BouncingScrollPhysics(),
             child: Center(
               child: Column(
                 children: <Widget>[
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: AppColors.cardBackground,
                       borderRadius: BorderRadius.circular(50),
@@ -107,7 +108,8 @@ class _MyGamesState extends State<MyGames> {
                   ),
                   const SizedBox(height: 20),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Text(
                       titles[_currentPage],
                       style: const TextStyle(
@@ -209,7 +211,7 @@ class _MyGamesState extends State<MyGames> {
                         ),
                       ],
                     )
-                  else
+                  else if (_currentPage != titles.length - 1 && !_showButtons)
                     Column(
                       children: [
                         ElevatedButton.icon(
@@ -257,63 +259,150 @@ class _MyGamesState extends State<MyGames> {
                     Column(
                       children: [
                         const SizedBox(height: 10),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.only(top: 20),
-                          decoration: BoxDecoration(
-                            color: AppColors.cardBackground,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            children: [
-                              const Text(
-                                "Scoreboard",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              SizedBox(
-                                height: 120,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: List.generate(5, (index) {
-                                      return const Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 8),
-                                        child: Column(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 25,
-                                              backgroundColor: Colors.white,
-                                              child: CircleAvatar(
-                                                radius: 22,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/profile.jpg'),
-                                              ),
-                                            ),
-                                            SizedBox(height: 5),
-                                            Text(
-                                              "82",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
+                        if (_showButtons)
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                OutlinedButton(
+                                  onPressed: () {},
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: AppColors.buttonText,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 26, vertical: 14),
+                                  ),
+                                  child: const Text(
+                                    "Re version",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.buttonText,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 20),
+                                OutlinedButton(
+                                  onPressed: () {},
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: AppColors.buttonText,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 26, vertical: 14),
+                                  ),
+                                  child: const Text(
+                                    "Add lecture",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.buttonText,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            return Container(
+                              width: constraints.maxWidth,
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.only(top: 10),
+                              decoration: BoxDecoration(
+                                color: AppColors.cardBackground,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    "Scoreboard",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    height: 120,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: List.generate(5, (index) {
+                                          return const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            child: Column(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 25,
+                                                  backgroundColor: Colors.white,
+                                                  child: CircleAvatar(
+                                                    radius: 22,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/profile.jpg'),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 5),
+                                                Text(
+                                                  "82",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
+                        const SizedBox(height: 10),
+                        if (_showButtons)
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              return ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  minimumSize: Size(constraints.maxWidth * 0.8,
+                                      50), // ปรับขนาดอัตโนมัติ
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(15), 
+                                  ),
+                                ),
+                                onPressed: () {},
+                                icon: SvgPicture.asset(
+                                  'assets/images/game.svg',
+                                  width: 30,
+                                ),
+                                label: const Text(
+                                  "Play",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: AppColors
+                                        .cardBackground, 
+                                  ),
+                                ),
+                              );
+                            },
+                          )
                       ],
                     ),
                   const SizedBox(height: 400),
@@ -321,68 +410,6 @@ class _MyGamesState extends State<MyGames> {
               ),
             ),
           ),
-          if (_showButtons)
-            Positioned(
-              bottom: 90,
-              left: 20,
-              right: 20,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.buttonText,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: const Text("Re version"),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle "Add Lecture"
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.buttonText,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: const Text("Add Lecture"),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      'assets/images/game.svg',
-                      width: 35,
-                      height: 35,
-                    ),
-                    label: const Text(
-                      "Play",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: AppColors.buttonText,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 240, 239, 240),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
     );
