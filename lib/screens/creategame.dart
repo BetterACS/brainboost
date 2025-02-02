@@ -22,6 +22,7 @@ class UploadFileScreen extends StatelessWidget {
           child: Text(
             'Create game',
             style: TextStyle(
+              fontSize: 20,
               color: AppColors.containerBackground,
               fontWeight: FontWeight.bold, 
             ),
@@ -31,10 +32,10 @@ class UploadFileScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: CircleAvatar(
-              radius: 22, //ขนาดวงกลมใหญ่
-              backgroundColor: AppColors.neutralBackground, // ขอบสีขาว
+              radius: 22,
+              backgroundColor: AppColors.neutralBackground,
               child: CircleAvatar(
-                radius: 19, // ขนาดวงกลมรูปภาพ
+                radius: 19, // 
                 backgroundImage: AssetImage('assets/images/profile.jpg'),
               ),
             ),
@@ -72,7 +73,7 @@ class UploadFileScreen extends StatelessWidget {
                           'Upload your files',
                           style: TextStyle(
                             color: AppColors.white,
-                            fontSize: 24,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -82,7 +83,7 @@ class UploadFileScreen extends StatelessWidget {
                           'File should be .pdf',
                           style: TextStyle(
                             color: AppColors.white.withOpacity(0.7),
-                            fontSize: 14,
+                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -91,7 +92,7 @@ class UploadFileScreen extends StatelessWidget {
                         'Game name',
                         style: TextStyle(
                           color: AppColors.white,
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -99,13 +100,14 @@ class UploadFileScreen extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           color: AppColors.white,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(5),
                         ),
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: 'Enter your game name',
                             hintStyle: TextStyle(
                               color: AppColors.containerBackground.withOpacity(0.5),
+                              fontSize: 14,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -190,7 +192,7 @@ class UploadFileScreen extends StatelessWidget {
                       const Spacer(),
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 35,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -199,7 +201,7 @@ class UploadFileScreen extends StatelessWidget {
                             backgroundColor: const Color(0xFFABABAB),
                             foregroundColor: const Color(0xFFE5E5E5),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             elevation: 0,
                           ),
