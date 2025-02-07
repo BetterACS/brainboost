@@ -1,10 +1,12 @@
 // import 'package:brainboost/screens/login.dart';
 import 'package:brainboost/services/auth_services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:brainboost/services/user.dart';
 
 class Signup extends StatelessWidget {
   Signup({super.key});
@@ -12,15 +14,36 @@ class Signup extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> createUserWithEmailAndPassword() async {
-    try {
-      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _emailController.text.trim(), password: _passwordController.text.trim());
-      print(userCredential);
+  final UserServices userServices = UserServices();
 
-    } on FirebaseAuthException catch (e) {
-      print(e.message);
-    }
-  }
+  // Future<void> createUserWithEmailAndPassword() async {
+  //   try {
+  //     final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _emailController.text.trim(), password: _passwordController.text.trim());
+  //     final CollectionReference users = FirebaseFirestore.instance.collection("users");
+  //     // Convert DateTime objects to Timestamps for Firestore.
+  //     final userData = {
+  //       'email': email,
+  //       'icon': 'default',
+  //       'username': email,
+  //       'create_at': Timestamp.now(),
+  //       'latest_login': Timestamp.now(),
+  //       'age': 12,
+  //       'game_sets': [],
+  //     };
+
+  //     // Use the id (converted to a string) as the document ID.
+  //     await users.add(userData)
+  //       .then((value) => print("User Added"))
+  //       .catchError((error) => print("Failed to add user: $error"));
+
+      
+  //     // await userServices.addUser(email: userCredential.user?.email as String);
+  //     print(userCredential);
+
+  //   } on FirebaseAuthException catch (e) {
+  //     print(e.message);
+  //   }
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

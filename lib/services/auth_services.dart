@@ -1,13 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:brainboost/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-// import '../pages/home/home.dart';
-// import '../pages/login/login.dart';
-// import 'package:brainboost/screens/home.dart';
-// import 'package:brainboost/screens/login.dart';
 
 class AuthService {
+  final UserServices userServices = UserServices();
+
   Future<void> signup(
       {required String email,
       required String password,
@@ -17,9 +17,8 @@ class AuthService {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       await Future.delayed(const Duration(seconds: 1));
-      // Navigator.pushReplacement(context,
-      //     MaterialPageRoute(builder: (BuildContext context) => const Home()));
-      // ignore: use_build_context_synchronously
+      await userServices.addUser(email: email);
+
       context.push("/home");
     } on FirebaseAuthException catch (e) {
       String message = '';
@@ -48,9 +47,7 @@ class AuthService {
           .signInWithEmailAndPassword(email: email, password: password);
 
       await Future.delayed(const Duration(seconds: 1));
-      // Navigator.pushReplacement(context,
-      //     MaterialPageRoute(builder: (BuildContext context) => const Home()));
-      // ignore: use_build_context_synchronously
+
       context.push("/home");
     } on FirebaseAuthException catch (e) {
       String message = '';
