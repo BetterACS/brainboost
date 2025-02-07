@@ -29,20 +29,6 @@ class _MyGamesState extends State<MyGames> {
   int _currentPage = 0;
   List<GamesType> games = [];
 
-  // final List<String> titles = [
-  //   // "Software Engineering",
-  //   // "Cybersecurity",
-  //   // "Data Science",
-  //   ""
-  // ];
-
-  // final List<String> imagePaths = [
-  //   // 'assets/images/photomain.png',
-  //   // 'assets/images/photomain2.png',
-  //   // 'assets/images/photomain3.png',
-  //   'assets/images/Add.png'
-  // ];
-
   @override
   void initState() {
     super.initState();
@@ -80,8 +66,8 @@ class _MyGamesState extends State<MyGames> {
       print("Path: $path");
       games.add(GamesType.fromMap(
           await GameServices().getGame(path: path) as Map<String, dynamic>));
-games.add(GamesType.fromMap(
-          await GameServices().getGame(path: path) as Map<String, dynamic>));
+      // games.add(GamesType.fromMap(
+      //     await GameServices().getGame(path: path) as Map<String, dynamic>));
     }
 
     print(games);
@@ -112,7 +98,7 @@ games.add(GamesType.fromMap(
                 children: [
                   SingleChildScrollView(
                     controller: _scrollController,
-                    physics: _currentPage == games.length - 1
+                    physics: _currentPage < games.length
                         ? const ClampingScrollPhysics()
                         : const BouncingScrollPhysics(),
                     child: Center(
@@ -151,28 +137,21 @@ games.add(GamesType.fromMap(
                           ),
                           const SizedBox(height: 20),
 
-                          if (_currentPage >= games.length)
-                            IconTitleButton(
-                              title: "Create Game",
-                              iconPath: 'assets/images/game.svg',
-                              onPressed: () {
-                                context.push(Routes.createGamePage);
-                              },
-                            )
-                          else
-                            // Game Title
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              child: Text(
-                                games[_currentPage].name,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          // Game Title
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: Text(
+                              _currentPage < games.length
+                                  ? games[_currentPage].name
+                                  : "",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
+                          ),
                           const SizedBox(height: 20),
 
                           // Game Body
@@ -185,14 +164,15 @@ games.add(GamesType.fromMap(
                                 setState(() {
                                   _currentPage = index;
                                 });
+                                print("Current Page: $_currentPage");
                               },
-                              itemCount: games.length,
+                              itemCount: games.length + 1,
                               itemBuilder: (context, index) {
                                 return AnimatedContainer(
                                   duration: const Duration(milliseconds: 500),
                                   curve: Curves.easeInOut,
                                   decoration: BoxDecoration(
-                                    color: index == games.length - 1
+                                    color: index == games.length
                                         ? Colors.transparent
                                         : const Color.fromARGB(255, 0, 38, 84),
                                     shape: BoxShape.circle,
@@ -200,7 +180,9 @@ games.add(GamesType.fromMap(
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(150),
                                     child: Image.asset(
-                                      index >= games.length ? "assets/images/Add.png" : "assets/images/${games[index].icon}",
+                                      index >= games.length
+                                          ? "assets/images/Add.png"
+                                          : "assets/images/${games[index].icon}",
                                       fit: BoxFit.cover,
                                       errorBuilder:
                                           (context, error, stackTrace) {
@@ -217,107 +199,105 @@ games.add(GamesType.fromMap(
                           // Description
                           const SizedBox(height: 5),
 
-                          // if (_currentPage == titles.length - 1)
-                            // Column(
-                            //   children: [
-                            //     const Text(
-                            //       "Learn more about Lecture?",
-                            //       style: TextStyle(
-                            //         color: Colors.white,
-                            //         fontSize: 14,
-                            //         fontStyle: FontStyle.italic,
-                            //       ),
-                            //     ),
-                            //     const SizedBox(height: 20),
-                            //     ElevatedButton(
-                            //       onPressed: () {
-                            //         Navigator.push(
-                            //           context,
-                            //           MaterialPageRoute(
-                            //             builder: (context) => const UploadFileScreen(),
-                            //           ),
-                            //         );
-                            //       },
-                            //       style: ElevatedButton.styleFrom(
-                            //         backgroundColor: AppColors.neutralBackground,
-                            //         shape: RoundedRectangleBorder(
-                            //           borderRadius: BorderRadius.circular(20),
-                            //         ),
-                            //         padding: const EdgeInsets.symmetric(
-                            //           horizontal: 16,
-                            //           vertical: 12,
-                            //         ),
-                            //       ),
-                            //       child: Row(
-                            //         mainAxisSize: MainAxisSize.min,
-                            //         children: [
-                            //           SvgPicture.asset(
-                            //             'assets/images/game.svg',
-                            //             width: 24,
-                            //             height: 24,
-                            //             color: Colors.white,
-                            //           ),
-                            //           const SizedBox(width: 8),
-                            //           const Text(
-                            //             'Create Summary',
-                            //             style: TextStyle(
-                            //               color: Colors.white,
-                            //               fontSize: 16,
-                            //               fontWeight: FontWeight.bold,
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //     ),
-                            //   ],
-                            // )
-                          // else
-
-                          Column(
-                            children: [
-                              ElevatedButton.icon(
-                                onPressed: () =>
-                                    context.push(Routes.playGamePage),
-                                icon: SvgPicture.asset(
-                                  'assets/images/game.svg',
-                                  width: 35,
-                                  height: 35,
+                          if (_currentPage >= games.length)
+                            Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const UploadFileScreen(),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        AppColors.neutralBackground,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/images/game.svg',
+                                        width: 24,
+                                        height: 24,
+                                        color: Colors.white,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Text(
+                                        'Create new game',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                label: const Text(
-                                  "Play",
+                              ],
+                            )
+                          else
+                            // Play Button
+                            Column(
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: () => context
+                                      .push(Routes.playGamePage, extra: {
+                                    'games': games[_currentPage].gameList
+                                  }),
+                                  icon: SvgPicture.asset(
+                                    'assets/images/game.svg',
+                                    width: 35,
+                                    height: 35,
+                                  ),
+                                  label: const Text(
+                                    "Play",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: AppColors.buttonText,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 25,
+                                      vertical: 10,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    side: BorderSide(
+                                      color: AppColors.buttonBorder,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  "You have played 2 days ago",
                                   style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.italic,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.buttonText,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 25,
-                                    vertical: 10,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  side: BorderSide(
-                                    color: AppColors.buttonBorder,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                "You have played 2 days ago",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ],
-                          ),
-                          // if (_currentPage != games.length - 1)
+                              ],
+                            ),
+
+                          // Scoreboard
+                          if (_currentPage < games.length)
                             Column(
                               children: [
                                 const SizedBox(height: 10),
@@ -383,7 +363,7 @@ games.add(GamesType.fromMap(
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 400),
+                          const SizedBox(height: 400),
                         ],
                       ),
                     ),

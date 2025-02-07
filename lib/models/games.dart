@@ -1,7 +1,3 @@
-enum GameType {
-  quiz,
-}
-
 class GameContent {
   const GameContent();
 }
@@ -20,7 +16,7 @@ class GameQuizContent extends GameContent {
 
 class GameData {
   // final String gameName;
-  final GameType gameType;
+  final String gameType;
   final GameContent content;
 
   const GameData({
