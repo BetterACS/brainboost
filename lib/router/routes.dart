@@ -27,6 +27,9 @@ class Routes {
   // Play Game
   static const String playGamePage = '/play-game';
 
+  // Result
+  static const String resultPage = '/result';
+
   // Create Summary
   static const String createSummaryPage = 'create-summary';
   static const String nestedCreateSummaryPageFromGame = '/home/create-summary';
