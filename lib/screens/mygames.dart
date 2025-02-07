@@ -43,10 +43,6 @@ class _MyGamesState extends State<MyGames> {
         });
       }
     });
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _loadGamesMethod();
-    // });
   }
 
   Future<void> _loadGamesMethod() async {
@@ -66,8 +62,6 @@ class _MyGamesState extends State<MyGames> {
       print("Path: $path");
       games.add(GamesType.fromMap(
           await GameServices().getGame(path: path) as Map<String, dynamic>));
-      // games.add(GamesType.fromMap(
-      //     await GameServices().getGame(path: path) as Map<String, dynamic>));
     }
 
     print(games);
@@ -104,6 +98,9 @@ class _MyGamesState extends State<MyGames> {
                     child: Center(
                       child: Column(
                         children: <Widget>[
+
+                          // 
+                          //  Player Name
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
@@ -137,6 +134,7 @@ class _MyGamesState extends State<MyGames> {
                           ),
                           const SizedBox(height: 20),
 
+                          //
                           // Game Title
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -154,7 +152,8 @@ class _MyGamesState extends State<MyGames> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Game Body
+                          //
+                          // Game Icon
                           SizedBox(
                             height: 300,
                             width: 300,
@@ -198,8 +197,10 @@ class _MyGamesState extends State<MyGames> {
 
                           // Description
                           const SizedBox(height: 5),
-
                           if (_currentPage >= games.length)
+                            
+                            //
+                            // Create New Game Button
                             Column(
                               children: [
                                 const SizedBox(height: 20),
@@ -248,7 +249,9 @@ class _MyGamesState extends State<MyGames> {
                               ],
                             )
                           else
-                            // Play Button
+                            
+                            //
+                            // Play Game Button
                             Column(
                               children: [
                                 ElevatedButton.icon(
@@ -296,7 +299,9 @@ class _MyGamesState extends State<MyGames> {
                               ],
                             ),
 
-                          // Scoreboard
+
+                          //
+                          // Show Scoreboard when the game is not the last one
                           if (_currentPage < games.length)
                             Column(
                               children: [
@@ -368,6 +373,8 @@ class _MyGamesState extends State<MyGames> {
                       ),
                     ),
                   ),
+
+                  // Show Buttons
                   if (_showButtons)
                     Positioned(
                       bottom: 90,
@@ -435,7 +442,7 @@ class _MyGamesState extends State<MyGames> {
               ),
             );
           } else {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
         });
   }
