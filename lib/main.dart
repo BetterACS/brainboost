@@ -1,14 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:brainboost/firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const MyApp());
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    runApp(const MyApp());
+  }, (Object error, StackTrace stackTrace) {
+    print('runZonedGuarded: Caught error in my root zone. $error');
+  });
 }
 
 class MyApp extends StatelessWidget {
