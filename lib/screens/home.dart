@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:brainboost/screens/history.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/component/history_item.dart'; // Add this import
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -312,69 +313,20 @@ class _HomeState extends State<Home> {
             ],
           ),
           const SizedBox(height: 10),
-          Column(
-            children: List.generate(2, (index) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.gray,
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/photomain.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            index == 0 ? "World war 2" : "Object oriented..",
-                            style: const TextStyle(
-                              color: AppColors.gradient1,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            "16 Nov 2024",
-                            style: TextStyle(
-                              color: AppColors.gray2,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        print("Play pressed");
-                      },
-                      icon: const Icon(
-                        Icons.play_circle_fill,
-                        color: AppColors.neutralBackground,
-                        size: 50,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+          HistoryItem(
+            title: "World war 2",
+            date: "11 Dec 2024",
+            imagePath: 'assets/images/photomain.png',
+            isDownload: false,
+            onPressed: () => print("Play Software Engine.."),
           ),
+          HistoryItem(
+          title: "Object oriented..",
+          date: "11 Dec 2024",
+          imagePath: 'assets/images/photomain3.png',
+          isDownload: false,
+          onPressed: () => print("Play Software Engine.."),
+        ),
         ],
       ),
     );
