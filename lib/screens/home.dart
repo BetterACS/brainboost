@@ -1,8 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:brainboost/screens/history.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/services/user.dart';
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -40,38 +43,58 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
+  
   Widget _buildProfileSection() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.neutralBackground,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 25,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 22,
-              backgroundImage: AssetImage('assets/images/profile.jpg'),
-            ),
+    final String? email = UserServices().getCurrentUserEmail(); 
+    if (email == null) return const Text("User not logged in");
+
+    return FutureBuilder<DocumentSnapshot>(
+      future: UserServices().users.doc(email).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Text("User not found");
+        }
+
+        final userData = snapshot.data!.data() as Map<String, dynamic>;
+        final username = userData['username'] ?? 'Guest';
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppColors.neutralBackground,
+            borderRadius: BorderRadius.circular(50),
           ),
-          SizedBox(width: 10),
-          Text(
-            "Mon Chinawat",
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.white,
+                child: CircleAvatar(
+                  radius: 22,
+                  backgroundImage: AssetImage('assets/images/profile.jpg'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                username,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
+
 
   Widget _buildPageView() {
     return SizedBox(

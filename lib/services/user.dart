@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:brainboost/models/games.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserServices {
   final CollectionReference users =
       FirebaseFirestore.instance.collection("users");
 
   /// Adds a new user to the Firestore collection.
-  Future<void> addUser({
-    required String email,
-  }) async {
+  Future<void> addUser({required String email}) async {
+    final username = email.split('@')[0];
+
     // Convert DateTime objects to Timestamps for Firestore.
     final userData = {
       'email': email,
       'icon': 'default',
-      'username': email,
+      'username': username,
       'create_at': Timestamp.now(),
       'latest_login': Timestamp.now(),
       'age': 12,
@@ -27,6 +28,11 @@ class UserServices {
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
   }
+
+  String? getCurrentUserEmail() {
+  final user = FirebaseAuth.instance.currentUser;
+  return user?.email;
+}
 
   Future<List<String>> getGames({
     required String email,
@@ -54,4 +60,5 @@ class UserServices {
       return [];
     }
   }
+  
 }
