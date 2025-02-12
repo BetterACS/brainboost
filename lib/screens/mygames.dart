@@ -1,6 +1,7 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/models/games.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -46,8 +47,8 @@ class _MyGamesState extends State<MyGames> {
   }
 
   Future<void> _loadGamesMethod() async {
-    if (_isLoadedGames) return;
-    games = [];
+    // if (_isLoadedGames) return;
+
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       GoRouter.of(context).go('/login');
@@ -58,14 +59,18 @@ class _MyGamesState extends State<MyGames> {
     final List<String> paths = await userServices.getGames(email: email);
     // var games = [];
 
+    final List<GamesType> _games = [];
     for (var path in paths) {
       print("Path: $path");
-      games.add(GamesType.fromMap(
-          await GameServices().getGame(path: path) as Map<String, dynamic>));
+      _games.add(GamesType.fromMap(
+          await GameServices().getGame(path: path) as Map<String, dynamic>, path));
     }
 
     print(games);
-    _isLoadedGames = true;
+    setState(() {
+      games = _games;
+      _isLoadedGames = true;
+    });
   }
 
   @override
@@ -98,8 +103,7 @@ class _MyGamesState extends State<MyGames> {
                     child: Center(
                       child: Column(
                         children: <Widget>[
-
-                          // 
+                          //
                           //  Player Name
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -198,7 +202,7 @@ class _MyGamesState extends State<MyGames> {
                           // Description
                           const SizedBox(height: 5),
                           if (_currentPage >= games.length)
-                            
+
                             //
                             // Create New Game Button
                             Column(
@@ -249,7 +253,7 @@ class _MyGamesState extends State<MyGames> {
                               ],
                             )
                           else
-                            
+
                             //
                             // Play Game Button
                             Column(
@@ -257,7 +261,8 @@ class _MyGamesState extends State<MyGames> {
                                 ElevatedButton.icon(
                                   onPressed: () => context
                                       .push(Routes.playGamePage, extra: {
-                                    'games': games[_currentPage].gameList
+                                    'games': games[_currentPage].gameList,
+                                    'reference': games[_currentPage].ref
                                   }),
                                   icon: SvgPicture.asset(
                                     'assets/images/game.svg',
@@ -299,7 +304,6 @@ class _MyGamesState extends State<MyGames> {
                               ],
                             ),
 
-
                           //
                           // Show Scoreboard when the game is not the last one
                           if (_currentPage < games.length)
@@ -317,7 +321,7 @@ class _MyGamesState extends State<MyGames> {
                                   child: Column(
                                     children: [
                                       const Text(
-                                        "Scoreboard",
+                                        "History",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
@@ -330,8 +334,12 @@ class _MyGamesState extends State<MyGames> {
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
                                           child: Row(
-                                            children: List.generate(5, (index) {
-                                              return const Padding(
+
+
+                                            children: List.generate(
+                                              games[_currentPage].played_history.length, 
+                                              (index) {
+                                              return Padding(
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 8),
                                                 child: Column(
@@ -348,7 +356,7 @@ class _MyGamesState extends State<MyGames> {
                                                     ),
                                                     SizedBox(height: 5),
                                                     Text(
-                                                      "82",
+                                                      games[_currentPage].played_history[index]['score'].toString(),
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 14,
@@ -360,6 +368,8 @@ class _MyGamesState extends State<MyGames> {
                                                 ),
                                               );
                                             }),
+
+
                                           ),
                                         ),
                                       ),
@@ -397,6 +407,34 @@ class _MyGamesState extends State<MyGames> {
                                 ),
                                 child: const Text("Re version"),
                               ),
+
+                              // Delete Game
+                              ElevatedButton(
+                                onPressed: () async {
+                                  String? email =
+                                      FirebaseAuth.instance.currentUser!.email;
+                                  if (email == null) return;
+
+                                  final List<String> paths =
+                                      await userServices.getGames(email: email);
+                                  GameServices().deleteGame(
+                                      path: paths[_currentPage], email: email);
+
+                                  setState(() {
+                                    _isLoadedGames = false;
+                                    _currentPage = 0;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: AppColors.buttonText,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: const Text("Delete game"),
+                              ),
+
                               ElevatedButton(
                                 onPressed: () {
                                   // Handle "Add Lecture"
