@@ -45,60 +45,57 @@ class History extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildHistoryTab(String email, String type) {
-    if (email.isEmpty) {
-      return const Center(child: Text("No user email provided"));
-    }
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('history')
-          .where('email', isEqualTo: email)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.hasError) {
-          return const Center(child: Text("Error loading history"));
-        }
-
-        if (!snapshot.hasData ||
-            snapshot.data == null ||
-            snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No history found"));
-        }
-
-        var documents = snapshot.data!.docs;
-        List<Map<String, dynamic>> games = documents
-            .map((doc) => doc.data() as Map<String, dynamic>? ?? {})
-            .where((game) => game.isNotEmpty)
-            .toList();
-
-        if (type != "all") {
-          games = games.where((game) => game["type"] == type).toList();
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: games.length,
-          itemBuilder: (context, index) {
-            var game = games[index];
-            return _buildHistoryItem(
-              title: game['game_name'] ?? 'Unknown',
-              date: (game['play_at'] as Timestamp?)?.toDate().toString() ??
-                  'No date',
-              imagePath: game['image_game'] ?? '',
-              isDownload: game['isDownload'] ?? false,
-            );
-          },
-        );
-      },
-    );
+Widget _buildHistoryTab(String email, String type) {
+  if (email.isEmpty) {
+    return const Center(child: Text("No user email provided"));
   }
 
+  return StreamBuilder<DocumentSnapshot>(
+    stream: FirebaseFirestore.instance.collection('history').doc(email).snapshots(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (snapshot.hasError) {
+        return const Center(child: Text("Error loading history"));
+      }
+
+      if (!snapshot.hasData || snapshot.data == null || !snapshot.data!.exists) {
+        return const Center(child: Text("No history found"));
+      }
+
+      var docData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+
+      List<Map<String, dynamic>> allGames = docData.entries
+          .where((entry) => entry.value is List)
+          .expand((entry) => (entry.value as List).whereType<Map<String, dynamic>>())
+          .toList();
+
+      if (type != "all") {
+        allGames = allGames.where((game) => game["type"]?.toString() == type).toList();
+      }
+
+      if (allGames.isEmpty) {
+        return const Center(child: Text("No history found"));
+      }
+
+      return ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: allGames.length,
+        itemBuilder: (context, index) {
+          var game = allGames[index];
+          return _buildHistoryItem(
+            title: game['game_name'] ?? 'Unknown',
+            date: (game['play_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
+            imagePath: game['image_game'] ?? '',
+            isDownload: game['isDownload'] ?? false,
+          );
+        },
+      );
+    },
+  );
+}
   Widget _buildHistoryItem({
     required String title,
     required String date,
