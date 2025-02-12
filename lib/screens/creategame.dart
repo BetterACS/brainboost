@@ -2,6 +2,7 @@ import 'package:brainboost/screens/mygames.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:brainboost/component/colors.dart';
 
@@ -13,7 +14,6 @@ import 'package:http/http.dart' as http;
 
 import 'package:brainboost/services/games.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
 
@@ -205,6 +205,8 @@ class UploadFileScreen extends StatefulWidget {
 }
 
 class _UploadFileScreenState extends State<UploadFileScreen> {
+  late TextEditingController _gameNameTextController;
+
   PlatformFile? pickedFile; // ไฟล์ที่เลือก
   String? fileName; // ชื่อไฟล์
   String? uploadLink;
@@ -213,6 +215,18 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
 
   bool isUploading = false; // เช็คสถานะอัพโหลด
   bool uploadSuccess = false; // เช็คอัพโหลดสำเร็จ
+
+  @override
+  void initState() {
+    super.initState();
+    _gameNameTextController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _gameNameTextController.dispose();
+    super.dispose();
+  }
 
   Future<void> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -247,7 +261,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
   Future uploadFile() async {
     final path = 'files/${pickedFile!.name}';
 
-    try {  
+    try {
       final ref = FirebaseStorage.instance.ref().child(path);
 
       // Progress
@@ -332,6 +346,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: _gameNameTextController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -480,11 +495,12 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       barrierDismissible: false,
       builder: (context) => const CreatingDialog(),
     );
-          
+
     var httpClient = http.Client();
     dialogMessage.value = "Extract valuable information from the file";
 
-    var extractResponse = await httpClient.get(Uri.http('13.229.107.165', '/extract', {'pdf_path': uploadLink}));
+    var extractResponse = await httpClient
+        .get(Uri.https('monsh.xyz', '/extract', {'pdf_path': uploadLink}));
     print("Extract! file");
     // Assuming you have already decoded the response bytes as a string:
     var decodedResponse = utf8.decode(extractResponse.bodyBytes);
@@ -496,25 +512,29 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
 
     dialogMessage.value = "Crafting your game";
     Map<String, String> params = {
-      'game_type': 'quiz', "context": jsonDict['markdown']
+      'game_type': 'quiz',
+      "context": jsonDict['markdown']
     };
     // print(jsonEncode(params));
 
     var createGameResponse = await httpClient.post(
-      Uri.http('13.229.107.165', '/create_game'),
+      Uri.https('monsh.xyz', '/create_game'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
       body: jsonEncode(params),
     );
     print("Create Game!");
-    
+
     // Convert the JSON string into a Dart map (dictionary)
     var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
 
     GameServices gamesServices = await GameServices();
 
-    final DocumentReference<Object?>? gameID = await gamesServices.createGame(name: "Name", email: FirebaseAuth.instance.currentUser!.email!, gameData: gameDict['data'] as List<dynamic>);
+    final DocumentReference<Object?>? gameID = await gamesServices.createGame(
+        name: _gameNameTextController.text,
+        email: FirebaseAuth.instance.currentUser!.email!,
+        gameData: gameDict['data'] as List<dynamic>);
     if (gameID == null) {
       showDialog(
         context: context,
@@ -522,7 +542,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       );
       return;
     }
-    await gamesServices.addGameToUser(email: FirebaseAuth.instance.currentUser!.email!, docPath: gameID);
+    await gamesServices.addGameToUser(
+        email: FirebaseAuth.instance.currentUser!.email!, docPath: gameID);
 
     // await uploadFile();
     // จำลองโหลด

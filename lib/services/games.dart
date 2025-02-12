@@ -62,6 +62,69 @@ class GameServices {
     }
   }
 
+  Future<void> deleteGame({required String path, required String email}) async {
+    print("Start remove");
+    final userRef = FirebaseFirestore.instance.collection("users").doc(email);
+
+    try {
+      // Fetch the current games array
+      final snapshot = await userRef.get();
+      if (!snapshot.exists) {
+        print("User document does not exist!");
+        return;
+      }
+
+      List<dynamic> games = snapshot.data()?['games'] ?? [];
+
+      print("Current games: $games");
+
+      // Check if the path exists in the array
+      DocumentReference<Map<String, dynamic>> gamePath =
+          FirebaseFirestore.instance.doc(path);
+
+      if (!games.contains(gamePath)) {
+        print("Game path not found: $gamePath");
+        return;
+      }
+
+      // Remove the game path
+      await userRef.update({
+        'games': FieldValue.arrayRemove([gamePath]),
+      });
+
+      print("Delete Game: $gamePath");
+    } catch (error) {
+      print("Failed to delete reference game: $error");
+    }
+  }
+
+  // Future<void> deleteGame({required String path, required String email}) async {
+  //   print("Start remove");
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection("users")
+  //         .doc(email)
+  //         .update({
+  //           'games': FieldValue.arrayRemove(["/" + path]),
+  //         })
+  //         .then((value) => print("Delete Game"))
+  //         .catchError((error) => print("Failed to add game to user: $error"));
+  //   } catch (error) {
+  //     print("Failed to delete reference game $error");
+  //     return;
+  //   }
+
+  //   // try {
+  //   //   await FirebaseFirestore.instance.doc(path as String).delete();
+  //   // } catch (error) {
+  //   //   print("Failed to delete game $error");
+  //   // }
+
+  //   // await FirebaseFirestore.instance.collection("users").doc(email).update(
+  //   //   'games': ...
+  //   // );
+  // }
+
   Future<void> addStoreToPlayedHistory({
     required String email,
     required String gamePath,
