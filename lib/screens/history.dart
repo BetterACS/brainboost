@@ -1,9 +1,11 @@
 import 'package:brainboost/component/colors.dart';
-// import 'package:brainboost/component/navbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class History extends StatelessWidget {
-  const History({super.key});
+  final String email;
+
+  const History({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +13,7 @@ class History extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'History',
             style: TextStyle(
               color: AppColors.buttonText,
@@ -19,118 +21,73 @@ class History extends StatelessWidget {
             ),
           ),
           backgroundColor: Colors.white,
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey,
-                    width: 0.5,
-                  ),
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(18.0),
-                  bottomRight: Radius.circular(18.0),
-                ),
-              ),
-              child: const TabBar(
-                labelColor: AppColors.buttonText,
-                unselectedLabelColor: AppColors.unselectedTab,
-                indicatorColor: AppColors.buttonText,
-                indicatorWeight: 3.0,
-                tabs: [
-                  Tab(text: 'All'),
-                  Tab(text: 'Game'),
-                  Tab(text: 'Summarize'),
-                ],
-              ),
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(48.0),
+            child: TabBar(
+              labelColor: AppColors.buttonText,
+              unselectedLabelColor: AppColors.unselectedTab,
+              indicatorColor: AppColors.buttonText,
+              indicatorWeight: 3.0,
+              tabs: [
+                Tab(text: 'All'),
+                Tab(text: 'Game'),
+                Tab(text: 'Summarize'),
+              ],
             ),
           ),
         ),
         body: TabBarView(
           children: [
-            _buildAllTab(),
-            _buildGameTab(),
-            _buildSummarizeTab(),
+            _buildHistoryTab(email, "all"),
+            _buildHistoryTab(email, "game"),
+            _buildHistoryTab(email, "summarize"),
           ],
         ),
-        // bottomNavigationBar: const Navbar(),
       ),
     );
   }
 
-  Widget _buildAllTab() {
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        _buildHistoryItem(
-          title: "World war 2",
-          date: "16 Nov 2024",
-          imagePath: 'assets/images/photomain.png',
-          isDownload: false,
-        ),
-        _buildHistoryItem(
-          title: "Object oriented..",
-          date: "16 Nov 2024",
-          imagePath: 'assets/images/photomain3.png',
-          isDownload: false,
-        ),
-        _buildHistoryItem(
-          title: "Software Engine.",
-          date: "11 Dec 2024",
-          imagePath: 'assets/images/photomain3.png',
-          isDownload: false,
-        ),
-        _buildHistoryItem(
-          title: "ประวัติศาสตร์",
-          date: "16 Nov 2024",
-          imagePath: 'assets/images/iconhistory.png',
-          isDownload: true,
-        ),
-      ],
-    );
-  }
+  Widget _buildHistoryTab(String email, String category) {
+    if (email.isEmpty) {
+      return const Center(child: Text("No user email provided"));
+    }
 
-  // Tab สำหรับ Game
-  Widget _buildGameTab() {
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        _buildHistoryItem(
-          title: "World war 2",
-          date: "16 Nov 2024",
-          imagePath: 'assets/images/photomain.png',
-          isDownload: false,
-        ),
-        _buildHistoryItem(
-          title: "Object oriented..",
-          date: "16 Nov 2024",
-          imagePath: 'assets/images/photomain3.png',
-          isDownload: false,
-        ),
-        _buildHistoryItem(
-          title: "Sofeware Enigine..",
-          date: "11 Dec 2024",
-          imagePath: 'assets/images/photomain3.png',
-          isDownload: false,
-        ),
-      ],
-    );
-  }
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+    .collection('history')
+    .where('email', isEqualTo: email) 
+    .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-  Widget _buildSummarizeTab() {
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        _buildHistoryItem(
-          title: "ประวัติศาสตร์",
-          date: "16 Nov 2024",
-          imagePath: 'assets/images/iconhistory.png',
-          isDownload: true,
-        ),
-      ],
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text("No history found"));
+        }
+
+        var documents = snapshot.data!.docs;
+        List<dynamic> games = documents.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+        if (category != "all") {
+          games = games.where((game) => game["category"] == category).toList();
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: games.length,
+          itemBuilder: (context, index) {
+            var game = games[index] as Map<String, dynamic>;
+
+            return _buildHistoryItem(
+              title: game['game_name'] ?? 'Unknown',
+              date: game['time_at']?.toDate().toString() ?? 'No date',
+              imagePath: game['image_url'] ?? '',
+              isDownload: game['isDownload'] ?? false,
+            );
+          },
+        );
+      },
     );
   }
 
@@ -159,14 +116,11 @@ class History extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset(
-              imagePath,
+            child: Image.network(
+              imagePath.isNotEmpty ? imagePath : 'https://via.placeholder.com/80',
               width: 80,
               height: 80,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.image, size: 80, color: Colors.grey);
-              },
             ),
           ),
           const SizedBox(width: 16.0),
@@ -187,10 +141,7 @@ class History extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 4.0,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                   decoration: BoxDecoration(
                     color: const Color(0xFF0066FF),
                     borderRadius: BorderRadius.circular(8.0),

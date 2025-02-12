@@ -288,7 +288,7 @@ class _HomeState extends State<Home> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const History()),
+                    MaterialPageRoute(builder: (context) => const History(email: '',)),
                   );
                 },
                 child: const Row(

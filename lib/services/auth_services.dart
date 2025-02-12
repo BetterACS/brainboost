@@ -63,6 +63,7 @@ class AuthService {
         backgroundColor: Colors.black54,
         textColor: Colors.white,
         fontSize: 14.0,
+        
       );
     } catch (e) {}
   }
