@@ -1,11 +1,14 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:brainboost/screens/history.dart';
+import 'package:brainboost/services/games.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/screens/creategame.dart';  
-// import 'package:brainboost/screens/createsummary.dart'; 
-
+import 'package:brainboost/screens/creategame.dart';
+import 'package:brainboost/services/user.dart';
+import 'package:brainboost/component/history_item.dart'; // Add this import
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,6 +20,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool isProfileLoaded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,35 +48,66 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Future<DocumentSnapshot> fetchUsername() async {
+    final String? email = UserServices().getCurrentUserEmail();
+    final DocumentSnapshot userDoc =
+        await UserServices().users.doc(email).get();
+
+    setState(() {
+      isProfileLoaded = true;
+    });
+    return userDoc;
+  }
+
   Widget _buildProfileSection() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.neutralBackground,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 25,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 22,
-              backgroundImage: AssetImage('assets/images/profile.jpg'),
-            ),
+    final String? email = UserServices().getCurrentUserEmail();
+    if (email == null) return const Text("User not logged in");
+
+    return FutureBuilder<DocumentSnapshot>(
+      future: fetchUsername(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            isProfileLoaded == false) {
+          return const CircularProgressIndicator();
+        }
+
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Text("User not found");
+        }
+
+        final userData = snapshot.data!.data() as Map<String, dynamic>;
+        final username = userData['username'] ?? 'Guest';
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppColors.neutralBackground,
+            borderRadius: BorderRadius.circular(50),
           ),
-          SizedBox(width: 10),
-          Text(
-            "Mon Chinawat",
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.white,
+                child: CircleAvatar(
+                  radius: 22,
+                  backgroundImage: AssetImage('assets/images/profile.jpg'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                username,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -95,53 +130,107 @@ class _HomeState extends State<Home> {
     );
   }
 
+  bool isLoadCircle = false;
+  int numberGames = 0;
+  int correctQuestion = 0;
+  
+  Future<void> fetchGamePerformance() async {
+    String? email = FirebaseAuth.instance.currentUser?.email;
+    if (email == null || isLoadCircle == true) return;
+
+    List<String> gamesPath = await UserServices().getGames(email: email as String);
+    int _games = 0;
+    int _score = 0;
+
+    for (String gamePath in gamesPath) {
+      Map<String, dynamic> game = await GameServices().getGame(path: gamePath) as Map<String, dynamic>;
+  
+      _games += game['game_list'].length as int;
+      int currentScore = 0;
+      for (Map<String, dynamic> playedHistory in game['played_history']) {
+        DocumentReference userPath = playedHistory['player'];
+        String player = userPath.path.split("/")[1];
+
+        if (player == email) {
+          if (playedHistory['score'] > currentScore) {
+            currentScore = playedHistory['score'];
+          }
+        }
+      }
+      _score += currentScore;
+    }
+
+    print(_score);
+    setState(() {
+      isLoadCircle = true;
+      numberGames = _games;
+      correctQuestion = _score;
+    });
+  }
+
   Widget _buildCircularChartPage() {
-    return Center(
-      child: SizedBox(
-        height: 300,
-        width: 300,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            CustomPaint(
-              size: const Size(290, 290),
-              painter: CircularChartPainter(70),
+    return FutureBuilder<void>(
+      future: fetchGamePerformance(),
+      builder: (context, snapshot) {
+
+        if (isLoadCircle)
+          return Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    size: const Size(290, 290),
+                    painter: CircularChartPainter((correctQuestion / numberGames) * 100),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Success rate",
+                        style: TextStyle(
+                          color: AppColors.buttonText,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        ((correctQuestion / numberGames) * 100).toStringAsFixed(2) + "%",
+                        style: TextStyle(
+                          color: AppColors.buttonText,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "out of ${numberGames} questions",
+                        style: TextStyle(
+                          color: AppColors.buttonText,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Success rate",
-                  style: TextStyle(
-                    color: AppColors.buttonText,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "70%",
-                  style: TextStyle(
-                    color: AppColors.buttonText,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "out of 17 questions",
-                  style: TextStyle(
-                    color: AppColors.buttonText,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          );
+        else
+          return Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+            )
+          );
+      },
     );
   }
+
+  // }
 
   Widget _buildRecentGamePage() {
     return Stack(
@@ -249,37 +338,37 @@ class _HomeState extends State<Home> {
     );
   }
 
- Widget _buildActionButtons() {
-  return Padding(
-    padding: const EdgeInsets.only(top: 20),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildButton(
-          icon: Icons.games_rounded,
-          text: "Create Game",
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CreateGameScreen()),
-            );
-          },
-        ),
-        _buildButton(
-          icon: Icons.summarize,
-          text: "Create Summary",
-          onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => const CreateSummary()),
-            // );
-          },
-        ),
-      ],
-    ),
-  );
-}
-
+  Widget _buildActionButtons() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildButton(
+            icon: Icons.games_rounded,
+            text: "Create Game",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const CreateGameScreen()),
+              );
+            },
+          ),
+          _buildButton(
+            icon: Icons.summarize,
+            text: "Create Summary",
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => const CreateSummary()),
+              // );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildHistorySection() {
     return Padding(
@@ -326,68 +415,19 @@ class _HomeState extends State<Home> {
             ],
           ),
           const SizedBox(height: 10),
-          Column(
-            children: List.generate(2, (index) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.gray,
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/photomain.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            index == 0 ? "World war 2" : "Object oriented..",
-                            style: const TextStyle(
-                              color: AppColors.gradient1,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            "16 Nov 2024",
-                            style: TextStyle(
-                              color: AppColors.gray2,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        print("Play pressed");
-                      },
-                      icon: const Icon(
-                        Icons.play_circle_fill,
-                        color: AppColors.neutralBackground,
-                        size: 50,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+          HistoryItem(
+            title: "World war 2",
+            date: "11 Dec 2024",
+            imagePath: 'assets/images/photomain.png',
+            isDownload: false,
+            onPressed: () => print("Play Software Engine.."),
+          ),
+          HistoryItem(
+            title: "Object oriented..",
+            date: "11 Dec 2024",
+            imagePath: 'assets/images/photomain3.png',
+            isDownload: false,
+            onPressed: () => print("Play Software Engine.."),
           ),
         ],
       ),
@@ -395,59 +435,58 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildButton({
-  required IconData icon,
-  required String text,
-  required VoidCallback onPressed,
-}) {
-  return InkWell(
-    onTap: onPressed,
-    borderRadius: const BorderRadius.only(
-      topRight: Radius.circular(48),
-      topLeft: Radius.circular(12),
-      bottomLeft: Radius.circular(12),
-      bottomRight: Radius.circular(12),
-    ),
-    child: Container(
-      height: 70,
-      width: 200,
-      decoration: const BoxDecoration(
-        gradient: AppColors.buttonGradient,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(48),
-          topLeft: Radius.circular(12),
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
+    required IconData icon,
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: const BorderRadius.only(
+        topRight: Radius.circular(48),
+        topLeft: Radius.circular(12),
+        bottomLeft: Radius.circular(12),
+        bottomRight: Radius.circular(12),
+      ),
+      child: Container(
+        height: 70,
+        width: 200,
+        decoration: const BoxDecoration(
+          gradient: AppColors.buttonGradient,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(48),
+            topLeft: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          ),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -10,
+              left: -12,
+              child: Transform.rotate(
+                angle: 25 * pi / 180,
+                child: Icon(
+                  icon,
+                  color: AppColors.accentBackground,
+                  size: 54,
+                ),
+              ),
+            ),
+            Center(
+              child: Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: -10,
-            left: -12,
-            child: Transform.rotate(
-              angle: 25 * pi / 180,
-              child: Icon(
-                icon,
-                color: AppColors.accentBackground,
-                size: 54,
-              ),
-            ),
-          ),
-          Center(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
+    );
+  }
 }
 
 class CircularChartPainter extends CustomPainter {

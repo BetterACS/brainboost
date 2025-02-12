@@ -47,7 +47,7 @@ class _MyGamesState extends State<MyGames> {
   }
 
   Future<void> _loadGamesMethod() async {
-    // if (_isLoadedGames) return;
+    if (_isLoadedGames) return;
 
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
