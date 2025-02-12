@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 class History extends StatelessWidget {
   final String email;
-
   const History({super.key, required this.email});
 
   @override
@@ -47,7 +46,7 @@ class History extends StatelessWidget {
     );
   }
 
-  Widget _buildHistoryTab(String email, String category) {
+  Widget _buildHistoryTab(String email, String type) {
     if (email.isEmpty) {
       return const Center(child: Text("No user email provided"));
     }
@@ -66,7 +65,9 @@ class History extends StatelessWidget {
           return const Center(child: Text("Error loading history"));
         }
 
-        if (!snapshot.hasData || snapshot.data == null || snapshot.data!.docs.isEmpty) {
+        if (!snapshot.hasData ||
+            snapshot.data == null ||
+            snapshot.data!.docs.isEmpty) {
           return const Center(child: Text("No history found"));
         }
 
@@ -76,8 +77,8 @@ class History extends StatelessWidget {
             .where((game) => game.isNotEmpty)
             .toList();
 
-        if (category != "all") {
-          games = games.where((game) => game["category"] == category).toList();
+        if (type != "all") {
+          games = games.where((game) => game["type"] == type).toList();
         }
 
         return ListView.builder(
@@ -87,7 +88,8 @@ class History extends StatelessWidget {
             var game = games[index];
             return _buildHistoryItem(
               title: game['game_name'] ?? 'Unknown',
-              date: (game['play_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
+              date: (game['play_at'] as Timestamp?)?.toDate().toString() ??
+                  'No date',
               imagePath: game['image_game'] ?? '',
               isDownload: game['isDownload'] ?? false,
             );
@@ -122,8 +124,8 @@ class History extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: Image.network(
-              imagePath.isNotEmpty ? imagePath : 'https://via.placeholder.com/80',
+            child: Image.asset(
+              'assets/images/photomain.png',
               width: 80,
               height: 80,
               fit: BoxFit.cover,
@@ -147,7 +149,8 @@ class History extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 4.0),
                   decoration: BoxDecoration(
                     color: const Color(0xFF0066FF),
                     borderRadius: BorderRadius.circular(8.0),

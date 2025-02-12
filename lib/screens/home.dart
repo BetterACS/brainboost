@@ -1,8 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/screens/history.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:go_router/go_router.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -286,10 +289,9 @@ class _HomeState extends State<Home> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const History(email: '',)),
-                  );
+                  final userEmail =
+                      FirebaseAuth.instance.currentUser?.email ?? '';
+                  context.push(Routes.historyPage, extra: userEmail);
                 },
                 child: const Row(
                   children: [
