@@ -37,6 +37,7 @@ dependencies:
   firebase_auth: ^5.4.1
   fluttertoast: ^8.2.10
   cloud_firestore: ^5.6.3
+  file_picker: ^6.1.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -95,3 +96,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+
