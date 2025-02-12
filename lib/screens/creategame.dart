@@ -1,10 +1,21 @@
 import 'package:brainboost/screens/mygames.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:brainboost/component/colors.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'dart:async';
+import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import 'package:brainboost/services/games.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
 
 // หน้าสร้างเกมใหม่
 class CreateGameScreen extends StatelessWidget {
@@ -194,9 +205,28 @@ class UploadFileScreen extends StatefulWidget {
 }
 
 class _UploadFileScreenState extends State<UploadFileScreen> {
+  late TextEditingController _gameNameTextController;
+
+  PlatformFile? pickedFile; // ไฟล์ที่เลือก
   String? fileName; // ชื่อไฟล์
+  String? uploadLink;
+
+  double progress = 0.0;
+
   bool isUploading = false; // เช็คสถานะอัพโหลด
   bool uploadSuccess = false; // เช็คอัพโหลดสำเร็จ
+
+  @override
+  void initState() {
+    super.initState();
+    _gameNameTextController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _gameNameTextController.dispose();
+    super.dispose();
+  }
 
   Future<void> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -204,19 +234,55 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       allowedExtensions: ['pdf'],
     );
 
-    if (result != null) {
-      setState(() {
-        fileName = result.files.single.name; // ชื่อไฟล์
-        isUploading = true; // เริ่มอัพโหลด
+    if (result == null) {
+      return;
+    }
+
+    setState(() {
+      fileName = result.files.single.name; // ชื่อไฟล์
+      pickedFile = result.files.first; // ไฟล์ที่เลือก
+      uploadSuccess = false; // อัพโหลดไม่สำเร็จ
+      isUploading = true; // เริ่มอัพโหลด
+      uploadLink = null; // ลิ้งค์อัพโหลด
+      progress = 0.0; // ความคืบหน้า
+      // uploadSuccess = true;
+    });
+
+    await uploadFile();
+
+    // // จำลองอัพไฟล์
+    // await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      isUploading = false;
+      uploadSuccess = true; // อัพโหลดเสร็จ
+    });
+  }
+
+  Future uploadFile() async {
+    final path = 'files/${pickedFile!.name}';
+
+    try {
+      final ref = FirebaseStorage.instance.ref().child(path);
+
+      // Progress
+      final uploadTask = ref.putData(pickedFile!.bytes!);
+      uploadTask.snapshotEvents.listen((event) {
+        setState(() {
+          progress = event.bytesTransferred / event.totalBytes;
+        });
+        print("Upload Progress: $progress");
       });
 
-      // จำลองอัพไฟล์
-      await Future.delayed(const Duration(seconds: 2));
-
+      // Wait for the upload task to complete
+      await uploadTask;
+      final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
+      // final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
+      print("Download-Link: $urlDownload");
       setState(() {
-        isUploading = false;
-        uploadSuccess = true; // อัพโหลดเสร็จ
+        uploadLink = urlDownload;
       });
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -280,6 +346,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: _gameNameTextController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -352,10 +419,11 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                 isUploading
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: const LinearProgressIndicator(
+                        child: LinearProgressIndicator(
                           backgroundColor: Color(0xFFE9E9E9),
                           color: Colors.green,
                           minHeight: 10,
+                          value: progress,
                         ),
                       )
                     : uploadSuccess
@@ -421,14 +489,65 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
   }
 
   void createGame(BuildContext context) async {
+    dialogMessage.value = "";
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => const CreatingDialog(),
     );
 
+    var httpClient = http.Client();
+    dialogMessage.value = "Extract valuable information from the file";
+
+    var extractResponse = await httpClient
+        .get(Uri.https('monsh.xyz', '/extract', {'pdf_path': uploadLink}));
+    print("Extract! file");
+    // Assuming you have already decoded the response bytes as a string:
+    var decodedResponse = utf8.decode(extractResponse.bodyBytes);
+    print(decodedResponse);
+    // Convert the JSON string into a Dart map (dictionary)
+    Map<String, dynamic> jsonDict = jsonDecode(decodedResponse);
+
+    // print("Extract! file");
+
+    dialogMessage.value = "Crafting your game";
+    Map<String, String> params = {
+      'game_type': 'quiz',
+      "context": jsonDict['markdown']
+    };
+    // print(jsonEncode(params));
+
+    var createGameResponse = await httpClient.post(
+      Uri.https('monsh.xyz', '/create_game'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(params),
+    );
+    print("Create Game!");
+
+    // Convert the JSON string into a Dart map (dictionary)
+    var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
+
+    GameServices gamesServices = await GameServices();
+
+    final DocumentReference<Object?>? gameID = await gamesServices.createGame(
+        name: _gameNameTextController.text,
+        email: FirebaseAuth.instance.currentUser!.email!,
+        gameData: gameDict['data'] as List<dynamic>);
+    if (gameID == null) {
+      showDialog(
+        context: context,
+        builder: (context) => const ErrorDialog(),
+      );
+      return;
+    }
+    await gamesServices.addGameToUser(
+        email: FirebaseAuth.instance.currentUser!.email!, docPath: gameID);
+
+    // await uploadFile();
     // จำลองโหลด
-    await Future.delayed(const Duration(seconds: 3));
+    // await Future.delayed(const Duration(seconds: 3));
 
     // เปลี่ยน True / false เอาไว้เทสว่าสำเร็จมั้ย
     // bool isSuccess = false;
@@ -440,12 +559,37 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       context: context,
       builder: (context) => isSuccess ? SuccessDialog() : ErrorDialog(),
     );
+
+    setState(() {
+      uploadLink = null;
+    });
   }
 }
 
 // Pop-up creating
-class CreatingDialog extends StatelessWidget {
+class CreatingDialog extends StatefulWidget {
   const CreatingDialog({super.key});
+
+  @override
+  _CreatingDialogState createState() => _CreatingDialogState();
+}
+
+class _CreatingDialogState extends State<CreatingDialog> {
+  @override
+  void initState() {
+    super.initState();
+    dialogMessage.addListener(() {
+      if (mounted) {
+        setState(() {}); // Rebuild dialog when message changes
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    dialogMessage.removeListener(() {}); // Avoid memory leaks
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -487,21 +631,21 @@ class CreatingDialog extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 50),
-                const Text(
-                  "Creating",
+                Text(
+                  dialogMessage.value,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Please wait while we",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14),
-                ),
-                const Text(
-                  "generate game for you!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14),
-                ),
+                // const Text(
+                //   "Please wait while we",
+                //   textAlign: TextAlign.center,
+                //   style: TextStyle(fontSize: 14),
+                // ),
+                // const Text(
+                //   "generate game for you!",
+                //   textAlign: TextAlign.center,
+                //   style: TextStyle(fontSize: 14),
+                // ),
                 const SizedBox(height: 30),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
