@@ -54,20 +54,27 @@ class History extends StatelessWidget {
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-    .collection('history')
-    .where('email', isEqualTo: email) 
-    .snapshots(),
+          .collection('history')
+          .where('email', isEqualTo: email)
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        if (snapshot.hasError) {
+          return const Center(child: Text("Error loading history"));
+        }
+
+        if (!snapshot.hasData || snapshot.data == null || snapshot.data!.docs.isEmpty) {
           return const Center(child: Text("No history found"));
         }
 
         var documents = snapshot.data!.docs;
-        List<dynamic> games = documents.map((doc) => doc.data() as Map<String, dynamic>).toList();
+        List<Map<String, dynamic>> games = documents
+            .map((doc) => doc.data() as Map<String, dynamic>? ?? {})
+            .where((game) => game.isNotEmpty)
+            .toList();
 
         if (category != "all") {
           games = games.where((game) => game["category"] == category).toList();
@@ -77,12 +84,11 @@ class History extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           itemCount: games.length,
           itemBuilder: (context, index) {
-            var game = games[index] as Map<String, dynamic>;
-
+            var game = games[index];
             return _buildHistoryItem(
               title: game['game_name'] ?? 'Unknown',
-              date: game['time_at']?.toDate().toString() ?? 'No date',
-              imagePath: game['image_url'] ?? '',
+              date: (game['play_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
+              imagePath: game['image_game'] ?? '',
               isDownload: game['isDownload'] ?? false,
             );
           },
