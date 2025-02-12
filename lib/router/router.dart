@@ -1,4 +1,5 @@
 import 'package:brainboost/models/games.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/layout/layout_scaffold.dart';
 
@@ -74,7 +75,7 @@ final router = GoRouter(
           //   wrong: extra?['wrong'] as int? ?? 0,
           //   time: extra?['time'] as String? ?? '',
           // );
-          return GameWrapper(games: games);
+          return GameWrapper(games: games, reference: extra['reference'] as String);
           // return Text("Play Game Page");
         }),
 

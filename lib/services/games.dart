@@ -124,4 +124,46 @@ class GameServices {
   //   //   'games': ...
   //   // );
   // }
+
+  Future<void> addStoreToPlayedHistory({
+    required String email,
+    required String gamePath,
+    required int score,
+  }) async {
+    try {
+      DocumentReference gameRef = FirebaseFirestore.instance.doc(gamePath);
+
+      // Get current played history
+      DocumentSnapshot gameSnapshot = await gameRef.get();
+
+      if (!gameSnapshot.exists) {
+        print("Game document does not exist");
+        return;
+      }
+
+      List<dynamic> playedHistory =
+          (gameSnapshot.data() as Map<String, dynamic>)["played_history"] ?? [];
+
+      // Create new score entry
+      Map<String, dynamic> scoreMap = {
+        "player": FirebaseFirestore.instance.collection("users").doc(email),
+        "score": score
+      };
+
+      // Add new entry
+      playedHistory.add(scoreMap);
+
+      // Keep only the last 5 entries
+      if (playedHistory.length > 5) {
+        playedHistory.removeAt(0); // Remove the oldest entry (first element)
+      }
+
+      // Update Firestore
+      await gameRef.update({"played_history": playedHistory});
+
+      print("Added to played history");
+    } catch (error) {
+      print("Failed to add score: $error");
+    }
+  }
 }

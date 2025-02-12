@@ -63,7 +63,7 @@ class _MyGamesState extends State<MyGames> {
     for (var path in paths) {
       print("Path: $path");
       _games.add(GamesType.fromMap(
-          await GameServices().getGame(path: path) as Map<String, dynamic>));
+          await GameServices().getGame(path: path) as Map<String, dynamic>, path));
     }
 
     print(games);
@@ -261,7 +261,8 @@ class _MyGamesState extends State<MyGames> {
                                 ElevatedButton.icon(
                                   onPressed: () => context
                                       .push(Routes.playGamePage, extra: {
-                                    'games': games[_currentPage].gameList
+                                    'games': games[_currentPage].gameList,
+                                    'reference': games[_currentPage].ref
                                   }),
                                   icon: SvgPicture.asset(
                                     'assets/images/game.svg',
@@ -320,7 +321,7 @@ class _MyGamesState extends State<MyGames> {
                                   child: Column(
                                     children: [
                                       const Text(
-                                        "Scoreboard",
+                                        "History",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
@@ -333,8 +334,12 @@ class _MyGamesState extends State<MyGames> {
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
                                           child: Row(
-                                            children: List.generate(5, (index) {
-                                              return const Padding(
+
+
+                                            children: List.generate(
+                                              games[_currentPage].played_history.length, 
+                                              (index) {
+                                              return Padding(
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 8),
                                                 child: Column(
@@ -351,7 +356,7 @@ class _MyGamesState extends State<MyGames> {
                                                     ),
                                                     SizedBox(height: 5),
                                                     Text(
-                                                      "82",
+                                                      games[_currentPage].played_history[index]['score'].toString(),
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 14,
@@ -363,6 +368,8 @@ class _MyGamesState extends State<MyGames> {
                                                 ),
                                               );
                                             }),
+
+
                                           ),
                                         ),
                                       ),
