@@ -4,11 +4,9 @@ import 'package:brainboost/screens/history.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/screens/creategame.dart';  
-// import 'package:brainboost/screens/createsummary.dart'; 
-
+import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
-
+import 'package:brainboost/component/history_item.dart'; // Add this import
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -46,9 +44,9 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-  
+
   Widget _buildProfileSection() {
-    final String? email = UserServices().getCurrentUserEmail(); 
+    final String? email = UserServices().getCurrentUserEmail();
     if (email == null) return const Text("User not logged in");
 
     return FutureBuilder<DocumentSnapshot>(
@@ -97,7 +95,6 @@ class _HomeState extends State<Home> {
       },
     );
   }
-
 
   Widget _buildPageView() {
     return SizedBox(
@@ -272,37 +269,37 @@ class _HomeState extends State<Home> {
     );
   }
 
- Widget _buildActionButtons() {
-  return Padding(
-    padding: const EdgeInsets.only(top: 20),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildButton(
-          icon: Icons.games_rounded,
-          text: "Create Game",
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CreateGameScreen()),
-            );
-          },
-        ),
-        _buildButton(
-          icon: Icons.summarize,
-          text: "Create Summary",
-          onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => const CreateSummary()),
-            // );
-          },
-        ),
-      ],
-    ),
-  );
-}
-
+  Widget _buildActionButtons() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildButton(
+            icon: Icons.games_rounded,
+            text: "Create Game",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const CreateGameScreen()),
+              );
+            },
+          ),
+          _buildButton(
+            icon: Icons.summarize,
+            text: "Create Summary",
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => const CreateSummary()),
+              // );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildHistorySection() {
     return Padding(
@@ -349,68 +346,19 @@ class _HomeState extends State<Home> {
             ],
           ),
           const SizedBox(height: 10),
-          Column(
-            children: List.generate(2, (index) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.gray,
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/photomain.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            index == 0 ? "World war 2" : "Object oriented..",
-                            style: const TextStyle(
-                              color: AppColors.gradient1,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            "16 Nov 2024",
-                            style: TextStyle(
-                              color: AppColors.gray2,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        print("Play pressed");
-                      },
-                      icon: const Icon(
-                        Icons.play_circle_fill,
-                        color: AppColors.neutralBackground,
-                        size: 50,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+          HistoryItem(
+            title: "World war 2",
+            date: "11 Dec 2024",
+            imagePath: 'assets/images/photomain.png',
+            isDownload: false,
+            onPressed: () => print("Play Software Engine.."),
+          ),
+          HistoryItem(
+            title: "Object oriented..",
+            date: "11 Dec 2024",
+            imagePath: 'assets/images/photomain3.png',
+            isDownload: false,
+            onPressed: () => print("Play Software Engine.."),
           ),
         ],
       ),
@@ -418,59 +366,58 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildButton({
-  required IconData icon,
-  required String text,
-  required VoidCallback onPressed,
-}) {
-  return InkWell(
-    onTap: onPressed,
-    borderRadius: const BorderRadius.only(
-      topRight: Radius.circular(48),
-      topLeft: Radius.circular(12),
-      bottomLeft: Radius.circular(12),
-      bottomRight: Radius.circular(12),
-    ),
-    child: Container(
-      height: 70,
-      width: 200,
-      decoration: const BoxDecoration(
-        gradient: AppColors.buttonGradient,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(48),
-          topLeft: Radius.circular(12),
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
+    required IconData icon,
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: const BorderRadius.only(
+        topRight: Radius.circular(48),
+        topLeft: Radius.circular(12),
+        bottomLeft: Radius.circular(12),
+        bottomRight: Radius.circular(12),
+      ),
+      child: Container(
+        height: 70,
+        width: 200,
+        decoration: const BoxDecoration(
+          gradient: AppColors.buttonGradient,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(48),
+            topLeft: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          ),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -10,
+              left: -12,
+              child: Transform.rotate(
+                angle: 25 * pi / 180,
+                child: Icon(
+                  icon,
+                  color: AppColors.accentBackground,
+                  size: 54,
+                ),
+              ),
+            ),
+            Center(
+              child: Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: -10,
-            left: -12,
-            child: Transform.rotate(
-              angle: 25 * pi / 180,
-              child: Icon(
-                icon,
-                color: AppColors.accentBackground,
-                size: 54,
-              ),
-            ),
-          ),
-          Center(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
+    );
+  }
 }
 
 class CircularChartPainter extends CustomPainter {
