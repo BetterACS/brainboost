@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:brainboost/screens/history.dart';
+import 'package:brainboost/services/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/screens/creategame.dart';
@@ -18,6 +20,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool isProfileLoaded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +48,26 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Future<DocumentSnapshot> fetchUsername() async {
+    final String? email = UserServices().getCurrentUserEmail();
+    final DocumentSnapshot userDoc =
+        await UserServices().users.doc(email).get();
+
+    setState(() {
+      isProfileLoaded = true;
+    });
+    return userDoc;
+  }
+
   Widget _buildProfileSection() {
     final String? email = UserServices().getCurrentUserEmail();
     if (email == null) return const Text("User not logged in");
 
     return FutureBuilder<DocumentSnapshot>(
-      future: UserServices().users.doc(email).get(),
+      future: fetchUsername(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            isProfileLoaded == false) {
           return const CircularProgressIndicator();
         }
 
@@ -115,53 +130,107 @@ class _HomeState extends State<Home> {
     );
   }
 
+  bool isLoadCircle = false;
+  int numberGames = 0;
+  int correctQuestion = 0;
+  
+  Future<void> fetchGamePerformance() async {
+    String? email = FirebaseAuth.instance.currentUser?.email;
+    if (email == null || isLoadCircle == true) return;
+
+    List<String> gamesPath = await UserServices().getGames(email: email as String);
+    int _games = 0;
+    int _score = 0;
+
+    for (String gamePath in gamesPath) {
+      Map<String, dynamic> game = await GameServices().getGame(path: gamePath) as Map<String, dynamic>;
+  
+      _games += game['game_list'].length as int;
+      int currentScore = 0;
+      for (Map<String, dynamic> playedHistory in game['played_history']) {
+        DocumentReference userPath = playedHistory['player'];
+        String player = userPath.path.split("/")[1];
+
+        if (player == email) {
+          if (playedHistory['score'] > currentScore) {
+            currentScore = playedHistory['score'];
+          }
+        }
+      }
+      _score += currentScore;
+    }
+
+    print(_score);
+    setState(() {
+      isLoadCircle = true;
+      numberGames = _games;
+      correctQuestion = _score;
+    });
+  }
+
   Widget _buildCircularChartPage() {
-    return Center(
-      child: SizedBox(
-        height: 300,
-        width: 300,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            CustomPaint(
-              size: const Size(290, 290),
-              painter: CircularChartPainter(70),
+    return FutureBuilder<void>(
+      future: fetchGamePerformance(),
+      builder: (context, snapshot) {
+
+        if (isLoadCircle)
+          return Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    size: const Size(290, 290),
+                    painter: CircularChartPainter((correctQuestion / numberGames) * 100),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Success rate",
+                        style: TextStyle(
+                          color: AppColors.buttonText,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        ((correctQuestion / numberGames) * 100).toStringAsFixed(2) + "%",
+                        style: TextStyle(
+                          color: AppColors.buttonText,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "out of ${numberGames} questions",
+                        style: TextStyle(
+                          color: AppColors.buttonText,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Success rate",
-                  style: TextStyle(
-                    color: AppColors.buttonText,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "70%",
-                  style: TextStyle(
-                    color: AppColors.buttonText,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "out of 17 questions",
-                  style: TextStyle(
-                    color: AppColors.buttonText,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          );
+        else
+          return Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+            )
+          );
+      },
     );
   }
+
+  // }
 
   Widget _buildRecentGamePage() {
     return Stack(

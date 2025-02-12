@@ -18,7 +18,8 @@ class UserServices {
       'create_at': Timestamp.now(),
       'latest_login': Timestamp.now(),
       'age': 12,
-      'game_sets': [],
+      'games': [],
+      'recent_play': null
     };
 
     // Use the id (converted to a string) as the document ID.
