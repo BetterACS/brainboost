@@ -61,5 +61,29 @@ class UserServices {
       return [];
     }
   }
+
+  Future<String> getPersonalize({
+    required String email,
+  }) async {
+    try {
+      final userDoc = await users.doc(email).get();
+      if (!userDoc.exists) {
+        print("User not found");
+        return "";
+      }
+
+      final userData = userDoc.data() as Map<String, dynamic>;
+      print(userData);
+      // return as string.
+      if (userData.containsKey('personalize')) {
+        return userData['personalize'];
+      }
+      return "";
+
+    } catch (error) {
+      print("Failed to get games: $error");
+      return "";
+    }
+  }
   
 }

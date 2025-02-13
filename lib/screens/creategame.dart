@@ -1,4 +1,5 @@
 import 'package:brainboost/screens/mygames.dart';
+import 'package:brainboost/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -509,13 +510,27 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     Map<String, dynamic> jsonDict = jsonDecode(decodedResponse);
 
     // print("Extract! file");
+    dialogMessage.value = "Get your personalize";
 
+    String? email = FirebaseAuth.instance.currentUser!.email;
+    if (email == null) {
+      showDialog(
+        context: context,
+        builder: (context) => const ErrorDialog(),
+      );
+      return;
+    }
+
+    String personalize = await UserServices().getPersonalize(email: email);
+    
     dialogMessage.value = "Crafting your game";
     Map<String, String> params = {
-      'game_type': 'quiz',
-      "context": jsonDict['markdown']
+      "game_type": 'quiz',
+      "context": jsonDict['data'],
+      "personalize": personalize,
+      "language": "Thai and English upon to context.",
+      "num_games": "3",
     };
-    // print(jsonEncode(params));
 
     var createGameResponse = await httpClient.post(
       Uri.https('monsh.xyz', '/create_game'),
@@ -527,7 +542,9 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     print("Create Game!");
 
     // Convert the JSON string into a Dart map (dictionary)
+    
     var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
+    
 
     GameServices gamesServices = await GameServices();
 
@@ -535,6 +552,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
         name: _gameNameTextController.text,
         email: FirebaseAuth.instance.currentUser!.email!,
         gameData: gameDict['data'] as List<dynamic>);
+    
     if (gameID == null) {
       showDialog(
         context: context,
