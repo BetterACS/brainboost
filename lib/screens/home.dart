@@ -9,6 +9,32 @@ import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/component/history_item.dart'; // Add this import
+import 'package:brainboost/component/circular_page_chart.dart';
+
+var histories = [
+  HistoryItem(
+    title: "World war 2",
+    date: "11 Dec 2024",
+    imagePath: 'assets/images/photomain.png',
+    isDownload: false,
+    onPressed: () => print("Play Software Engine.."),
+  ),
+  HistoryItem(
+    title: "World war 2",
+    date: "11 Dec 2024",
+    imagePath: 'assets/images/photomain.png',
+    isDownload: false,
+    onPressed: () => print("Play Software Engine.."),
+  )
+];
+
+class _MouseScrollBehavior extends ScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
+}
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -36,7 +62,7 @@ class _HomeState extends State<Home> {
               _buildProfileSection(),
               const SizedBox(height: 20),
               _buildPageView(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               _buildPageIndicator(),
               const SizedBox(height: 20),
               _buildActionButtons(),
@@ -133,18 +159,20 @@ class _HomeState extends State<Home> {
   bool isLoadCircle = false;
   int numberGames = 0;
   int correctQuestion = 0;
-  
+
   Future<void> fetchGamePerformance() async {
     String? email = FirebaseAuth.instance.currentUser?.email;
     if (email == null || isLoadCircle == true) return;
 
-    List<String> gamesPath = await UserServices().getGames(email: email as String);
+    List<String> gamesPath =
+        await UserServices().getGames(email: email as String);
     int _games = 0;
     int _score = 0;
 
     for (String gamePath in gamesPath) {
-      Map<String, dynamic> game = await GameServices().getGame(path: gamePath) as Map<String, dynamic>;
-  
+      Map<String, dynamic> game =
+          await GameServices().getGame(path: gamePath) as Map<String, dynamic>;
+
       _games += game['game_list'].length as int;
       int currentScore = 0;
       for (Map<String, dynamic> playedHistory in game['played_history']) {
@@ -172,7 +200,6 @@ class _HomeState extends State<Home> {
     return FutureBuilder<void>(
       future: fetchGamePerformance(),
       builder: (context, snapshot) {
-
         if (isLoadCircle)
           return Center(
             child: SizedBox(
@@ -182,8 +209,9 @@ class _HomeState extends State<Home> {
                 alignment: Alignment.center,
                 children: [
                   CustomPaint(
-                    size: const Size(290, 290),
-                    painter: CircularChartPainter((correctQuestion / numberGames) * 100),
+                    size: const Size(285, 285),
+                    painter: CircularChartPainter(
+                        (correctQuestion / numberGames) * 100),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -192,25 +220,27 @@ class _HomeState extends State<Home> {
                         "Success rate",
                         style: TextStyle(
                           color: AppColors.buttonText,
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 6),
                       Text(
-                        ((correctQuestion / numberGames) * 100).toStringAsFixed(2) + "%",
+                        ((correctQuestion / numberGames) * 100)
+                                .toStringAsFixed(2) +
+                            "%",
                         style: TextStyle(
                           color: AppColors.buttonText,
-                          fontSize: 30,
+                          fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 6),
                       Text(
                         "out of ${numberGames} questions",
                         style: TextStyle(
                           color: AppColors.buttonText,
-                          fontSize: 18,
+                          fontSize: 17.59,
                         ),
                       ),
                     ],
@@ -221,11 +251,10 @@ class _HomeState extends State<Home> {
           );
         else
           return Center(
-            child: SizedBox(
-              height: 300,
-              width: 300,
-            )
-          );
+              child: SizedBox(
+            height: 300,
+            width: 300,
+          ));
       },
     );
   }
@@ -355,16 +384,16 @@ class _HomeState extends State<Home> {
               );
             },
           ),
-          _buildButton(
-            icon: Icons.summarize,
-            text: "Create Summary",
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const CreateSummary()),
-              // );
-            },
-          ),
+          // _buildButton(
+          //   icon: Icons.summarize,
+          //   text: "Create Summary",
+          //   onPressed: () {
+          //     // Navigator.push(
+          //     //   context,
+          //     //   MaterialPageRoute(builder: (context) => const CreateSummary()),
+          //     // );
+          //   },
+          // ),
         ],
       ),
     );
@@ -415,20 +444,22 @@ class _HomeState extends State<Home> {
             ],
           ),
           const SizedBox(height: 10),
-          HistoryItem(
-            title: "World war 2",
-            date: "11 Dec 2024",
-            imagePath: 'assets/images/photomain.png',
-            isDownload: false,
-            onPressed: () => print("Play Software Engine.."),
-          ),
-          HistoryItem(
-            title: "Object oriented..",
-            date: "11 Dec 2024",
-            imagePath: 'assets/images/photomain3.png',
-            isDownload: false,
-            onPressed: () => print("Play Software Engine.."),
-          ),
+          for (var history in histories) history,
+
+          // HistoryItem(
+          //   title: "World war 2",
+          //   date: "11 Dec 2024",
+          //   imagePath: 'assets/images/photomain.png',
+          //   isDownload: false,
+          //   onPressed: () => print("Play Software Engine.."),
+          // ),
+          // HistoryItem(
+          //   title: "Object oriented..",
+          //   date: "11 Dec 2024",
+          //   imagePath: 'assets/images/photomain3.png',
+          //   isDownload: false,
+          //   onPressed: () => print("Play Software Engine.."),
+          // ),
         ],
       ),
     );
@@ -487,61 +518,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-class CircularChartPainter extends CustomPainter {
-  final double percentage;
-
-  CircularChartPainter(this.percentage);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double strokeWidth = 27;
-    final double radius = size.width / 2 - strokeWidth / 2;
-
-    final Rect rect = Rect.fromCircle(
-      center: Offset(size.width / 2, size.height / 2),
-      radius: radius,
-    );
-
-    final Paint backgroundPaint = Paint()
-      ..color = const Color(0xFFC2C2C2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    final Paint foregroundPaint = Paint()
-      ..shader = AppColors.circleGradient.createShader(rect)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawCircle(
-      Offset(size.width / 2, size.height / 2),
-      radius,
-      backgroundPaint,
-    );
-
-    double sweepAngle = 2 * pi * (percentage / 100);
-    canvas.drawArc(
-      Rect.fromCircle(
-        center: Offset(size.width / 2, size.height / 2),
-        radius: radius,
-      ),
-      0,
-      sweepAngle,
-      false,
-      foregroundPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
-
-class _MouseScrollBehavior extends ScrollBehavior {
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-      };
 }
