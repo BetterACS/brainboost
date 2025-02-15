@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
-import 'package:brainboost/component/cards/profile.dart'; // เพิ่ม import นี้
+import 'package:brainboost/component/cards/profile_header.dart'; // เพิ่ม import นี้
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:brainboost/services/user.dart';
