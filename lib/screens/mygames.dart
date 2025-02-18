@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/component/cards/profile_header.dart'; // เพิ่ม import นี้
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:brainboost/services/user.dart';
@@ -63,7 +64,8 @@ class _MyGamesState extends State<MyGames> {
     for (var path in paths) {
       print("Path: $path");
       _games.add(GamesType.fromMap(
-          await GameServices().getGame(path: path) as Map<String, dynamic>, path));
+          await GameServices().getGame(path: path) as Map<String, dynamic>,
+          path));
     }
 
     print(games);
@@ -105,37 +107,7 @@ class _MyGamesState extends State<MyGames> {
                         children: <Widget>[
                           //
                           //  Player Name
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: AppColors.cardBackground,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: Colors.white,
-                                  child: CircleAvatar(
-                                    radius: 22,
-                                    backgroundImage:
-                                        AssetImage('assets/images/profile.jpg'),
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  "Mon Chinawat",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          const ProfileContainer(),
                           const SizedBox(height: 20),
 
                           //
@@ -334,11 +306,10 @@ class _MyGamesState extends State<MyGames> {
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
                                           child: Row(
-
-
                                             children: List.generate(
-                                              games[_currentPage].played_history.length, 
-                                              (index) {
+                                                games[_currentPage]
+                                                    .played_history
+                                                    .length, (index) {
                                               return Padding(
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 8),
@@ -356,7 +327,10 @@ class _MyGamesState extends State<MyGames> {
                                                     ),
                                                     SizedBox(height: 5),
                                                     Text(
-                                                      games[_currentPage].played_history[index]['score'].toString(),
+                                                      games[_currentPage]
+                                                          .played_history[index]
+                                                              ['score']
+                                                          .toString(),
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 14,
@@ -368,8 +342,6 @@ class _MyGamesState extends State<MyGames> {
                                                 ),
                                               );
                                             }),
-
-
                                           ),
                                         ),
                                       ),

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/component/cards/profile_header.dart';
 import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/component/history_item.dart'; // Add this import
@@ -59,7 +60,7 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 50),
-              _buildProfileSection(),
+              const ProfileContainer(),
               const SizedBox(height: 20),
               _buildPageView(),
               const SizedBox(height: 10),
@@ -85,57 +86,57 @@ class _HomeState extends State<Home> {
     return userDoc;
   }
 
-  Widget _buildProfileSection() {
-    final String? email = UserServices().getCurrentUserEmail();
-    if (email == null) return const Text("User not logged in");
+//   Widget _buildProfileSection() {
+//     final String? email = UserServices().getCurrentUserEmail();
+//     if (email == null) return const Text("User not logged in");
 
-    return FutureBuilder<DocumentSnapshot>(
-      future: fetchUsername(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting &&
-            isProfileLoaded == false) {
-          return const CircularProgressIndicator();
-        }
+//     return FutureBuilder<DocumentSnapshot>(
+//       future: fetchUsername(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting &&
+//             isProfileLoaded == false) {
+//           return const CircularProgressIndicator();
+//         }
 
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Text("User not found");
-        }
+//         if (!snapshot.hasData || !snapshot.data!.exists) {
+//           return const Text("User not found");
+//         }
 
-        final userData = snapshot.data!.data() as Map<String, dynamic>;
-        final username = userData['username'] ?? 'Guest';
+//         final userData = snapshot.data!.data() as Map<String, dynamic>;
+//         final username = userData['username'] ?? 'Guest';
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: AppColors.neutralBackground,
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircleAvatar(
-                radius: 25,
-                backgroundColor: Colors.white,
-                child: CircleAvatar(
-                  radius: 22,
-                  backgroundImage: AssetImage('assets/images/profile.jpg'),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                username,
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+//         return Container(
+//           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+//           decoration: BoxDecoration(
+//             color: AppColors.neutralBackground,
+//             borderRadius: BorderRadius.circular(50),
+//           ),
+//           child: Row(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               const CircleAvatar(
+//                 radius: 25,
+//                 backgroundColor: Colors.white,
+//                 child: CircleAvatar(
+//                   radius: 22,
+//                   backgroundImage: AssetImage('assets/images/profile.jpg'),
+//                 ),
+//               ),
+//               const SizedBox(width: 10),
+//               Text(
+//                 username,
+//                 style: const TextStyle(
+//                   color: AppColors.textPrimary,
+//                   fontSize: 18,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         );
+//       },
+//     );
+//   }
 
   Widget _buildPageView() {
     return SizedBox(
