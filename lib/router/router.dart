@@ -41,54 +41,20 @@ final router = GoRouter(
           final List<GameData> games = [];
 
           for (var item in extra['games']) {
-            print(item['content']['choices']);
-            // print()
             games.add(GameData(
-                gameType: item['game_type'],
-                // item['content'] as GameContent
-                content: (item['game_type'] == 'quiz')
-                    ? GameQuizContent(
-                        correctAnswerIndex:
-                            item['content']['correct_idx'] as int,
-                        question: item['content']['question'] as String,
-                        options: (item['content']['choices'] as List<dynamic>)
-                            .map((e) => e as String)
-                            .toList(),
-                      )
-                    : GameContent()));
+              gameType: item['game_type'],
+              content: GameData.createContent(
+                item['game_type'],
+                item['content'],
+              ),
+            ));
           }
-          // final extra = state.extra as List<Map<String, dynamic>>;
-          // final List<GameData> games = [];
-          // print(extra);
-
-          // for (var item in extra) {
-          //   print("Item: $item");
-          // games.add(GameData(
-          //   gameType: item['gameType'] as GameType,
-          //   content: item['content'] as GameContent,
-          // ));
-          // }
-          // print("Games: $games");
-
-          // return ResultsPage(
-          //   correct: extra?['correct'] as int? ?? 0,
-          //   wrong: extra?['wrong'] as int? ?? 0,
-          //   time: extra?['time'] as String? ?? '',
-          // );
           return GameWrapper(games: games, reference: extra['reference'] as String);
-          // return Text("Play Game Page");
         }),
-
-    // GoRoute(
-    //   path: Routes.resultPage,
-    //   builder: (context, state) => ResultScreen(score: state.pathParameters['score'] as int)
-    // ),
 
     GoRoute(
         path: Routes.resultPage,
         builder: (context, state) {
-          // correct, wrong, time
-          // Map<String, int> args = state.extra as Map<String, int>;
           final extra = state.extra as Map<String, dynamic>?;
           return ResultsPage(
             correct: extra?['correct'] as int? ?? 0,

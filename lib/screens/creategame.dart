@@ -502,6 +502,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
 
     var extractResponse = await httpClient
         .get(Uri.https('monsh.xyz', '/extract', {'pdf_path': uploadLink}));
+
     print("Extract! file");
     // Assuming you have already decoded the response bytes as a string:
     var decodedResponse = utf8.decode(extractResponse.bodyBytes);
@@ -522,7 +523,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     }
 
     String personalize = await UserServices().getPersonalize(email: email);
-    
+
     dialogMessage.value = "Crafting your game";
     Map<String, String> params = {
       "game_type": 'quiz',
@@ -542,9 +543,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     print("Create Game!");
 
     // Convert the JSON string into a Dart map (dictionary)
-    
+
     var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
-    
 
     GameServices gamesServices = await GameServices();
 
@@ -552,7 +552,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
         name: _gameNameTextController.text,
         email: FirebaseAuth.instance.currentUser!.email!,
         gameData: gameDict['data'] as List<dynamic>);
-    
+
     if (gameID == null) {
       showDialog(
         context: context,
