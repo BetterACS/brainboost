@@ -41,13 +41,14 @@ class QuizOption extends StatefulWidget {
 }
 
 class _QuizOptionState extends State<QuizOption> {
+  double width = 300;
   bool _isClicked = false;
 
   void _handleTap() {
     if (!widget.hasCheckedAnswer) {
       setState(() => _isClicked = true);
       widget.onTap?.call();
-      Future.delayed(const Duration(milliseconds: 80), () {
+      Future.delayed(const Duration(milliseconds: 30), () {
         if (mounted) setState(() => _isClicked = false);
       });
     }
@@ -98,8 +99,8 @@ class _QuizOptionState extends State<QuizOption> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 64, // Fixed outer height
-      width: 320,
+      height: 88, // Fixed outer height
+      width: width,
       child: Stack(
         children: [
           AnimatedPositioned(
@@ -110,11 +111,11 @@ class _QuizOptionState extends State<QuizOption> {
             child: GestureDetector(
               onTap: _handleTap,
               child: Container(
-                width: 320,
+                width: width,
                 padding: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
                   color: _getBorderColor(),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: _getBorderColor(),
                     width: 2,
@@ -124,19 +125,19 @@ class _QuizOptionState extends State<QuizOption> {
                   duration: const Duration(milliseconds: 80),
                   margin: EdgeInsets.only(bottom: _isClicked ? 1 : 5),
                   constraints: BoxConstraints(
-                    minHeight: 48.0,
+                    minHeight: 64.0,
                   ),
                   padding: const EdgeInsets.all(4),
-                  width: 320,
+                  width: width,
                   decoration: BoxDecoration(
                     color: _getBackgroundColor(),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
                     child: Text(
                       widget.text,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         color: _getTextColor(),
                       ),
                     ),
@@ -164,6 +165,7 @@ class QuizActionButton extends StatelessWidget {
   final int? selectedAnswerIndex;
   final VoidCallback onCheck;
   final VoidCallback onNext;
+  final bool isCorrect;
 
   const QuizActionButton({
     super.key,
@@ -171,6 +173,7 @@ class QuizActionButton extends StatelessWidget {
     required this.selectedAnswerIndex,
     required this.onCheck,
     required this.onNext,
+    required this.isCorrect,
   });
 
   @override
@@ -196,7 +199,7 @@ class QuizActionButton extends StatelessWidget {
               child: Text(
                 'Check',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: selectedAnswerIndex != null
                       ? Colors.white
@@ -208,17 +211,17 @@ class QuizActionButton extends StatelessWidget {
             ElevatedButton(
               onPressed: onNext,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: isCorrect ? Colors.blue : Colors.red,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
                 elevation: 0,
               ),
-              child: const Text(
+              child: Text(
                 'Next',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
