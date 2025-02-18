@@ -56,29 +56,32 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
   }
 
   void onNext(int score) async {
+    print('onNext: ${this.score}');
     setState(() => isTransitioning = true);
     await _pageController.reverse();
     
     String? email = FirebaseAuth.instance.currentUser?.email;
     if (email == null) return;
-    
+    setState(() {
+      this.score += score;
+    });
+
     if (gameIndex >= widget.games.length - 1) {
       await GameServices().addStoreToPlayedHistory(
           email: email, gamePath: widget.reference, score: score);
       GoRouter.of(context).go(Routes.resultPage, extra: {
-        'correct': score,
-        'wrong': widget.games.length - score,
+        'correct': this.score,
+        'wrong': widget.games.length - this.score,
         'time': '10:00',
       });
       return;
     }
 
     setState(() {
-      this.score += score;
       prevGameIndex = gameIndex.toDouble();
       gameIndex++;
     });
-
+    
     await _pageController.forward();
     setState(() => isTransitioning = false);
   }
