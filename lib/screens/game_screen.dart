@@ -68,7 +68,7 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
 
     if (gameIndex >= widget.games.length - 1) {
       await GameServices().addStoreToPlayedHistory(
-          email: email, gamePath: widget.reference, score: score);
+          email: email, gamePath: widget.reference, score: this.score);
       GoRouter.of(context).go(Routes.resultPage, extra: {
         'correct': this.score,
         'wrong': widget.games.length - this.score,
