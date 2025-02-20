@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/screens/creategame.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +61,7 @@ class _MyGamesState extends State<MyGames> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryBackground,
+      backgroundColor: AppColors.mainColor,
       appBar: AppBar(
         title: const Text(""),
         elevation: 0,
@@ -113,7 +115,7 @@ class _MyGamesState extends State<MyGames> {
                     child: Text(
                       titles[_currentPage],
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.cardBackground,
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                       ),
@@ -121,10 +123,12 @@ class _MyGamesState extends State<MyGames> {
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
-                    height: 300,
-                    width: 300,
+                      height: 400,
+                    width: 400, 
                     child: PageView.builder(
-                      controller: _pageController,
+                      controller: PageController(
+                          viewportFraction: 0.74), 
+                      scrollDirection: Axis.horizontal,
                       onPageChanged: (index) {
                         setState(() {
                           _currentPage = index;
@@ -132,25 +136,74 @@ class _MyGamesState extends State<MyGames> {
                       },
                       itemCount: imagePaths.length,
                       itemBuilder: (context, index) {
+                        bool isSelected = index == _currentPage;
+                        bool isAddButton = index == imagePaths.length - 1;
+
+                        double selectedSize =
+                            isSelected ? 280 : 200; 
+                        double backgroundSize =
+                            selectedSize + 30;
+
                         return AnimatedContainer(
-                          duration: const Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
-                          decoration: BoxDecoration(
-                            color: index == imagePaths.length - 1
-                                ? Colors.transparent
-                                : const Color.fromARGB(255, 0, 38, 84),
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(150),
-                            child: Image.asset(
-                              imagePaths[index],
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error,
-                                    size: 80, color: Colors.red);
-                              },
-                            ),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: isSelected ? 10 : 20),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              if (!isAddButton)
+                                Container(
+                                  width: backgroundSize,
+                                  height: backgroundSize,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey.shade300,
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.2),
+                                              blurRadius: 20,
+                                              spreadRadius: 5,
+                                            ),
+                                          ]
+                                        : [],
+                                  ),
+                                ),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(150),
+                                child: Stack(
+                                  children: [
+                                    Image.asset(
+                                      imagePaths[index],
+                                      width: selectedSize,
+                                      height: selectedSize,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(Icons.error,
+                                            size: 80, color: Colors.red);
+                                      },
+                                    ),
+                                    if (!isSelected) 
+                                      Positioned.fill(
+                                        child: Container(
+                                          color: Colors.black
+                                              .withOpacity(0.1), 
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                                sigmaX: 1.0,
+                                                sigmaY: 1.0), 
+                                            child: Container(
+                                                color: Colors.transparent),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
@@ -168,7 +221,7 @@ class _MyGamesState extends State<MyGames> {
                             fontStyle: FontStyle.italic,
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 0),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -215,40 +268,40 @@ class _MyGamesState extends State<MyGames> {
                     Column(
                       children: [
                         ElevatedButton.icon(
+                          
                           onPressed: () => context.push(Routes.playGamePage),
-                          icon: SvgPicture.asset(
-                            'assets/images/game.svg',
-                            width: 35,
-                            height: 35,
-                          ),
+                          icon:  SvgPicture.asset(
+                                'assets/images/game.svg',
+                                width: 24,
+                                height: 24,
+                                color: Colors.white,
+                              ),
                           label: const Text(
                             "Play",
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppColors.buttonText,
+                            backgroundColor: AppColors.neutralBackground,
+                            foregroundColor:  Colors.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 25,
-                              vertical: 10,
+                              vertical: 8,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            side: BorderSide(
-                              color: AppColors.buttonBorder,
-                              width: 2,
-                            ),
+         
                           ),
                         ),
                         const SizedBox(height: 10),
                         const Text(
                           "You have played 2 days ago",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.gray2,
                             fontSize: 14,
                             fontStyle: FontStyle.italic,
                           ),
@@ -381,10 +434,9 @@ class _MyGamesState extends State<MyGames> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 10),
                                   minimumSize: Size(constraints.maxWidth * 0.8,
-                                      50), // ปรับขนาดอัตโนมัติ
+                                      50), 
                                   shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(15), 
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
                                 onPressed: () {},
@@ -396,8 +448,7 @@ class _MyGamesState extends State<MyGames> {
                                   "Play",
                                   style: TextStyle(
                                     fontSize: 20,
-                                    color: AppColors
-                                        .cardBackground, 
+                                    color: AppColors.cardBackground,
                                   ),
                                 ),
                               );
