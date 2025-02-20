@@ -81,7 +81,7 @@ class _MyGamesState extends State<MyGames> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppColors.cardBackground,
+                      color: AppColors.neutralBackground,
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: const Row(
@@ -123,11 +123,10 @@ class _MyGamesState extends State<MyGames> {
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
-                      height: 400,
-                    width: 400, 
+                    height: 400,
+                    width: 400,
                     child: PageView.builder(
-                      controller: PageController(
-                          viewportFraction: 0.74), 
+                      controller: PageController(viewportFraction: 0.75),
                       scrollDirection: Axis.horizontal,
                       onPageChanged: (index) {
                         setState(() {
@@ -139,10 +138,8 @@ class _MyGamesState extends State<MyGames> {
                         bool isSelected = index == _currentPage;
                         bool isAddButton = index == imagePaths.length - 1;
 
-                        double selectedSize =
-                            isSelected ? 280 : 200; 
-                        double backgroundSize =
-                            selectedSize + 30;
+                        double selectedSize = isSelected ? 270 : 200;
+                        double backgroundSize = selectedSize + 50;
 
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -163,7 +160,7 @@ class _MyGamesState extends State<MyGames> {
                                         ? [
                                             BoxShadow(
                                               color:
-                                                  Colors.black.withOpacity(0.2),
+                                                  Colors.black.withOpacity(0.5),
                                               blurRadius: 20,
                                               spreadRadius: 5,
                                             ),
@@ -186,15 +183,13 @@ class _MyGamesState extends State<MyGames> {
                                             size: 80, color: Colors.red);
                                       },
                                     ),
-                                    if (!isSelected) 
+                                    if (!isSelected)
                                       Positioned.fill(
                                         child: Container(
-                                          color: Colors.black
-                                              .withOpacity(0.1), 
+                                          color: Colors.white.withOpacity(0.1),
                                           child: BackdropFilter(
                                             filter: ImageFilter.blur(
-                                                sigmaX: 1.0,
-                                                sigmaY: 1.0), 
+                                                sigmaX: 1.0, sigmaY: 1.0),
                                             child: Container(
                                                 color: Colors.transparent),
                                           ),
@@ -268,14 +263,13 @@ class _MyGamesState extends State<MyGames> {
                     Column(
                       children: [
                         ElevatedButton.icon(
-                          
                           onPressed: () => context.push(Routes.playGamePage),
-                          icon:  SvgPicture.asset(
-                                'assets/images/game.svg',
-                                width: 24,
-                                height: 24,
-                                color: Colors.white,
-                              ),
+                          icon: SvgPicture.asset(
+                            'assets/images/game.svg',
+                            width: 24,
+                            height: 24,
+                            color: Colors.white,
+                          ),
                           label: const Text(
                             "Play",
                             style: TextStyle(
@@ -283,18 +277,16 @@ class _MyGamesState extends State<MyGames> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.neutralBackground,
-                            foregroundColor:  Colors.white,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 25,
+                              horizontal: 20,
                               vertical: 8,
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
-         
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -326,8 +318,11 @@ class _MyGamesState extends State<MyGames> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
+                                    side: const BorderSide(
+                                        color: Colors.white, width: 2),
+                                    minimumSize: const Size(160, 40),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 26, vertical: 14),
+                                        horizontal: 16, vertical: 10),
                                   ),
                                   child: const Text(
                                     "Re version",
@@ -347,8 +342,11 @@ class _MyGamesState extends State<MyGames> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
+                                    side: const BorderSide(
+                                        color: Colors.white, width: 2),
+                                    minimumSize: const Size(160, 40),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 26, vertical: 14),
+                                        horizontal: 16, vertical: 10),
                                   ),
                                   child: const Text(
                                     "Add lecture",
@@ -374,6 +372,17 @@ class _MyGamesState extends State<MyGames> {
                               ),
                               child: Column(
                                 children: [
+                                  Container(
+                                    width: 110, 
+                                    height: 4, 
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                      height:
+                                          10), // ระยะห่างระหว่างขีดกับข้อความ
                                   const Text(
                                     "Scoreboard",
                                     style: TextStyle(
@@ -430,11 +439,11 @@ class _MyGamesState extends State<MyGames> {
                             builder: (context, constraints) {
                               return ElevatedButton.icon(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: AppColors.neutralBackground,
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 10),
-                                  minimumSize: Size(constraints.maxWidth * 0.8,
-                                      50), 
+                                  minimumSize:
+                                      Size(constraints.maxWidth * 0.8, 50),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
                                   ),
@@ -442,13 +451,15 @@ class _MyGamesState extends State<MyGames> {
                                 onPressed: () {},
                                 icon: SvgPicture.asset(
                                   'assets/images/game.svg',
-                                  width: 30,
+                                  width: 24,
+                                  height: 24,
+                                  color: Colors.white,
                                 ),
                                 label: const Text(
                                   "Play",
                                   style: TextStyle(
                                     fontSize: 20,
-                                    color: AppColors.cardBackground,
+                                    color: Colors.white,
                                   ),
                                 ),
                               );
@@ -502,7 +513,7 @@ class IconTitleButton extends StatelessWidget {
             height: 24,
             color: Colors.white,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
           Text(
             title,
             style: const TextStyle(
