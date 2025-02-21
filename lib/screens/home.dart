@@ -87,7 +87,11 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 10),
               _buildPageIndicator(),
               const SizedBox(height: 20),
+<<<<<<< Updated upstream
 		_buildCreateSection(),
+=======
+              _buildCreateSection(),
+>>>>>>> Stashed changes
               _buildCreateButtons(context),
               _buildHistorySection(),
             ],
@@ -393,6 +397,10 @@ class _HomeState extends State<Home> {
     );
   }
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 Widget _buildCreateSection() {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
@@ -413,7 +421,11 @@ Widget _buildCreateSection() {
 
 Widget _buildCreateButtons(BuildContext context) {
   return Padding(
+<<<<<<< Updated upstream
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+=======
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+>>>>>>> Stashed changes
     child: Container(
       height: 200,
       width: double.infinity,
@@ -528,7 +540,7 @@ Widget _buildCreateButtons(BuildContext context) {
 
   Widget _buildHistorySection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
