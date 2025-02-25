@@ -68,9 +68,8 @@ class _MyGamesState extends State<MyGames> {
           path));
     }
 
-    print(games);
     setState(() {
-      games = _games;
+      games = _games.reversed.toList();
       _isLoadedGames = true;
     });
   }
