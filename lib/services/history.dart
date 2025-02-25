@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GameHistoryService {
-  final CollectionReference users =
+  final CollectionReference history =
       FirebaseFirestore.instance.collection("history");
 
   /// Adds a new game record to the user's history.
@@ -12,7 +12,7 @@ class GameHistoryService {
     required int score,
   }) async {
     try {
-      final userRef = users.doc(email);
+      final userRef = history.doc(email);
 
       await userRef.update({
         'game_history': FieldValue.arrayUnion([
@@ -37,7 +37,7 @@ class GameHistoryService {
     required String email,
   }) async {
     try {
-      final userDoc = await users.doc(email).get();
+      final userDoc = await history.doc(email).get();
 
       if (!userDoc.exists) {
         print("User not found");

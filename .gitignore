@@ -1,4 +1,14 @@
-lib/firebase_options.dart
+# ignore window / macos build
+windows/flutter/
+macos/flutter/
+
+# ignore .firebaserc for all examples
+**/.firebaserc
+**/GoogleService-Info.plist
+**/google-services.json
+**/firebase_app_id_file.json
+**/firebase_options.dart
+
 # Miscellaneous
 *.class
 *.log
