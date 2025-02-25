@@ -49,11 +49,11 @@ class AppColors {
 
 
   // Quiz button colors.
-  static const Color borderQuizOption = Color(0xFFB0B0B0);
+  static const Color borderQuizOption = Color.fromARGB(255, 201, 201, 201);
   static const Color borderQuizSelectedOption = Colors.blue;
   static const Color borderQuizCorrectOption = Colors.green;
   static const Color borderQuizIncorrectOption = Colors.red;
-  static const Color borderQuizNonSelectedOption = Color(0xFFB0B0B0);
+  static const Color borderQuizNonSelectedOption = Color.fromARGB(255, 201, 201, 201);
 
   static const Color backgroundQuizOption = Colors.white;
   static const Color backgroundQuizSelectedOption = Color(0xFFE4F4FF);
