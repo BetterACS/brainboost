@@ -80,6 +80,7 @@ class _GameWrapperState extends State<GameWrapper> {
 
       // case Add other game types here
 
+
       default:
         return const Center(child: Text('Unknown game type'));
     }

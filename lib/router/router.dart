@@ -2,11 +2,10 @@ import 'package:brainboost/models/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/layout/layout_scaffold.dart';
-
 import 'package:brainboost/screens/all.dart';
-
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -112,8 +111,6 @@ final router = GoRouter(
             ),
           ],
         ),
-
-        // My Games
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -122,18 +119,14 @@ final router = GoRouter(
             ),
           ],
         ),
-
-        // History
         StatefulShellBranch(
           routes: [
             GoRoute(
               path: Routes.historyPage,
-              builder: (context, state) => const History(),
+              builder: (context, state) => History(),
             ),
           ],
         ),
-
-        // Profile
         StatefulShellBranch(
           routes: [
             GoRoute(

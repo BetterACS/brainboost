@@ -1,9 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/screens/history.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:brainboost/component/colors.dart';
+import 'package:go_router/go_router.dart';
 import 'package:brainboost/services/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/cards/profile_header.dart';
@@ -545,10 +549,9 @@ Widget _buildCreateButtons(BuildContext context) {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const History()),
-                  );
+                  final userEmail =
+                      FirebaseAuth.instance.currentUser?.email ?? '';
+                  context.push(Routes.historyPage, extra: userEmail);
                 },
                 child: const Row(
                   children: [
