@@ -17,7 +17,7 @@ class MyGames extends StatefulWidget {
 class _MyGamesState extends State<MyGames> {
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
-
+   double _blueHeight = 250;
   bool _showButtons = false;
   int _currentPage = 0;
 
@@ -41,10 +41,12 @@ class _MyGamesState extends State<MyGames> {
     _scrollController.addListener(() {
       if (_scrollController.offset > 200 && !_showButtons) {
         setState(() {
+           _blueHeight = 250 + _scrollController.offset.clamp(0, 100);
           _showButtons = true;
         });
       } else if (_scrollController.offset <= 200 && _showButtons) {
         setState(() {
+           _blueHeight = 250 + _scrollController.offset.clamp(0, 100);
           _showButtons = false;
         });
       }
@@ -368,7 +370,7 @@ class _MyGamesState extends State<MyGames> {
                               margin: const EdgeInsets.only(top: 10),
                               decoration: BoxDecoration(
                                 color: AppColors.cardBackground,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(60),
                               ),
                               child: Column(
                                 children: [
@@ -382,7 +384,7 @@ class _MyGamesState extends State<MyGames> {
                                   ),
                                   const SizedBox(
                                       height:
-                                          10), // ระยะห่างระหว่างขีดกับข้อความ
+                                          15), 
                                   const Text(
                                     "Scoreboard",
                                     style: TextStyle(
