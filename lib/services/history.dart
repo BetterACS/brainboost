@@ -9,7 +9,7 @@ class GameHistoryService {
     required String email,
     required String gameId,
     required String gameName,
-    required int score,
+    // required int score,
   }) async {
     try {
       final userRef = history.doc(email);
@@ -19,7 +19,7 @@ class GameHistoryService {
           {
             'game_id': gameId,
             'game_name': gameName,
-            'score': score,
+            // 'score': score,
             'image_game': 'default',
             'played_at': Timestamp.now(),
           }
