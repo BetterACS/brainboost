@@ -10,3 +10,4 @@ export 'game_screen.dart';
 export 'login.dart';
 export 'signup.dart';
 export 'loading_home_wrapper.dart';
+export 'history.dart';

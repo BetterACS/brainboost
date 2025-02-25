@@ -39,7 +39,7 @@ class HistoryItem extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.asset(
-              imagePath,
+              'assets/images/photomain.png',
               width: 80,
               height: 80,
               fit: BoxFit.cover,
