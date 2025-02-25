@@ -1,8 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/router.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:brainboost/firebase_options.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    runApp(const MyApp());
+  }, (Object error, StackTrace stackTrace) {
+    print('runZonedGuarded: Caught error in my root zone. $error');
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -13,7 +26,10 @@ class MyApp extends StatelessWidget {
   /// See all the routes in [router/routes.dart].
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    routerConfig: router,
-    debugShowCheckedModeBanner: false,
-  );
+        theme: ThemeData(
+            textTheme: GoogleFonts.ibmPlexSansThaiTextTheme(
+                Theme.of(context).textTheme)),
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+      );
 }
