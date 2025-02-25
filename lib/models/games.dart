@@ -26,6 +26,24 @@ class GameData {
     required this.gameType,
     required this.content,
   });
+
+  static GameContent createContent(String gameType, Map<String, dynamic> content) {
+    switch (gameType) {
+      case 'quiz':
+        return GameQuizContent(
+          correctAnswerIndex: content['correct_idx'] as int,
+          question: content['question'] as String,
+          options: (content['choices'] as List<dynamic>)
+              .map((e) => e as String)
+              .toList(),
+        );
+      // Add more cases here for future game types
+      // case 'memory':
+      //   return GameMemoryContent(...);
+      default:
+        return GameContent();
+    }
+  }
 }
 
 class PlayerHistory {
