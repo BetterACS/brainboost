@@ -77,7 +77,7 @@ class HistoryItem extends StatelessWidget {
                   child: Text(
                     date,
                     style: const TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
