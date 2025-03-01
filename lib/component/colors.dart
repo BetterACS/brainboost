@@ -27,6 +27,7 @@ class AppColors {
   static const Color accentDarkmode = Color(0xFF1F1F21);
   static const Color mainColor = Color.fromRGBO(236, 245, 255, 1.0);
   static const Color gray4 = Color.fromRGBO(225, 228, 232, 1.0);
+  static const Color gray5 = Color(0xFF888888);
 
   static const LinearGradient circleGradient = LinearGradient(
     colors: [
