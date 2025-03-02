@@ -270,7 +270,7 @@ class _MyGamesState extends State<MyGames> {
 
                             //
                             // Play Game Button
-                              else if (_currentPage != games.length - 1 && !_showButtons)
+                              else if (_currentPage != games.length && !_showButtons)
                             Column(
                               children: [
                                 ElevatedButton.icon(
