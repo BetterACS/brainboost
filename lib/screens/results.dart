@@ -163,19 +163,19 @@ class ResultsPage extends StatelessWidget {
         InfoCard(
           title: 'Correct',
           value: correct.toString(),
-          icon: Icons.check,
+          icon: Icons.check_circle, 
           cardColor: correctAnswersColor,
         ),
         InfoCard(
           title: 'Wrong',
           value: wrong.toString(),
-          icon: Icons.curtains_closed_rounded,
+          icon: Icons.cancel, 
           cardColor: wrongAnswersColor,
         ),
         InfoCard(
           title: 'Time',
           value: time,
-          icon: Icons.access_time,
+          icon: Icons.watch_later,
           cardColor: timeColor,
         )
       ],
