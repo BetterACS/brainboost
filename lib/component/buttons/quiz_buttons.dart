@@ -70,8 +70,8 @@ class QuizOption extends StatelessWidget {
     return GestureDetector(
       onTap: !hasCheckedAnswer ? onTap : null,
       child: Container(
-        width: 350,
-        height: 64 - 4,
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: _getBorderColor(),
           borderRadius: BorderRadius.circular(10),
@@ -82,19 +82,21 @@ class QuizOption extends StatelessWidget {
         ),
         child: Container(
           margin: const EdgeInsets.only(bottom: 4),
-          width: 350,
-          height: 64,
           decoration: BoxDecoration(
             color: _getBackgroundColor(),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             child: Text(
               text,
               style: TextStyle(
                 fontSize: 16,
                 color: _getTextColor(),
               ),
+              textAlign: TextAlign.center,
+              softWrap: true,
+              overflow: TextOverflow.visible,
             ),
           ),
         ),
@@ -102,7 +104,6 @@ class QuizOption extends StatelessWidget {
     );
   }
 }
-
 /// A widget that displays either a Check or Next button based on quiz state.
 /// 
 /// Shows:
