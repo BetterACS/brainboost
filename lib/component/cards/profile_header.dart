@@ -52,7 +52,7 @@ class _ProfileContainerState extends State<ProfileContainer> {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: AppColors.neutralBackground,
               borderRadius: BorderRadius.circular(50),
             ),
             child: Row(
