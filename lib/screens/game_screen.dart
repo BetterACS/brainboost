@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/games.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class GameWrapper extends StatefulWidget {
   final List<GameData> games;
@@ -23,7 +24,7 @@ class GameWrapper extends StatefulWidget {
 }
 
 class _GameWrapperState extends State<GameWrapper> {
-
+  final player = AudioPlayer();
   int gameIndex = 0;
   int score = 0;
 
@@ -32,8 +33,11 @@ class _GameWrapperState extends State<GameWrapper> {
 
     if (email == null) return;
     if (gameIndex >= widget.games.length - 1) {
-      
-      await GameServices().addStoreToPlayedHistory(email: email, gamePath: widget.reference, score: score);
+      await player.play(
+          AssetSource('sounds/game-level-complete-universfield-pixabay.mp3'));
+
+      await GameServices().addStoreToPlayedHistory(
+          email: email, gamePath: widget.reference, score: score);
       GoRouter.of(context).go(Routes.resultPage, extra: {
         'correct': score,
         'wrong': widget.games.length - score,
@@ -79,7 +83,6 @@ class _GameWrapperState extends State<GameWrapper> {
         );
 
       // case Add other game types here
-
 
       default:
         return const Center(child: Text('Unknown game type'));
