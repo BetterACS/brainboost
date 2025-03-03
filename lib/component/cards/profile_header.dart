@@ -50,7 +50,7 @@ class _ProfileContainerState extends State<ProfileContainer> {
           final username = userData['username'] ?? 'Guest';
 
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.only(left: 10, right: 14, top: 8, bottom: 8),
             decoration: BoxDecoration(
               color: AppColors.neutralBackground,
               borderRadius: BorderRadius.circular(50),
@@ -59,14 +59,14 @@ class _ProfileContainerState extends State<ProfileContainer> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircleAvatar(
-                  radius: 25,
+                  radius: 19,
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
-                    radius: 22,
+                    radius: 18,
                     backgroundImage: AssetImage('assets/images/profile.jpg'),
                   ),
                 ),
-                SizedBox(width: 10),
+                SizedBox(width: 8),
                 Text(
                   username,
                   style: TextStyle(
