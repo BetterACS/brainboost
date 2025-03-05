@@ -97,12 +97,17 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
       await GameServices().addStoreToPlayedHistory(
           email: email, gamePath: widget.reference, score: this.score);
       GoRouter.of(context).go(Routes.resultPage, extra: {
-        'correct': this.score,
-        'wrong': widget.games.length - this.score,
-        'time': formattedTime,
-      });
-      return;
-    }
+      'correct': this.score,
+      'wrong': widget.games.length - this.score,
+      'time': formattedTime,
+      'reference': widget.reference,  // เพิ่มบรรทัดนี้
+      'games': widget.games.map((game) => {
+        'game_type': game.gameType,
+        'content': (game.content as GameQuizContent).toMap(), 
+      }).toList(),  // เพิ่มบรรทัดนี้
+    });
+    return;
+  }
 
     setState(() {
       prevGameIndex = gameIndex.toDouble();
