@@ -47,7 +47,7 @@ class GameBingoPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 10,
@@ -55,31 +55,55 @@ class GameBingoPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 2.5),
-                itemCount: 9,
-                itemBuilder: (context, index) {
-                  List<int> numbers = [10, 25, 30, 15, 15, 25, 20, 10, 15];
-                  return Container(
-                    alignment: Alignment.center,
+              child: Column(
+                children: [
+                  // Blue rectangle above the grid (height changed to 60)
+                  Container(
+                    height: 60,
+                    width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.blue[900],
+                      color: Color(0xFF003366),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(
-                      "${numbers[index]}",
-                      style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                    child: const Center(
+                      child: Text(
+                        "Bingo Quiz",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(height: 8),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                            childAspectRatio: 2.5),
+                    itemCount: 9,
+                    itemBuilder: (context, index) {
+                      List<int> numbers = [10, 25, 30, 15, 15, 25, 20, 10, 15];
+                      return Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.blue[900],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "${numbers[index]}",
+                          style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
