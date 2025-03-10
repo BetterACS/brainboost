@@ -43,6 +43,7 @@ dependencies:
   sliding_up_panel: ^2.0.0+1
   flutter_hooks: ^0.20.5
   lottie: 3.2.0
+  audioplayers: ^6.2.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -74,6 +75,8 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/animations/
+
+    - assets/sounds/
 
   #   - images/a_dot_ham.jpeg
 

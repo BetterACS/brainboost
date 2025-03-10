@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/games.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class GameWrapper extends StatefulWidget {
   final List<GameData> games;
@@ -25,6 +26,7 @@ class GameWrapper extends StatefulWidget {
 }
 
 class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStateMixin {
+    final player = AudioPlayer();
   int gameIndex = 0;
   int score = 0;
   double prevGameIndex = 0;
@@ -67,6 +69,9 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
     });
 
     if (gameIndex >= widget.games.length - 1) {
+      await player.play(
+          AssetSource('sounds/game-level-complete-universfield-pixabay.mp3'));
+
       await GameServices().addStoreToPlayedHistory(
           email: email, gamePath: widget.reference, score: this.score);
       GoRouter.of(context).go(Routes.resultPage, extra: {

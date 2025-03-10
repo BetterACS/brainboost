@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:brainboost/component/bottom_slider.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -25,6 +26,9 @@ class _QuizScreenState extends State<QuizScreen>
   bool hasCheckedAnswer = false;
   int score = 0;
 
+  final player = AudioPlayer();
+// await player.play(UrlSource('https://example.com/my-audio.wav'));
+
   @override
   void initState() {
     super.initState();
@@ -43,10 +47,17 @@ class _QuizScreenState extends State<QuizScreen>
     }
   }
 
-  void checkAnswer() {
+  void checkAnswer() async {
     if (selectedAnswerIndex == widget.content.correctAnswerIndex) {
       score++;
+      await player.play(
+          AssetSource('sounds/level-up-2-universfield-pixabay.mp3'),
+          position: const Duration(milliseconds: 10));
+    } else {
+      await player.play(AssetSource('sounds/error-8-universfield-pixabay.mp3'),
+          position: const Duration(milliseconds: 60));
     }
+
     setState(() {
       hasCheckedAnswer = true;
     });
