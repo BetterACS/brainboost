@@ -9,125 +9,173 @@ class GameBingoPage extends StatefulWidget {
 
 class _GameBingoPageState extends State<GameBingoPage> {
   List<int> numbers = [10, 25, 30, 15, 15, 25, 20, 10, 15];
+
   final TextEditingController _answerController = TextEditingController();
-  bool _isAnswerCorrect = false;
-  bool _isAnswerChecked = false;
+
+  // สร้าง Map เพื่อเก็บสถานะของแต่ละหมายเลข
+  Map<int, bool> isAnswerCorrect = {};
+  Map<int, bool> isAnswerChecked = {};
 
   void _showQuestionDialog(int number) {
+    _answerController.clear(); // รีเซ็ตค่าตอบก่อนแสดงคำถาม
+    setState(() {
+      isAnswerChecked[number] = false; // รีเซ็ตการตรวจสอบคำตอบของช่องนี้
+    });
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor:
-              Colors.white, // Set background color of the entire dialog
-          title: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            decoration: BoxDecoration(
-              color: const Color(
-                  0xFF092866), // Set background of the title to blue
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color:
-                    Colors.blue[900]!, // Optional border for the title section
-              ),
-            ),
-            child: Text(
-              "$number Points",
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // Set the text color to white for contrast
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-
-          content: Container(
-            color: Colors.white, // Set background color of the content to white
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  "ภายหลังสงครามโลกครั้งที่ 2 ผู้นำฝ่ายโลกคอมมิวนิสต์ขยายอิทธิพลและการแทรกแซงการปกครองในดินแดนส่วนต่างๆ ของโลกหลายแห่งข้อนี้ข้อใด",
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF092866),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Colors.blue[900]!,
+                  ),
+                ),
+                child: Text(
+                  "$number Points",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _answerController,
-                  decoration: InputDecoration(
-                    hintText: "Answer",
-                    hintStyle: TextStyle(color: Color(0xFFC2C2C2)),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF092866)),
-                    ),
-                    fillColor: _isAnswerChecked
-                        ? (_isAnswerCorrect
-                            ? Colors
-                                .green[100] // Correct answer, green background
-                            : Colors
-                                .red[100]) // Incorrect answer, red background
-                        : Colors
-                            .white, // Default background when the answer is not checked
-                    filled: true,
-                    errorText: _isAnswerChecked && !_isAnswerCorrect
-                        ? 'Incorrect Answer'
-                        : null,
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "ภายหลังสงครามโลกครั้งที่ 2 ผู้นำฝ่ายโลกคอมมิวนิสต์ขยายอิทธิพลและการแทรกแซงการปกครองในดินแดนส่วนต่างๆ ของโลกหลายแห่งข้อนี้ข้อใด",
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _answerController,
+                        decoration: InputDecoration(
+                          hintText: "Answer",
+                          hintStyle: const TextStyle(color: Color(0xFFC2C2C2)),
+                          border: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Color(0xFF092866)),
+                          ),
+                          filled: true,
+                          fillColor: isAnswerChecked[number] == true
+                              ? (isAnswerCorrect[number] == true
+                                  ? Colors.green[100] // สีเขียวถ้าถูก
+                                  : Colors.red[100]) // สีแดงถ้าผิด
+                              : Colors.white,
+                          errorText: isAnswerChecked[number] == true &&
+                                  isAnswerCorrect[number] == false
+                              ? 'Incorrect Answer'
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const SizedBox(height: 24), // เพิ่มช่องว่างให้กว้างขึ้น
+                      Padding(
+                        padding:
+                            const EdgeInsets.all(2.0), // ปรับให้เท่ากับช่องกรอก
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: Colors.grey[400]!, width: 2),
+                                ),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    shadowColor: Colors.transparent,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: Text(
+                                    "Back",
+                                    style: TextStyle(
+                                      color: Colors.grey[400],
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF205ED8),
+                                      Color(0xFF092866)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setDialogState(() {
+                                      isAnswerCorrect[number] =
+                                          _answerController.text.trim() ==
+                                              'correct_answer';
+                                      isAnswerChecked[number] = true;
+                                    });
+                                  },
+                                  child: Text(
+                                    isAnswerChecked[number] == true
+                                        ? (isAnswerCorrect[number] == true
+                                            ? 'Correct'
+                                            : 'Try Again')
+                                        : 'Submit',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
-            ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("Back"),
-                ),
-                const SizedBox(width: 16),
-                Ink(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF092866), Color(0xFF205ED8)],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        // Replace with the actual correct answer
-                        _isAnswerCorrect =
-                            _answerController.text.trim() == 'correct_answer';
-                        _isAnswerChecked = true;
-                      });
-                    },
-                    child: Text(
-                      _isAnswerChecked
-                          ? _isAnswerCorrect
-                              ? 'Correct'
-                              : 'Try Again'
-                          : 'Submit',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -148,7 +196,7 @@ class _GameBingoPageState extends State<GameBingoPage> {
       ),
       body: Container(
         padding: const EdgeInsets.only(
-            top: 32.0, left: 16.0, right: 16.0, bottom: 16.0),
+            top: 16.0, left: 16.0, right: 16.0, bottom: 16.0),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -209,26 +257,32 @@ class _GameBingoPageState extends State<GameBingoPage> {
                     shrinkWrap: true,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 1),
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 1, // ยังคงอัตราส่วนเป็น 1:1
+                      mainAxisExtent: 60, // กำหนดความสูงให้ 89
+                    ),
                     itemCount: 9,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () => _showQuestionDialog(numbers[index]),
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.blue[900],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "${numbers[index]}",
-                            style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                        child: SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.blue[900],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              "${numbers[index]}",
+                              style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
                           ),
                         ),
                       );
