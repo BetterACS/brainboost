@@ -12,14 +12,13 @@ class _GameBingoPageState extends State<GameBingoPage> {
 
   final TextEditingController _answerController = TextEditingController();
 
-  // สร้าง Map เพื่อเก็บสถานะของแต่ละหมายเลข
   Map<int, bool> isAnswerCorrect = {};
   Map<int, bool> isAnswerChecked = {};
 
   void _showQuestionDialog(int number) {
-    _answerController.clear(); // รีเซ็ตค่าตอบก่อนแสดงคำถาม
+    _answerController.clear();
     setState(() {
-      isAnswerChecked[number] = false; // รีเซ็ตการตรวจสอบคำตอบของช่องนี้
+      isAnswerChecked[number] = false;
     });
 
     showDialog(
@@ -76,8 +75,8 @@ class _GameBingoPageState extends State<GameBingoPage> {
                           filled: true,
                           fillColor: isAnswerChecked[number] == true
                               ? (isAnswerCorrect[number] == true
-                                  ? Colors.green[100] // สีเขียวถ้าถูก
-                                  : Colors.red[100]) // สีแดงถ้าผิด
+                                  ? Colors.green[100]
+                                  : Colors.red[100])
                               : Colors.white,
                           errorText: isAnswerChecked[number] == true &&
                                   isAnswerCorrect[number] == false
@@ -86,10 +85,9 @@ class _GameBingoPageState extends State<GameBingoPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const SizedBox(height: 24), // เพิ่มช่องว่างให้กว้างขึ้น
+                      const SizedBox(height: 24),
                       Padding(
-                        padding:
-                            const EdgeInsets.all(2.0), // ปรับให้เท่ากับช่องกรอก
+                        padding: const EdgeInsets.all(2.0),
                         child: Row(
                           children: [
                             Expanded(
@@ -185,7 +183,14 @@ class _GameBingoPageState extends State<GameBingoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("สงครามโลกครั้งที่ล้าน"),
+        title: const Text(
+          "สงครามโลกครั้งที่ล้าน",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF092866),
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -193,10 +198,11 @@ class _GameBingoPageState extends State<GameBingoPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        toolbarHeight: 100,
       ),
       body: Container(
         padding: const EdgeInsets.only(
-            top: 16.0, left: 16.0, right: 16.0, bottom: 16.0),
+            top: 4.0, left: 16.0, right: 16.0, bottom: 16.0),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -211,13 +217,16 @@ class _GameBingoPageState extends State<GameBingoPage> {
             const Text(
               "0",
               style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 40,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue),
+                  color: Color(0xFF092866)),
             ),
             const Text(
               "Points",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF092866)),
             ),
             const SizedBox(height: 8),
             Container(
@@ -260,8 +269,8 @@ class _GameBingoPageState extends State<GameBingoPage> {
                       crossAxisCount: 3,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
-                      childAspectRatio: 1, // ยังคงอัตราส่วนเป็น 1:1
-                      mainAxisExtent: 60, // กำหนดความสูงให้ 89
+                      childAspectRatio: 1,
+                      mainAxisExtent: 60,
                     ),
                     itemCount: 9,
                     itemBuilder: (context, index) {
