@@ -12,7 +12,7 @@ class AppColors {
   static const Color buttonForeground = Color(0xFF1F6DAC);
   static const Color buttonBorder = Color(0xFF0C375A);
   static const Color textPrimary = Colors.white;
-  static const Color cardBackground = Color(0xFF003366);
+  static const Color cardBackground = Color.fromARGB(255, 17, 51, 121);
   static const Color buttonText = Color(0xFF003366);
   static const Color activeColor = Color.fromARGB(255, 18, 112, 194);
   static const Color inactiveColor = Color.fromARGB(255, 14, 53, 87);
@@ -51,11 +51,11 @@ class AppColors {
   static const Color createButtonForeground = Color(0xFFE5E5E5);
 
   // Quiz button colors.
-  static const Color borderQuizOption = Color(0xFFB0B0B0);
+  static const Color borderQuizOption = Color.fromARGB(255, 201, 201, 201);
   static const Color borderQuizSelectedOption = Colors.blue;
   static const Color borderQuizCorrectOption = Colors.green;
   static const Color borderQuizIncorrectOption = Colors.red;
-  static const Color borderQuizNonSelectedOption = Color(0xFFB0B0B0);
+  static const Color borderQuizNonSelectedOption = Color.fromARGB(255, 201, 201, 201);
 
   static const Color backgroundQuizOption = Colors.white;
   static const Color backgroundQuizSelectedOption = Color(0xFFE4F4FF);
