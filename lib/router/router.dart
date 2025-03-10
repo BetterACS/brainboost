@@ -59,6 +59,8 @@ final router = GoRouter(
             correct: extra?['correct'] as int? ?? 0,
             wrong: extra?['wrong'] as int? ?? 0,
             time: extra?['time'] as String? ?? '',
+            gameReference: extra?['reference'] as String?,
+            gameData: extra?['games'] as List<dynamic>?,
           );
         }),
 
