@@ -41,6 +41,8 @@ dependencies:
   firebase_storage: ^12.4.2
   http: ^1.3.0
   sliding_up_panel: ^2.0.0+1
+  flutter_hooks: ^0.20.5
+  lottie: 3.2.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -71,7 +73,8 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-    
+    - assets/animations/
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -99,5 +102,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-
-

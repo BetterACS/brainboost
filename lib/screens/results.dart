@@ -3,6 +3,7 @@ import 'package:brainboost/component/buttons/dropshadow_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
+import 'package:lottie/lottie.dart';
 
 const correctAnswersColor = Color.fromRGBO(32, 94, 216, 1);
 const wrongAnswersColor = Color.fromRGBO(223, 69, 69, 1);
@@ -73,7 +74,7 @@ class ResultsPage extends StatelessWidget {
 
               // Padding from Improvement Text
               const Spacer(),
-              
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -135,7 +136,7 @@ class ResultsPage extends StatelessWidget {
             height: 262,
             fit: BoxFit.contain,
           ),
-        )
+        ),
       ],
     );
   }
@@ -183,8 +184,7 @@ class ResultsPage extends StatelessWidget {
 
   Widget _buildImprovementText() {
     return ConstrainedBox(
-      constraints:
-          const BoxConstraints(maxWidth: 250),
+      constraints: const BoxConstraints(maxWidth: 250),
       child: const Text(
         'You scored 20% more than the previous time.',
         textAlign: TextAlign.center,
