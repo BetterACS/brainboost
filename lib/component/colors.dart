@@ -12,7 +12,7 @@ class AppColors {
   static const Color buttonForeground = Color(0xFF1F6DAC);
   static const Color buttonBorder = Color(0xFF0C375A);
   static const Color textPrimary = Colors.white;
-  static const Color cardBackground = Color(0xFF003366);
+  static const Color cardBackground = Color.fromARGB(255, 17, 51, 121);
   static const Color buttonText = Color(0xFF003366);
   static const Color activeColor = Color.fromARGB(255, 18, 112, 194);
   static const Color inactiveColor = Color.fromARGB(255, 14, 53, 87);
@@ -25,6 +25,9 @@ class AppColors {
   static const Color gray3 = Color(0xFFC2C2C2);
   static const Color backgroundDarkmode = Color(0xFF262626);
   static const Color accentDarkmode = Color(0xFF1F1F21);
+  static const Color mainColor = Color.fromRGBO(236, 245, 255, 1.0);
+  static const Color gray4 = Color.fromRGBO(225, 228, 232, 1.0);
+  static const Color gray5 = Color(0xFF888888);
 
   static const LinearGradient circleGradient = LinearGradient(
     colors: [
@@ -47,7 +50,6 @@ class AppColors {
   static const Color createButtonBackground = Color(0xFFABABAB);
   static const Color createButtonForeground = Color(0xFFE5E5E5);
 
-
   // Quiz button colors.
   static const Color borderQuizOption = Color.fromARGB(255, 201, 201, 201);
   static const Color borderQuizSelectedOption = Colors.blue;
@@ -66,9 +68,8 @@ class AppColors {
   static const Color textQuizCorrectOption = Color(0xFF229749);
   static const Color textQuizIncorrectOption = Color(0xFFCF1717);
   static const Color textQuizNonSelectedOption = Colors.black87;
-  
+
   // Games Screen components
   static const Color gameScreenBackground = Color(0xFFF0F7FF);
   static const Color progressBar = Color(0xFFE9E9E9);
 }
-
