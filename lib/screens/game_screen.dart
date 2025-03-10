@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,6 +34,17 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
   late AnimationController _pageController;
   late Animation<double> _pageAnimation;
   bool isTransitioning = false;
+  
+  // Timer variables - not displayed but tracked
+  Timer? _timer;
+  int _seconds = 0;
+  
+  // Format seconds into MM:SS format
+  String get formattedTime {
+    int minutes = _seconds ~/ 60;
+    int remainingSeconds = _seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
 
   @override
   void initState() {
@@ -49,11 +61,23 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
       curve: Curves.easeInOut,
     ));
     _pageController.forward();
+    
+    // Start the timer when the game begins but don't display it
+    startTimer();
+  }
+
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _seconds++;
+      });
+    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -72,15 +96,23 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
       await player.play(
           AssetSource('sounds/game-level-complete-universfield-pixabay.mp3'));
 
+      // Stop the timer when all games are completed
+      _timer?.cancel();
+      
       await GameServices().addStoreToPlayedHistory(
           email: email, gamePath: widget.reference, score: this.score);
       GoRouter.of(context).go(Routes.resultPage, extra: {
-        'correct': this.score,
-        'wrong': widget.games.length - this.score,
-        'time': '10:00',
-      });
-      return;
-    }
+      'correct': this.score,
+      'wrong': widget.games.length - this.score,
+      'time': formattedTime,
+      'reference': widget.reference,  // เพิ่มบรรทัดนี้
+      'games': widget.games.map((game) => {
+        'game_type': game.gameType,
+        'content': (game.content as GameQuizContent).toMap(), 
+      }).toList(),  // เพิ่มบรรทัดนี้
+    });
+    return;
+  }
 
     setState(() {
       prevGameIndex = gameIndex.toDouble();
@@ -102,10 +134,8 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
         title: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: SizedBox(
-            width: 280, // Adjust width as needed
+            width: 280, // Original width
             height: 16,
-            // Adjust height as needed
-
             child: TweenAnimationBuilder<double>(
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInSine,
@@ -118,16 +148,7 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
                 width: 290,
                 height: 16,
               ),
-
-              // LinearProgressIndicator(
-              //   value: max(min(value, 1), 0),
-              //   backgroundColor: AppColors.progressBar,
-              //   valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-              //   minHeight: 16, // Controls height directly
-              // ),
             ),
-
-            // child: ,
           ),
         ),
       ),

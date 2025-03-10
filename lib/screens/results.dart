@@ -1,10 +1,12 @@
 import 'package:brainboost/component/cards/info_card.dart';
 import 'package:brainboost/component/buttons/dropshadow_button.dart';
+import 'package:brainboost/models/games.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:lottie/lottie.dart';
-
+int _currentPage = 0;
+  List<GamesType> games = [];
 const correctAnswersColor = Color.fromRGBO(32, 94, 216, 1);
 const wrongAnswersColor = Color.fromRGBO(223, 69, 69, 1);
 const timeColor = Color.fromRGBO(255, 193, 7, 1);
@@ -41,13 +43,17 @@ class ResultsPage extends StatelessWidget {
     required this.correct,
     required this.wrong,
     required this.time,
+    this.gameReference,
+    this.gameData,
   });
 
   final int correct;
   final int wrong;
   final String time;
+  final String? gameReference; // เพิ่ม parameter นี้
+  final List<dynamic>? gameData;
 
-  @override
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF0F7FF),
@@ -90,13 +96,19 @@ class ResultsPage extends StatelessWidget {
                       size: 42,
                     ),
                   ),
-                  const SizedBox(width: 10), // give it width
+                  const SizedBox(width: 10),
                   DropShadowButton(
                     width: 275,
                     height: 64,
                     backgroundColor: const Color(0xFF205ED8),
                     shadowColor: const Color(0xFF1746A2),
-                    onPressed: () => context.go(Routes.playGamePage),
+                    onPressed: () {
+                      // ส่ง gameData ไปด้วยหากมี
+                      context.go(Routes.playGamePage, extra: {
+                        'games': gameData ?? [],
+                        'reference': gameReference
+                      });
+                    },
                     child: const Text(
                       "Play Again",
                       style: TextStyle(
@@ -109,7 +121,6 @@ class ResultsPage extends StatelessWidget {
                 ],
               ),
 
-              // Padding from BOTTOM
               const SizedBox(height: 10),
             ],
           ),
@@ -163,19 +174,19 @@ class ResultsPage extends StatelessWidget {
         InfoCard(
           title: 'Correct',
           value: correct.toString(),
-          icon: Icons.check,
+          icon: Icons.check_circle, 
           cardColor: correctAnswersColor,
         ),
         InfoCard(
           title: 'Wrong',
           value: wrong.toString(),
-          icon: Icons.curtains_closed_rounded,
+          icon: Icons.cancel, 
           cardColor: wrongAnswersColor,
         ),
         InfoCard(
           title: 'Time',
           value: time,
-          icon: Icons.access_time,
+          icon: Icons.watch_later,
           cardColor: timeColor,
         )
       ],
