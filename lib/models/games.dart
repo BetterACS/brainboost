@@ -27,7 +27,8 @@ class GameData {
     required this.content,
   });
 
-  static GameContent createContent(String gameType, Map<String, dynamic> content) {
+  static GameContent createContent(
+      String gameType, Map<String, dynamic> content) {
     switch (gameType) {
       case 'quiz':
         return GameQuizContent(
@@ -50,10 +51,7 @@ class PlayerHistory {
   final DocumentReference player;
   final int score;
 
-  const PlayerHistory({
-    required this.player,
-    required this.score
-  });
+  const PlayerHistory({required this.player, required this.score});
 }
 
 class GamesType {
@@ -66,16 +64,15 @@ class GamesType {
   final String media;
   final List<Map<String, dynamic>> played_history;
 
-  GamesType({
-    required this.ref,
-    required this.author,
-    required this.name,
-    required this.description,
-    required this.icon,
-    required this.gameList,
-    required this.media,
-    required this.played_history
-  });
+  GamesType(
+      {required this.ref,
+      required this.author,
+      required this.name,
+      required this.description,
+      required this.icon,
+      required this.gameList,
+      required this.media,
+      required this.played_history});
 
   /// Factory constructor to create a GamesType instance from Firestore data
   factory GamesType.fromMap(Map<String, dynamic> data, dynamic ref) {
@@ -96,5 +93,41 @@ class GamesType {
               .toList() ??
           [],
     );
+  }
+}
+
+class GameBingoContent extends GameContent {
+  final String question;
+  final String answer;
+  final int point;
+
+  const GameBingoContent({
+    required this.question,
+    required this.answer,
+    required this.point,
+  }) : super();
+}
+
+class GameData2 {
+  final String gametype;
+  final GameContent content;
+
+  const GameData2({
+    required this.gametype,
+    required this.content,
+  });
+
+  static GameContent createContent(
+      String gameType, Map<String, dynamic> content) {
+    switch (gameType) {
+      case 'Bingo':
+        return GameBingoContent(
+          question: content['Question'] as String,
+          answer: content['answer'] as String,
+          point: int.parse(content['point']), 
+        );
+      default:
+        return GameContent();
+    }
   }
 }
