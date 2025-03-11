@@ -13,8 +13,9 @@ import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/cards/profile_header.dart';
 import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
-import 'package:brainboost/component/history_item.dart'; 
+import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
+import 'package:brainboost/screens/game_bingo.dart';
 
 class CloudPainter extends CustomPainter {
   @override
@@ -23,7 +24,7 @@ class CloudPainter extends CustomPainter {
       ..color = Colors.white
       ..style = PaintingStyle.fill;
 
-    // วงกลมก้อนเมฆ 
+    // วงกลมก้อนเมฆ
     canvas.drawCircle(Offset(size.width * 0.1, size.height * 1.2), 114, paint);
     canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.95), 45, paint);
     canvas.drawCircle(Offset(size.width * 0.57, size.height * 1.15), 77, paint);
@@ -91,7 +92,7 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 10),
               _buildPageIndicator(),
               const SizedBox(height: 20),
-		          _buildCreateSection(),
+              _buildCreateSection(),
               _buildCreateButtons(context),
               _buildHistorySection(),
             ],
@@ -100,8 +101,6 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
-  
 
   Future<DocumentSnapshot> fetchUsername() async {
     final String? email = UserServices().getCurrentUserEmail();
@@ -113,7 +112,6 @@ class _HomeState extends State<Home> {
     });
     return userDoc;
   }
-
 
 //   Widget _buildProfileSection() {
 //     final String? email = UserServices().getCurrentUserEmail();
@@ -352,7 +350,11 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.only(top: 0),
               child: ElevatedButton(
                 onPressed: () {
-                  print("Replay pressed");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const GameBingoPage()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonBackground,
@@ -397,138 +399,133 @@ class _HomeState extends State<Home> {
     );
   }
 
-Widget _buildCreateSection() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-    child: Align(
-      alignment: Alignment.centerLeft,  
-      child: const Text(
-        "Start",
-        style: TextStyle(
-          color: AppColors.gradient1,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+  Widget _buildCreateSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: const Text(
+          "Start",
+          style: TextStyle(
+            color: AppColors.gradient1,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-
-Widget _buildCreateButtons(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-    child: Container(
-      height: 200,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        gradient: AppColors.buttonGradient,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
-              child: SizedBox(
-                child: CustomPaint(
-                  size: const Size(double.infinity, 100),
-                  painter: CloudPainter(),
+  Widget _buildCreateButtons(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Container(
+        height: 200,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: AppColors.buttonGradient,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+                child: SizedBox(
+                  child: CustomPaint(
+                    size: const Size(double.infinity, 100),
+                    painter: CloudPainter(),
+                  ),
                 ),
               ),
             ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Let’s Gamify Your Learning!",
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Let’s Gamify Your Learning!",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Make studying fun! Just upload your file\nand start playing.",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 50),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CreateGameScreen()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.yellow[700],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                          ),
+                          child: const Text(
+                            "Create Game",
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              color: Color(0xFF002654),
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Text(
-                            "Make studying fun! Just upload your file\nand start playing.",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 50),
-
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CreateGameScreen()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow[700],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
                         ),
-                        child: const Text(
-                          "Create Game",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF002654),
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-
-                SizedBox(
-                  height: 155,
-                  child: Image.asset(
-                    'assets/images/rockety.webp',
-                    fit: BoxFit.contain,
+                  SizedBox(
+                    height: 155,
+                    child: Image.asset(
+                      'assets/images/rockety.webp',
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildHistorySection() {
     return Padding(
