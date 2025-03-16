@@ -1,4 +1,5 @@
 import 'package:brainboost/screens/mygames.dart';
+import 'package:brainboost/services/history.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -16,7 +17,17 @@ import 'package:http/http.dart' as http;
 import 'package:brainboost/services/games.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// Add at the top of the file
+enum CreationStage {
+  extracting,
+  personalizing,
+  crafting,
+  completed
+}
+
 ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
+ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
+ValueNotifier<CreationStage> currentStage = ValueNotifier<CreationStage>(CreationStage.extracting);
 
 // หน้าสร้างเกมใหม่
 class CreateGameScreen extends StatelessWidget {
@@ -491,28 +502,26 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
 
   void createGame(BuildContext context) async {
     dialogMessage.value = "";
+    creationProgress.value = 0.0;
+    currentStage.value = CreationStage.extracting;
+    
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => const CreatingDialog(),
     );
-
+  
     var httpClient = http.Client();
     dialogMessage.value = "Extract valuable information from the file";
-
+    creationProgress.value = 0.25;
+  
     var extractResponse = await httpClient
         .get(Uri.https('monsh.xyz', '/extract', {'pdf_path': uploadLink}));
-
-    print("Extract! file");
-    // Assuming you have already decoded the response bytes as a string:
-    var decodedResponse = utf8.decode(extractResponse.bodyBytes);
-    print(decodedResponse);
-    // Convert the JSON string into a Dart map (dictionary)
-    Map<String, dynamic> jsonDict = jsonDecode(decodedResponse);
-
-    // print("Extract! file");
+  
+    currentStage.value = CreationStage.personalizing;
     dialogMessage.value = "Get your personalize";
-
+    creationProgress.value = 0.32;
+  
     String? email = FirebaseAuth.instance.currentUser!.email;
     if (email == null) {
       showDialog(
@@ -521,9 +530,33 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       );
       return;
     }
-
+  
     String personalize = await UserServices().getPersonalize(email: email);
+  
+    // var extractResponse = await httpClient
+    //     .get(Uri.https('monsh.xyz', '/extract', {'pdf_path': uploadLink}));
 
+    // Assuming you have already decoded the response bytes as a string:
+    var decodedResponse = utf8.decode(extractResponse.bodyBytes);
+    print(decodedResponse);
+    // Convert the JSON string into a Dart map (dictionary)
+    Map<String, dynamic> jsonDict = jsonDecode(decodedResponse);
+
+    // print("Extract! file");
+    // dialogMessage.value = "Get your personalize";
+
+    // String? email = FirebaseAuth.instance.currentUser!.email;
+    // if (email == null) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) => const ErrorDialog(),
+    //   );
+    //   return;
+    // }
+
+    // String personalize = await UserServices().getPersonalize(email: email);
+    
+    currentStage.value = CreationStage.crafting;
     dialogMessage.value = "Crafting your game";
     Map<String, String> params = {
       "game_type": 'quiz',
@@ -540,6 +573,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       },
       body: jsonEncode(params),
     );
+    
+    creationProgress.value = 0.80;
     print("Create Game!");
 
     // Convert the JSON string into a Dart map (dictionary)
@@ -563,6 +598,12 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     await gamesServices.addGameToUser(
         email: FirebaseAuth.instance.currentUser!.email!, docPath: gameID);
 
+    GameHistoryService gameHistoryService = GameHistoryService();
+    await gameHistoryService.addGameHistory(
+        email: email,
+        gameId: gameID,
+        gameName: _gameNameTextController.text);
+    
     // await uploadFile();
     // จำลองโหลด
     // await Future.delayed(const Duration(seconds: 3));
@@ -571,8 +612,10 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     // bool isSuccess = false;
     bool isSuccess = true;
 
-    Navigator.pop(context);
+    currentStage.value = CreationStage.completed;
+    creationProgress.value = 1.0;
 
+    Navigator.pop(context);
     showDialog(
       context: context,
       builder: (context) => isSuccess ? SuccessDialog() : ErrorDialog(),
@@ -601,12 +644,31 @@ class _CreatingDialogState extends State<CreatingDialog> {
         setState(() {}); // Rebuild dialog when message changes
       }
     });
+    creationProgress.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
   void dispose() {
     dialogMessage.removeListener(() {}); // Avoid memory leaks
+    creationProgress.removeListener(() {});
     super.dispose();
+  }
+
+  double getProgressForStage(CreationStage stage) {
+    switch (stage) {
+      case CreationStage.extracting:
+        return 0.33;
+      case CreationStage.personalizing:
+        return 0.66;
+      case CreationStage.crafting:
+        return 0.99;
+      case CreationStage.completed:
+        return 1.0;
+    }
   }
 
   @override
@@ -653,17 +715,6 @@ class _CreatingDialogState extends State<CreatingDialog> {
                   dialogMessage.value,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-                const SizedBox(height: 10),
-                // const Text(
-                //   "Please wait while we",
-                //   textAlign: TextAlign.center,
-                //   style: TextStyle(fontSize: 14),
-                // ),
-                // const Text(
-                //   "generate game for you!",
-                //   textAlign: TextAlign.center,
-                //   style: TextStyle(fontSize: 14),
-                // ),
                 const SizedBox(height: 30),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
@@ -671,6 +722,7 @@ class _CreatingDialogState extends State<CreatingDialog> {
                     backgroundColor: Color(0xFFE9E9E9),
                     color: Colors.blue.shade800,
                     minHeight: 10,
+                    value: creationProgress.value,
                   ),
                 )
               ],
