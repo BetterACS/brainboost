@@ -102,15 +102,17 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
       await GameServices().addStoreToPlayedHistory(
           email: email, gamePath: widget.reference, score: this.score);
       GoRouter.of(context).go(Routes.resultPage, extra: {
-      'correct': this.score,
-      'wrong': widget.games.length - this.score,
-      'time': formattedTime,
-      'reference': widget.reference,  // เพิ่มบรรทัดนี้
-      'games': widget.games.map((game) => {
-        'game_type': game.gameType,
-        'content': (game.content as GameQuizContent).toMap(), 
-      }).toList(),  // เพิ่มบรรทัดนี้
-    });
+        'correct': this.score,
+        'wrong': widget.games.length - this.score,
+        'time': formattedTime,
+        'reference': widget.reference,
+        'games': widget.games
+            .map((game) => {
+                  'game_type': game.gameType,
+                  'content': (game.content as GameQuizContent).toMap(),
+                })
+            .toList(),
+      });
     return;
   }
 
@@ -125,34 +127,45 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.gameScreenBackground,
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        // กลับไปที่หน้า MyGames โดยตรง
+        context.go(Routes.gamePage);
+      },
+      child: Scaffold(
         backgroundColor: AppColors.gameScreenBackground,
-        elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        title: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: SizedBox(
-            width: 280, // Original width
-            height: 16,
-            child: TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 800),
-              curve: Curves.easeInSine,
-              tween: Tween<double>(
-                begin: (prevGameIndex + 1) / widget.games.length,
-                end: min((gameIndex + 1) / widget.games.length, 0.92),
-              ),
-              builder: (context, value, _) => GameScreenProgressBar(
-                progress: value,
-                width: 290,
-                height: 16,
+        appBar: AppBar(
+          backgroundColor: AppColors.gameScreenBackground,
+          elevation: 0,
+          leading: BackButton(
+            color: Colors.black,
+            onPressed: () => context.go(Routes.gamePage), // กำหนดพฤติกรรมปุ่มย้อนกลับในแอพบาร์
+          ),
+          title: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SizedBox(
+              width: 280, // Original width
+              height: 16,
+              child: TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeInSine,
+                tween: Tween<double>(
+                  begin: (prevGameIndex + 1) / widget.games.length,
+                  end: min((gameIndex + 1) / widget.games.length, 0.92),
+                ),
+                builder: (context, value, _) => GameScreenProgressBar(
+                  progress: value,
+                  width: 290,
+                  height: 16,
+                ),
               ),
             ),
           ),
         ),
+        body: _buildGameScreen(),
       ),
-      body: _buildGameScreen(),
     );
   }
 
