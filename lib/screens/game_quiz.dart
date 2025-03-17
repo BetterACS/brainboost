@@ -21,7 +21,7 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   int? selectedAnswerIndex;
   bool hasCheckedAnswer = false;
   int score = 0;
