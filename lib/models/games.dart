@@ -111,10 +111,12 @@ class GameBingoContent extends GameContent {
 class GameData2 {
   final String gametype;
   final GameContent content;
+  final String point;
 
   const GameData2({
     required this.gametype,
     required this.content,
+    required this.point,
   });
 
   static GameContent createContent(
@@ -124,7 +126,7 @@ class GameData2 {
         return GameBingoContent(
           question: content['Question'] as String,
           answer: content['answer'] as String,
-          point: int.parse(content['point']), 
+          point: int.parse(content['point']),
         );
       default:
         return GameContent();
