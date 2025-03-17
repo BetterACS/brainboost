@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:brainboost/screens/game_quiz.dart';
+import 'package:brainboost/screens/game_tinder.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
@@ -143,6 +144,12 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
               key: ValueKey(gameIndex),
               onNext: onNext,
               content: widget.games[gameIndex].content as GameQuizContent,
+              isTransitioning: isTransitioning,
+            ),
+          'tinder' => TinderGameScreen(
+              key: ValueKey(gameIndex),
+              onNext: onNext,
+              content: widget.games[gameIndex].content as GameTinderContent,
               isTransitioning: isTransitioning,
             ),
           _ => const Center(child: Text('Unknown game type')),

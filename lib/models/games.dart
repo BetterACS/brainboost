@@ -16,6 +16,18 @@ class GameQuizContent extends GameContent {
   }) : super();
 }
 
+class GameTinderContent extends GameContent {
+  final String question;
+  final String yesOption;
+  final String noOption;
+
+  const GameTinderContent({
+    required this.question,
+    required this.yesOption,
+    required this.noOption,
+  }) : super();
+}
+
 class GameData {
   // final String gameName;
   final String gameType;
@@ -36,6 +48,12 @@ class GameData {
           options: (content['choices'] as List<dynamic>)
               .map((e) => e as String)
               .toList(),
+        );
+      case 'tinder':
+        return GameTinderContent(
+          question: content['question'] as String,
+          yesOption: content['yes_option'] as String,
+          noOption: content['no_option'] as String,
         );
       // Add more cases here for future game types
       // case 'memory':
