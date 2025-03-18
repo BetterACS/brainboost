@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:brainboost/screens/game_quiz.dart';
-import 'package:brainboost/screens/game_tinder.dart';
+import 'package:brainboost/screens/game_yesno.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
@@ -66,6 +66,8 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
     setState(() {
       this.score += score;
     });
+
+    print('gameIndex: $gameIndex, games.length: ${widget.games.length}, ${(widget.games[gameIndex].content as GameTinderContent).correct_ans} ${(widget.games[gameIndex].content as GameTinderContent).question}');
 
     if (gameIndex >= widget.games.length - 1) {
       await GameServices().addStoreToPlayedHistory(
@@ -146,7 +148,7 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
               content: widget.games[gameIndex].content as GameQuizContent,
               isTransitioning: isTransitioning,
             ),
-          'tinder' => TinderGameScreen(
+          'yesno' => TinderGameScreen(
               key: ValueKey(gameIndex),
               onNext: onNext,
               content: widget.games[gameIndex].content as GameTinderContent,

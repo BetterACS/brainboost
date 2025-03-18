@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tcard/tcard.dart';
 import 'package:brainboost/component/bottom_slider.dart';
 import 'package:brainboost/models/games.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TinderGameScreen extends StatefulWidget {
   final GameTinderContent content;
@@ -26,17 +27,31 @@ class _TinderGameScreenState extends State<TinderGameScreen>
   bool _isCorrect = false;
 
   void _handleSwipe(SwipInfo info) {
+    print("handle ${widget.content.correct_ans}");
     setState(() {
       _showAnswer = true;
-      _isCorrect = (info.direction == SwipDirection.Right && widget.content.yesOption == 'yes') ||
-                   (info.direction == SwipDirection.Left && widget.content.noOption == 'no');
+      _isCorrect = (info.direction == SwipDirection.Right && widget.content.correct_ans) ||
+                   (info.direction == SwipDirection.Left && !widget.content.correct_ans);
     });
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 10), () {
       widget.onNext(_isCorrect ? 1 : 0);
       setState(() {
         _showAnswer = false;
       });
     });
+  }
+
+  void _submitAnswer(bool answer) {
+    setState(() {
+      _showAnswer = true;
+      _isCorrect = (answer == widget.content.correct_ans);
+    });
+    // Future.delayed(Duration(seconds: 2), () {
+    //   widget.onNext(_isCorrect ? 1 : 0);
+    //   setState(() {
+    //     _showAnswer = false;
+    //   });
+    // });
   }
 
   @override
@@ -48,7 +63,6 @@ class _TinderGameScreenState extends State<TinderGameScreen>
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: LinearProgressIndicator(value: 0.3),
               ),
               Container(
                 width: 340,
@@ -111,18 +125,24 @@ class _TinderGameScreenState extends State<TinderGameScreen>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text("No", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text("Yes", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ElevatedButton(
+                    onPressed: () => _submitAnswer(false),
+                    child: Text("No", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => _submitAnswer(true),
+                    child: Text("Yes", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
                 ],
               ),
               SizedBox(height: 20),
             ],
           ),
-          BottomSlider(
-            isVisible: false,
-            isTransitioning: widget.isTransitioning,
-            data: {},
-          ),
+          // BottomSlider(
+          //   isVisible: false,
+          //   isTransitioning: widget.isTransitioning,
+          //   data: {},
+          // ),
         ],
       ),
     );

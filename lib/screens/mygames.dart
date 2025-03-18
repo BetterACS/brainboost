@@ -70,7 +70,7 @@ class _MyGamesState extends State<MyGames> {
           path));
     }
 
-    print("kuay");
+    
     setState(() {
       games = _games;
       _isLoadedGames = true;

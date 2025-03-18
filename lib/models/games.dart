@@ -18,14 +18,15 @@ class GameQuizContent extends GameContent {
 
 class GameTinderContent extends GameContent {
   final String question;
-  final String yesOption;
-  final String noOption;
+  // final String yesOption;
+  // final String noOption;
+  final bool correct_ans;
 
   const GameTinderContent({
     required this.correct_ans,
     required this.question,
-    required this.yesOption,
-    required this.noOption,
+    // required this.yesOption,
+    // required this.noOption,
   }) : super();
 }
 
@@ -50,12 +51,13 @@ class GameData {
               .map((e) => e as String)
               .toList(),
         );
-      case 'tinder':
+      case 'yesno':
+      print('content ${content}');
         return GameTinderContent(
           correct_ans: content['correct_ans'] as bool,
           question: content['question'] as String,
-          yesOption: content['yes_option'] as String,
-          noOption: content['no_option'] as String,
+          // yesOption: content['yes_option'] as String,
+          // noOption: content['no_option'] as String,
         );
       // Add more cases here for future game types
       // case 'memory':
