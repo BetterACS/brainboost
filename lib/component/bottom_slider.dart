@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // Add this import
 
 class BottomSlider extends StatefulWidget {
   // final Widget child;
@@ -14,7 +16,7 @@ class BottomSlider extends StatefulWidget {
     required this.isVisible,
     required this.data,
     this.isTransitioning = false,
-    this.height = 0.21,
+    this.height = 0.18,
     this.expandedHeight = 0.56, // Add this new parameter
   });
 
@@ -33,6 +35,8 @@ class _BottomSliderState extends State<BottomSlider>
   late Animation<double> _expandAnimation;
   late AnimationController _textBoxController;
   late Animation<double> _textBoxAnimation;
+  bool _isLoading = false;
+  String? _explanation;
 
   @override
   void initState() {
@@ -75,6 +79,41 @@ class _BottomSliderState extends State<BottomSlider>
     );
   }
 
+  Future<void> _fetchExplanation() async {
+    if (widget.data['explanation'] != null) {
+      setState(() {
+        _explanation = widget.data['explanation'];
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final prompt =
+          "Why this '${widget.data['correctAnswer']}' is a correct answer of this question '${widget.data['question']}' please do a short explanation.";
+
+      final httpClient = http.Client();
+      final response = await httpClient
+          .get(Uri.https('monsh.xyz', '/explain_answer', {'context': prompt}));
+
+      // Decode the response and extract data
+      final decodedResponse = json.decode(utf8.decode(response.bodyBytes));
+
+      setState(() {
+        _explanation = decodedResponse['data'] ?? 'No explanation available';
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _explanation = 'Failed to load explanation';
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   void didUpdateWidget(BottomSlider oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -91,6 +130,7 @@ class _BottomSliderState extends State<BottomSlider>
       if (widget.isVisible != oldWidget.isVisible) {
         if (widget.isVisible) {
           _slideController.forward();
+          _fetchExplanation();
         }
       }
     }
@@ -120,8 +160,6 @@ class _BottomSliderState extends State<BottomSlider>
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final String explanation = widget.data['explanation'] ??
-        'No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n No explanation available \n ';
 
     return AnimatedBuilder(
       animation: _expandAnimation,
@@ -146,7 +184,8 @@ class _BottomSliderState extends State<BottomSlider>
                   children: [
                     // Header section
                     Container(
-                      padding: const EdgeInsets.only(left: 24, right: 24, top: 24),
+                      padding:
+                          const EdgeInsets.only(left: 24, right: 24, top: 24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -190,39 +229,54 @@ class _BottomSliderState extends State<BottomSlider>
                       ),
                     ),
                     if (_isExpanded)
-  Expanded(
-    child: FadeTransition(
-      opacity: _textBoxAnimation,
-      child: SizeTransition(
-        sizeFactor: _textBoxAnimation,
-        child: Center(  // Added Center widget
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.86,  // Adjusted width
-            // margin: const EdgeInsets.symmetric(vertical: 16),  // Changed margin
-            margin: const EdgeInsets.only(top: 14, bottom: 110),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(16),
-              ),
-              color: _isCorrect
-                  ? const Color(0xFFFFFFFF).withOpacity(0.8)
-                  : const Color(0xFFFFFFFF).withOpacity(0.8),
-            ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                explanation,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  ),
+                      Expanded(
+                        child: FadeTransition(
+                          opacity: _textBoxAnimation,
+                          child: SizeTransition(
+                            sizeFactor: _textBoxAnimation,
+                            child: Center(
+                              // Added Center widget
+                              child: Container(
+                                width: MediaQuery.of(context).size.width *
+                                    0.86, // Adjusted width
+                                // margin: const EdgeInsets.symmetric(vertical: 16),  // Changed margin
+                                margin:
+                                    const EdgeInsets.only(top: 14, bottom: 110),
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(16),
+                                  ),
+                                  color: _isCorrect
+                                      ? const Color(0xFF89B2FF)
+                                      : const Color(0xFFFF8688),
+                                ),
+                                child: _isLoading
+                                    ? Center(
+                                        child: CircularProgressIndicator(
+                                            color: _isCorrect
+                                                ? Color(0xFFBFD4FF)
+                                                : Color(0xFFFFBDBE)),
+                                      )
+                                    : SingleChildScrollView(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Text(
+                                          _explanation ??
+                                              'No explanation available',
+                                          style: TextStyle(
+                                            // Bolded the text
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18,
+                                            color: _isCorrect
+                                                ? const Color(0xFF103680)
+                                                : const Color(0xFFB72222),
+                                          ),
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),

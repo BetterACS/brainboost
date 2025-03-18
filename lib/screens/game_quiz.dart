@@ -20,8 +20,7 @@ class QuizScreen extends StatefulWidget {
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
-class _QuizScreenState extends State<QuizScreen>
-    with TickerProviderStateMixin {
+class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   int? selectedAnswerIndex;
   bool hasCheckedAnswer = false;
   int score = 0;
@@ -155,6 +154,7 @@ class _QuizScreenState extends State<QuizScreen>
             isTransitioning: widget.isTransitioning,
             data: {
               "gameType": "quiz",
+              "question": widget.content.question,
               "correctAnswer":
                   widget.content.options[widget.content.correctAnswerIndex],
               "selectedAnswer": selectedAnswerIndex != null,
@@ -174,7 +174,8 @@ class _QuizScreenState extends State<QuizScreen>
                 selectedAnswerIndex: selectedAnswerIndex,
                 onCheck: checkAnswer,
                 onNext: goToNextQuestion,
-                isCorrect: selectedAnswerIndex == widget.content.correctAnswerIndex,
+                isCorrect:
+                    selectedAnswerIndex == widget.content.correctAnswerIndex,
               ),
             ),
           ),
