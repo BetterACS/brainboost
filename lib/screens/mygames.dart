@@ -41,6 +41,13 @@ class _MyGamesState extends State<MyGames> {
   Future<void> _loadGamesMethod() async {
     if (_isLoadedGames) return;
 
+    if (!_isLoadedGames && games.length > 0) {
+      setState(() {
+        games = [];
+      });
+      return;
+    }
+
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       GoRouter.of(context).go('/login');
@@ -226,7 +233,19 @@ class _MyGamesState extends State<MyGames> {
                                         child: IconButton(
                                             iconSize: 16,
                                             color: Colors.white,
-                                            onPressed: () => print("Delete"),
+                                            onPressed: () => {
+                                                  GameServices().deleteGame(
+                                                      path: games[_currentPage]
+                                                          .ref,
+                                                      email: FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .email as String),
+
+                                                  setState(() => _isLoadedGames =
+                                                      false), // ลบเกมจาก Firebase
+                                                  // _isLoadedGames = false,
+                                                },
                                             icon: Icon(Icons.delete))))),
                           if (_slideUpPanelValue > slideValueThreshold)
                             Center(
