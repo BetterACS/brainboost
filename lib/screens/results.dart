@@ -103,7 +103,8 @@ class ResultsPage extends StatelessWidget {
                     backgroundColor: const Color(0xFF205ED8),
                     shadowColor: const Color(0xFF1746A2),
                     onPressed: () {
-                      // ส่ง gameData ไปด้วยหากมี
+                      // ยังคงใช้ context.go เพื่อล้างประวัติการนำทาง
+                      // ทำให้เมื่อกดปุ่มย้อนกลับจะไม่กลับมาที่หน้า Results
                       context.go(Routes.playGamePage, extra: {
                         'games': gameData ?? [],
                         'reference': gameReference
