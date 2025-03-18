@@ -22,6 +22,7 @@ class GameTinderContent extends GameContent {
   final String noOption;
 
   const GameTinderContent({
+    required this.correct_ans,
     required this.question,
     required this.yesOption,
     required this.noOption,
@@ -51,6 +52,7 @@ class GameData {
         );
       case 'tinder':
         return GameTinderContent(
+          correct_ans: content['correct_ans'] as bool,
           question: content['question'] as String,
           yesOption: content['yes_option'] as String,
           noOption: content['no_option'] as String,
