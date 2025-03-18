@@ -7,7 +7,7 @@ class GameHistoryService {
   /// Adds a new game record to the user's history.
   Future<void> addGameHistory({
     required String email,
-    required String gameId,
+    required DocumentReference gameId,
     required String gameName,
     // required int score,
   }) async {
@@ -15,11 +15,11 @@ class GameHistoryService {
       final userRef = history.doc(email);
 
       await userRef.update({
-        'game_history': FieldValue.arrayUnion([
+        'data': FieldValue.arrayUnion([
           {
             'game_id': gameId,
             'game_name': gameName,
-            // 'score': score,
+            'best_score': 0,
             'image_game': 'default',
             'played_at': Timestamp.now(),
           }
@@ -46,8 +46,8 @@ class GameHistoryService {
 
       final userData = userDoc.data() as Map<String, dynamic>;
 
-      if (userData.containsKey('game_history')) {
-        return List<Map<String, dynamic>>.from(userData['game_history']);
+      if (userData.containsKey('data')) {
+        return List<Map<String, dynamic>>.from(userData['data']);
       }
 
       return [];

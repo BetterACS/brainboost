@@ -53,7 +53,7 @@ class _BottomSliderState extends State<BottomSlider>
         _isCorrect = widget.data['isCorrect'];
       });
     }
-    
+
     // Don't animate during transitions
     if (!widget.isTransitioning) {
       if (widget.isVisible != oldWidget.isVisible) {
@@ -86,7 +86,8 @@ class _BottomSliderState extends State<BottomSlider>
         child: Container(
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-            color: _isCorrect ? const Color(0xFFBFD4FF) : const Color(0xFFFFBDBE),
+            color:
+                _isCorrect ? const Color(0xFFBFD4FF) : const Color(0xFFFFBDBE),
           ),
           child: SafeArea(
             top: true,

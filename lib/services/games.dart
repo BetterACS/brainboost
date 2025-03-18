@@ -24,6 +24,7 @@ class GameServices {
     required String name,
     required String email,
     required List<dynamic> gameData,
+    required String media,
   }) async {
     try {
       DocumentReference docID = await games
@@ -32,7 +33,7 @@ class GameServices {
             'author': email,
             'description': "This is a game",
             'icon': "photomain.png",
-            'media': "media.png",
+            'media': media,
             'game_list': gameData,
           })
           .then((value) => value)

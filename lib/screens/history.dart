@@ -132,15 +132,9 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
 
         var docData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
 
-        List<Map<String, dynamic>> allGames = docData.entries
-            .where((entry) => entry.value is List)
-            .expand((entry) =>
-                (entry.value as List).whereType<Map<String, dynamic>>())
-            .toList();
-
-        allGames = allGames
-            .where((game) => game["type"]?.toString() == type)
-            .toList();
+        List<Map<String, dynamic>> allGames = (docData['data'] as List<dynamic>?)
+            ?.whereType<Map<String, dynamic>>()
+            .toList() ?? [];
 
         if (allGames.isEmpty) {
           return const Center(child: Text("No history found"));
@@ -153,9 +147,8 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
             var game = allGames[index];
             return HistoryItem(
               title: game['game_name'] ?? 'Unknown',
-              date: (game['play_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
+              date: (game['played_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
               imagePath: game['image_game'] ?? '',
-              isDownload: game['isDownload'] ?? false,
               onPressed: () => print(game['game_name'] ?? 'Unknown'),
             );
           },

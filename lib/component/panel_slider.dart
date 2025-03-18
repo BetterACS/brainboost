@@ -126,36 +126,48 @@ class PanelSlider extends StatelessWidget {
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                          games[currentPage].played_history.length, (index) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 26,
-                                backgroundColor: Color(0xFF05235F),
-                                child: CircleAvatar(
-                                  radius: 24,
-                                  backgroundImage:
-                                      AssetImage('assets/images/profile.jpg'),
-                                ),
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                games[currentPage]
-                                    .played_history[index]['score']
-                                    .toString(),
+                      children: games[currentPage].played_history.isEmpty
+                          ? [
+                              const Text(
+                                "No play history yet",
                                 style: TextStyle(
                                   color: Color(0xFF05235F),
                                   fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            ],
-                          ),
-                        );
-                      }),
+                            ]
+                          : List.generate(
+                              games[currentPage].played_history.length,
+                              (index) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 4),
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 26,
+                                      backgroundColor: Color(0xFF05235F),
+                                      child: CircleAvatar(
+                                        radius: 24,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/profile.jpg'),
+                                      ),
+                                    ),
+                                    SizedBox(height: 2),
+                                    Text(
+                                      games[currentPage]
+                                          .played_history[index]['score']
+                                          .toString(),
+                                      style: TextStyle(
+                                        color: Color(0xFF05235F),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
                     ),
                   ),
                 ),
@@ -237,37 +249,55 @@ class PanelSlider extends StatelessWidget {
                   height: 120,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: List.generate(
-                          games[currentPage].played_history.length, (index) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 24,
-                                backgroundColor: Colors.white,
-                                child: CircleAvatar(
-                                  radius: 22,
-                                  backgroundImage:
-                                      AssetImage('assets/images/profile.jpg'),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: games[currentPage].played_history.isEmpty
+                            ? [
+                                const Text(
+                                  "No play history yet",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
+                              ]
+                            : List.generate(
+                                games[currentPage].played_history.length,
+                                (index) {
+                                  return Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    child: Column(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 24,
+                                          backgroundColor: Colors.white,
+                                          child: CircleAvatar(
+                                            radius: 22,
+                                            backgroundImage: AssetImage(
+                                                'assets/images/profile.jpg'),
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          games[currentPage]
+                                              .played_history[index]['score']
+                                              .toString(),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
-                              SizedBox(height: 5),
-                              Text(
-                                games[currentPage]
-                                    .played_history[index]['score']
-                                    .toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
+                      ),
                     ),
                   ),
                 ),

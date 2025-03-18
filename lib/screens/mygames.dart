@@ -24,12 +24,10 @@ class MyGames extends StatefulWidget {
 }
 
 class _MyGamesState extends State<MyGames> {
-  final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
 
   final UserServices userServices = UserServices();
 
-  bool _showButtons = false;
   bool _isLoadedGames = false;
 
   int _currentPage = 0;
@@ -38,21 +36,17 @@ class _MyGamesState extends State<MyGames> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 200 && !_showButtons) {
-        setState(() {
-          _showButtons = true;
-        });
-      } else if (_scrollController.offset <= 200 && _showButtons) {
-        setState(() {
-          _showButtons = false;
-        });
-      }
-    });
   }
 
   Future<void> _loadGamesMethod() async {
     if (_isLoadedGames) return;
+
+    if (!_isLoadedGames && games.length > 0) {
+      setState(() {
+        games = [];
+      });
+      return;
+    }
 
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -88,7 +82,6 @@ class _MyGamesState extends State<MyGames> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -114,7 +107,6 @@ class _MyGamesState extends State<MyGames> {
                       currentPage: _currentPage,
                       slidePanelFunction: toggleSlideUpPanel,
                     ),
-
                   Column(
                     children: <Widget>[
                       //
@@ -143,83 +135,136 @@ class _MyGamesState extends State<MyGames> {
                       ),
                       const SizedBox(height: 10),
 
-                      //
-                      // Game Icon
-                      SizedBox(
-                        height: 300,
-                        // width: 400,
-                        width: double.infinity,
-                        child: PageView.builder(
-                          controller: PageController(viewportFraction: 0.7),
-                          onPageChanged: (index) {
-                            bool isChangePanelValue = index == games.length;
+                      Stack(
+                        children: [
+                          //
+                          // Game Icon
+                          SizedBox(
+                            height: 300,
+                            // width: 400,
+                            width: double.infinity,
+                            child: PageView.builder(
+                              controller: PageController(viewportFraction: 0.7),
+                              onPageChanged: (index) {
+                                bool isChangePanelValue = index == games.length;
 
-                            if (isChangePanelValue) {
-                              toggleSlideUpPanel(0.0);
-                            }
-                            setState(() {
-                              _currentPage = index;
-                            });
-                            print("Current Page: $_currentPage");
-                          },
-                          itemCount: games.length + 1,
-                          itemBuilder: (context, index) {
-                            bool isSelected = index == _currentPage;
-                            double selectedSize = isSelected ? 340 : 300;
-                            double backgroundSize = isSelected ? 400 : 400;
+                                if (isChangePanelValue) {
+                                  toggleSlideUpPanel(0.0);
+                                }
+                                setState(() {
+                                  _currentPage = index;
+                                });
+                                print("Current Page: $_currentPage");
+                              },
+                              itemCount: games.length + 1,
+                              itemBuilder: (context, index) {
+                                bool isSelected = index == _currentPage;
+                                double selectedSize = isSelected ? 340 : 300;
+                                double backgroundSize = isSelected ? 400 : 400;
 
-                            bool isAddButton = index == games.length;
+                                bool isAddButton = index == games.length;
 
-                            return Transform.scale(
-                              scale: isSelected ? 1.0 : 0.85,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                transform: Matrix4.identity()
-                                  ..translate(0.0, isSelected ? -2.0 : 12.0,
-                                      isSelected ? 10.0 : 0.0),
-                                child: Stack(
-                                  children: [
-                                    if (index < games.length)
-                                      Positioned(
-                                        height: isSelected ? 265 : 240,
-                                        top: 26,
-                                        left: 0,
-                                        right: 0,
-                                        child: Center(
-                                          child: ClipOval(
-                                            child: AnimatedContainer(
-                                              duration: const Duration(
-                                                  milliseconds: 150),
-                                              width: backgroundSize,
-                                              color: _slideUpPanelValue <=
-                                                      slideValueThreshold
-                                                  ? Colors.grey.shade300
-                                                  : Color(0xFF102247),
+                                return Transform.scale(
+                                  scale: isSelected ? 1.0 : 0.85,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    transform: Matrix4.identity()
+                                      ..translate(0.0, isSelected ? -2.0 : 12.0,
+                                          isSelected ? 10.0 : 0.0),
+                                    child: Stack(
+                                      children: [
+                                        if (index < games.length)
+                                          Positioned(
+                                            height: isSelected ? 265 : 240,
+                                            top: 26,
+                                            left: 0,
+                                            right: 0,
+                                            child: Center(
+                                              child: ClipOval(
+                                                child: AnimatedContainer(
+                                                  duration: const Duration(
+                                                      milliseconds: 150),
+                                                  width: backgroundSize,
+                                                  color: _slideUpPanelValue <=
+                                                          slideValueThreshold
+                                                      ? Colors.grey.shade300
+                                                      : Color(0xFF102247),
+                                                ),
+                                              ),
                                             ),
                                           ),
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(150),
+                                          child: Image.asset(
+                                            isAddButton
+                                                ? "assets/images/Add.png"
+                                                : "assets/images/${games[index].icon}",
+                                            width: selectedSize,
+                                            height: selectedSize,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return const Icon(Icons.error,
+                                                  size: 80, color: Colors.red);
+                                            },
+                                          ),
                                         ),
-                                      ),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(150),
-                                      child: Image.asset(
-                                        isAddButton
-                                            ? "assets/images/Add.png"
-                                            : "assets/images/${games[index].icon}",
-                                        width: selectedSize,
-                                        height: selectedSize,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return const Icon(Icons.error,
-                                              size: 80, color: Colors.red);
-                                        },
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+                          // Options Icons
+                          if (_slideUpPanelValue > slideValueThreshold)
+                            Center(
+                                child: Container(
+                                    height: 32,
+                                    width: 32,
+                                    margin:
+                                        EdgeInsets.only(right: 172, top: 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Center(
+                                        child: IconButton(
+                                            iconSize: 16,
+                                            color: Colors.white,
+                                            onPressed: () => {
+                                                  GameServices().deleteGame(
+                                                      path: games[_currentPage]
+                                                          .ref,
+                                                      email: FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .email as String),
+
+                                                  setState(() => _isLoadedGames =
+                                                      false), // ลบเกมจาก Firebase
+                                                  // _isLoadedGames = false,
+                                                },
+                                            icon: Icon(Icons.delete))))),
+                          if (_slideUpPanelValue > slideValueThreshold)
+                            Center(
+                                child: Container(
+                                    height: 32,
+                                    width: 32,
+                                    margin:
+                                        EdgeInsets.only(right: 246, top: 48),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Center(
+                                        child: IconButton(
+                                            iconSize: 16,
+                                            color: Colors.white,
+                                            onPressed: () => print("Share"),
+                                            icon: Icon(Icons.share))))),
+                        ],
                       ),
                       // Description
                       const SizedBox(height: 5),
@@ -321,7 +366,6 @@ class _MyGamesState extends State<MyGames> {
                         ),
                     ],
                   ),
-                  
                 ],
               ),
             );
