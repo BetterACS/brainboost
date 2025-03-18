@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:brainboost/models/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +36,7 @@ final router = GoRouter(
     GoRoute(
         path: Routes.playGamePage,
         builder: (context, state) {
-          print("Play Game Page");
           final extra = state.extra as dynamic;
-          print(extra);
           final List<GameData> games = [];
 
           for (var item in extra['games']) {
@@ -48,6 +48,18 @@ final router = GoRouter(
               ),
             ));
           }
+          
+          // Shuffle and select 12 random games
+          if (games.length > 12) {
+            final random = Random();
+            if (games.length > 12) {
+              games.shuffle(random);
+              games.length = 12;
+            } else {
+              games.shuffle(random);
+            }
+          }
+
           return GameWrapper(games: games, reference: extra['reference'] as String);
         }),
 
