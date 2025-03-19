@@ -216,7 +216,9 @@ class _BingoScreenState extends State<BingoScreen> {
                     itemCount: 9,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () => _showQuestionDialog(index),
+                        onTap: isAnswerCorrect[index] == true
+                            ? null
+                            : () => _showQuestionDialog(index),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
