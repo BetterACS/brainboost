@@ -70,7 +70,7 @@ class _BingoScreenState extends State<BingoScreen> {
   void _checkAnswer(int index) {
     setState(() {
       if (isAnswerCorrect[index] == true) {
-        score += bingoList[index].point; // Add points for correct answers
+        score += bingoList[index].point;
       }
     });
   }
@@ -277,7 +277,7 @@ class _BingoScreenState extends State<BingoScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 14.0),
                 child: Text(
-                  "$score Point", // Display dynamic score
+                  "0 Point",
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -342,7 +342,10 @@ class _BingoScreenState extends State<BingoScreen> {
                         return GestureDetector(
                           onTap: isAnswerCorrect[index] == true
                               ? null
-                              : () => _showQuestionDialog(index),
+                              : () {
+                                  _showQuestionDialog(index);
+                                  _checkAnswer(index);
+                                },
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
