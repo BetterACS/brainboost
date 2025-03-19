@@ -42,6 +42,7 @@ class _BingoScreenState extends State<BingoScreen> {
   Map<int, bool> isAnswerCorrect = {};
   Map<int, bool> isAnswerChecked = {};
   bool isBingoWin = false;
+  int score = 0;
 
   // 🔹 เพิ่มรายการคำถามบิงโก 9 ข้อ
   final List<GameBingoContent> bingoList = [
@@ -63,6 +64,14 @@ class _BingoScreenState extends State<BingoScreen> {
       'correct': _score,
       'wrong': bingoList.length - _score,
       'time': '00:00',
+    });
+  }
+
+  void _checkAnswer(int index) {
+    setState(() {
+      if (isAnswerCorrect[index] == true) {
+        score += bingoList[index].point; // Add points for correct answers
+      }
     });
   }
 
@@ -252,7 +261,33 @@ class _BingoScreenState extends State<BingoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Bingo Game"),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 0.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: const [
+              Text(
+                "Bingo Game",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF003366),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 14.0),
+                child: Text(
+                  "$score Point", // Display dynamic score
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF003366),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         centerTitle: true,
       ),
       body: Center(
@@ -275,6 +310,7 @@ class _BingoScreenState extends State<BingoScreen> {
                 ),
                 child: Column(
                   children: [
+                    // Title "Bingo Game"
                     Container(
                       height: 60,
                       width: double.infinity,
