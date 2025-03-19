@@ -24,6 +24,24 @@ class GameQuizContent extends GameContent {
   }
 }
 
+class GameYesNoContent extends GameContent {
+  final String question;
+  final bool correct_ans;
+
+  const GameYesNoContent({
+    required this.correct_ans,
+    required this.question,
+  }) : super();
+
+  // เพิ่มเมธอด toMap()
+  Map<String, dynamic> toMap() {
+    return {
+      'question': question,
+      'correct_ans': correct_ans,
+    };
+  }
+}
+
 class GameData {
   final String gameType;
   final GameContent content;
@@ -51,6 +69,17 @@ class GameData {
               .map((e) => e as String)
               .toList(),
         );
+      case 'yesno':
+      // print('content ${content}');
+        return GameYesNoContent(
+          correct_ans: content['correct_ans'] as bool,
+          question: content['question'] as String,
+          // yesOption: content['yes_option'] as String,
+          // noOption: content['no_option'] as String,
+        );
+      // Add more cases here for future game types
+      // case 'memory':
+      //   return GameMemoryContent(...);
       default:
         return GameContent();
     }

@@ -72,6 +72,7 @@ class _MyGamesState extends State<MyGames> {
           path));
     }
 
+    
     setState(() {
       games = _games.reversed.toList();
       _isLoadedGames = true;
@@ -329,5 +330,55 @@ class _MyGamesState extends State<MyGames> {
             return Center(child: CircularProgressIndicator());
           }
         });
+  }
+}
+
+class IconTitleButton extends StatelessWidget {
+  final String title;
+  final String iconPath;
+  final VoidCallback onPressed;
+
+  const IconTitleButton({
+    required this.title,
+    required this.iconPath,
+    required this.onPressed,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.neutralBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            iconPath,
+            width: 24,
+            height: 24,
+            color: Colors.white,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
