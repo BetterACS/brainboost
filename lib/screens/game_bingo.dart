@@ -66,6 +66,9 @@ class _BingoScreenState extends State<BingoScreen> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               title: Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -92,7 +95,10 @@ class _BingoScreenState extends State<BingoScreen> {
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(
+                    height: 32,
+                    width: 32,
+                  ),
                 ],
               ),
               actions: [
@@ -121,32 +127,63 @@ class _BingoScreenState extends State<BingoScreen> {
                               : null,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       Row(
                         children: [
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () => Navigator.of(context).pop(),
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                               child: const Text("Back"),
                             ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                setDialogState(() {
-                                  isAnswerCorrect[index] =
-                                      _answerController.text.trim() ==
-                                          bingoList[index].answer;
-                                  isAnswerChecked[index] = true;
-                                });
+                            child: Container(
+                              height: 32,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF092866),
+                                    Color(0xFF205ED8),
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  setDialogState(() {
+                                    isAnswerCorrect[index] =
+                                        _answerController.text.trim() ==
+                                            bingoList[index].answer;
+                                    isAnswerChecked[index] = true;
+                                  });
 
-                                if (isAnswerCorrect[index] == true) {
-                                  Navigator.of(context).pop();
-                                  setState(() {});
-                                }
-                              },
-                              child: const Text("Submit"),
+                                  if (isAnswerCorrect[index] == true) {
+                                    Navigator.of(context).pop();
+                                    setState(() {});
+                                  }
+                                },
+                                child: const Text(
+                                  "Submit",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -170,98 +207,102 @@ class _BingoScreenState extends State<BingoScreen> {
         centerTitle: true,
       ),
       body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(0, 5))
-                ],
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    height: 60,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF003366),
-                      borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          // เพิ่ม Padding รอบๆ
+          padding: const EdgeInsets.all(16.0), // ระยะห่างจากขอบทั้งหมด
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 5))
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 60,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF003366),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: Text("Bingo Quiz",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                      ),
                     ),
-                    child: const Center(
-                      child: Text("Bingo Quiz",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white)),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: 1,
-                      mainAxisExtent: 60,
-                    ),
-                    itemCount: 9,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: isAnswerCorrect[index] == true
-                            ? null
-                            : () => _showQuestionDialog(index),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: isAnswerCorrect[index] == true
-                                    ? Colors.green[600]
-                                    : Colors.blue[900],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: isAnswerCorrect[index] == true
-                                  ? const SizedBox()
-                                  : Text(
-                                      "${bingoList[index].point}",
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                            ),
-                            if (isAnswerCorrect[index] == true)
-                              Align(
+                    const SizedBox(height: 8),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 1,
+                        mainAxisExtent: 60,
+                      ),
+                      itemCount: 9,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: isAnswerCorrect[index] == true
+                              ? null
+                              : () => _showQuestionDialog(index),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
                                 alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.check_circle,
-                                  color: Colors.white,
-                                  size: 32,
+                                decoration: BoxDecoration(
+                                  color: isAnswerCorrect[index] == true
+                                      ? Colors.green[600]
+                                      : Colors.blue[900],
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
+                                child: isAnswerCorrect[index] == true
+                                    ? const SizedBox()
+                                    : Text(
+                                        "${bingoList[index].point}",
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                               ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                              if (isAnswerCorrect[index] == true)
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: Colors.white,
+                                    size: 32,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-                "Players must answer questions correctly to complete a row (vertical, horizontal, or diagonal) to win!"),
-          ],
+              const SizedBox(height: 16),
+              const Text(
+                  "Players must answer questions correctly to complete a row (vertical, horizontal, or diagonal) to win!"),
+            ],
+          ),
         ),
       ),
     );
