@@ -140,14 +140,14 @@ class _BingoScreenState extends State<BingoScreen> {
                                           bingoList[index].answer;
                                   isAnswerChecked[index] = true;
                                 });
+
+                                if (isAnswerCorrect[index] == true) {
+                                  // ✅ ปิด Dialog ถ้าตอบถูก
+                                  Navigator.of(context).pop();
+                                  setState(() {});
+                                }
                               },
-                              child: Text(
-                                isAnswerChecked[index] == true
-                                    ? (isAnswerCorrect[index] == true
-                                        ? 'Correct'
-                                        : 'Try Again')
-                                    : 'Submit',
-                              ),
+                              child: const Text("Submit"),
                             ),
                           ),
                         ],
