@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/games.dart';
+import 'package:brainboost/screens/game_bingo.dart';
 
 class GameWrapper extends StatefulWidget {
   final List<GameData> games;

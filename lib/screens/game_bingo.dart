@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:brainboost/models/games.dart';
+import 'package:brainboost/screens/game_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:brainboost/router/routes.dart';
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +41,7 @@ class _BingoScreenState extends State<BingoScreen> {
   final TextEditingController _answerController = TextEditingController();
   Map<int, bool> isAnswerCorrect = {};
   Map<int, bool> isAnswerChecked = {};
+  bool isBingoWin = false;
 
   // 🔹 เพิ่มรายการคำถามบิงโก 9 ข้อ
   final List<GameBingoContent> bingoList = [
@@ -52,6 +55,51 @@ class _BingoScreenState extends State<BingoScreen> {
     GameBingoContent(question: "Question 8?", answer: "8", point: 10),
     GameBingoContent(question: "Question 9?", answer: "9", point: 15),
   ];
+
+  void _navigateToResults() {
+    int _score = isAnswerCorrect.values.where((correct) => correct).length;
+
+    context.go(Routes.resultPage, extra: {
+      'correct': _score,
+      'wrong': bingoList.length - _score,
+      'time': '00:00',
+    });
+  }
+
+  void _checkBingoWin() {
+    for (int row = 0; row < 3; row++) {
+      if (isAnswerCorrect[row * 3] == true &&
+          isAnswerCorrect[row * 3 + 1] == true &&
+          isAnswerCorrect[row * 3 + 2] == true) {
+        setState(() {
+          isBingoWin = true;
+        });
+        return;
+      }
+    }
+
+    for (int col = 0; col < 3; col++) {
+      if (isAnswerCorrect[col] == true &&
+          isAnswerCorrect[col + 3] == true &&
+          isAnswerCorrect[col + 6] == true) {
+        setState(() {
+          isBingoWin = true;
+        });
+        return;
+      }
+    }
+
+    if ((isAnswerCorrect[0] == true &&
+            isAnswerCorrect[4] == true &&
+            isAnswerCorrect[8] == true) ||
+        (isAnswerCorrect[2] == true &&
+            isAnswerCorrect[4] == true &&
+            isAnswerCorrect[6] == true)) {
+      setState(() {
+        isBingoWin = true;
+      });
+    }
+  }
 
   void _showQuestionDialog(int index) {
     _answerController.clear();
@@ -175,6 +223,7 @@ class _BingoScreenState extends State<BingoScreen> {
                                   if (isAnswerCorrect[index] == true) {
                                     Navigator.of(context).pop();
                                     setState(() {});
+                                    _checkBingoWin();
                                   }
                                 },
                                 child: const Text(
@@ -208,8 +257,7 @@ class _BingoScreenState extends State<BingoScreen> {
       ),
       body: Center(
         child: Padding(
-          // เพิ่ม Padding รอบๆ
-          padding: const EdgeInsets.all(16.0), // ระยะห่างจากขอบทั้งหมด
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               const SizedBox(height: 16),
@@ -300,7 +348,33 @@ class _BingoScreenState extends State<BingoScreen> {
               ),
               const SizedBox(height: 16),
               const Text(
-                  "Players must answer questions correctly to complete a row (vertical, horizontal, or diagonal) to win!"),
+                "Players must answer questions correctly to complete a row (vertical, horizontal, or diagonal) to win!",
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: isBingoWin
+                    ? () {
+                        _navigateToResults();
+                      }
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 205, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor:
+                      isBingoWin ? const Color(0xFFFFC107) : Colors.grey,
+                ),
+                child: const Text(
+                  "Next",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Color(0xFF003366),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
