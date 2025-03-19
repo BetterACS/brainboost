@@ -199,7 +199,7 @@ class _GameWrapperState extends State<GameWrapper>
           'yesno' => YesNoGameScreen(
               key: ValueKey(gameIndex),
               onNext: onNext,
-              content: widget.games[gameIndex].content as GameYesNoContent,
+              content: [widget.games[gameIndex].content as GameYesNoContent],
               isTransitioning: isTransitioning,
             ),
           _ => const Center(child: Text('Unknown game type')),

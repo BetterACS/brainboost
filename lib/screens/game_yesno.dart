@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tcard/tcard.dart';
-import 'package:brainboost/component/bottom_slider.dart';
 import 'package:brainboost/models/games.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
+import 'package:brainboost/router/routes.dart';
 
 class YesNoGameScreen extends StatefulWidget {
-  final GameYesNoContent content;
+  final List<GameYesNoContent> content;
   final Function onNext;
   final bool isTransitioning;
 
@@ -25,33 +25,61 @@ class _YesNoGameScreenState extends State<YesNoGameScreen>
   final TCardController _controller = TCardController();
   bool _showAnswer = false;
   bool _isCorrect = false;
+  int _score = 0;
+  int _currentQuestionIndex = 0;
 
   void _handleSwipe(SwipInfo info) {
-    print("handle ${widget.content.correct_ans}");
     setState(() {
       _showAnswer = true;
-      _isCorrect = (info.direction == SwipDirection.Right && widget.content.correct_ans) ||
-                   (info.direction == SwipDirection.Left && !widget.content.correct_ans);
+      _isCorrect = (info.direction == SwipDirection.Right && widget.content[_currentQuestionIndex].correct_ans) ||
+                   (info.direction == SwipDirection.Left && !widget.content[_currentQuestionIndex].correct_ans);
+      if (_isCorrect) {
+        _score++;
+      }
     });
-    Future.delayed(Duration(seconds: 10), () {
+    Future.delayed(Duration(seconds: 3), () {
       widget.onNext(_isCorrect ? 1 : 0);
       setState(() {
         _showAnswer = false;
       });
+      _nextQuestion();
     });
   }
 
   void _submitAnswer(bool answer) {
     setState(() {
       _showAnswer = true;
-      _isCorrect = (answer == widget.content.correct_ans);
+      _isCorrect = (answer == widget.content[_currentQuestionIndex].correct_ans);
+      if (_isCorrect) {
+        _score++;
+      }
     });
-    // Future.delayed(Duration(seconds: 2), () {
-    //   widget.onNext(_isCorrect ? 1 : 0);
-    //   setState(() {
-    //     _showAnswer = false;
-    //   });
-    // });
+    Future.delayed(Duration(seconds: 2), () {
+      widget.onNext(_isCorrect ? 1 : 0);
+      setState(() {
+        _showAnswer = false;
+      });
+      _nextQuestion();
+    });
+  }
+
+  void _nextQuestion() {
+    if (_currentQuestionIndex < widget.content.length - 1) {
+      setState(() {
+        _currentQuestionIndex++;
+        _controller.forward();
+      });
+    } else {
+      _navigateToResults();
+    }
+  }
+
+  void _navigateToResults() {
+    context.go(Routes.resultPage, extra: {
+      'correct': _score,
+      'wrong': widget.content.length - _score,
+      'time': '00:00', // Update this with the actual time if needed
+    });
   }
 
   @override
@@ -93,7 +121,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen>
                           child: Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: Text(
-                              widget.content.question,
+                              widget.content[_currentQuestionIndex].question,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 22,
@@ -135,14 +163,10 @@ class _YesNoGameScreenState extends State<YesNoGameScreen>
                   ),
                 ],
               ),
+              
               SizedBox(height: 20),
             ],
           ),
-          // BottomSlider(
-          //   isVisible: false,
-          //   isTransitioning: widget.isTransitioning,
-          //   data: {},
-          // ),
         ],
       ),
     );
