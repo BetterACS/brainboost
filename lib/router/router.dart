@@ -36,7 +36,7 @@ final router = GoRouter(
         builder: (context, state) {
           print("Play Game Page");
           final extra = state.extra as dynamic;
-          print(extra);
+          // print(extra['games'][0]['content']);
           final List<GameData> games = [];
 
           for (var item in extra['games']) {
@@ -48,7 +48,9 @@ final router = GoRouter(
               ),
             ));
           }
-          return GameWrapper(games: games, reference: extra['reference'] as String);
+          print("Hey");
+          return GameWrapper(
+              games: games, reference: extra['reference'] as String);
         }),
 
     GoRoute(

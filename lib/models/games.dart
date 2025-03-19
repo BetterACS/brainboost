@@ -38,6 +38,21 @@ class GameData {
               .map((e) => e as String)
               .toList(),
         );
+      case 'bingo':
+
+        //     question;
+        // final String answer;
+        // final int point;
+        print("Bingo ${content}");
+
+        return BingoContent(
+            bingo_list: (content['bingo_list'] as List<dynamic>)
+                .map((e) => GameBingoContent(
+                    answer: e['answer'],
+                    point: e['point'],
+                    question: e['question']))
+                .toList());
+
       // Add more cases here for future game types
       // case 'memory':
       //   return GameMemoryContent(...);
@@ -96,7 +111,13 @@ class GamesType {
   }
 }
 
-class GameBingoContent extends GameContent {
+class BingoContent extends GameContent {
+  final List<GameBingoContent> bingo_list;
+
+  const BingoContent({required this.bingo_list}) : super();
+}
+
+class GameBingoContent {
   final String question;
   final String answer;
   final int point;
@@ -108,28 +129,58 @@ class GameBingoContent extends GameContent {
   }) : super();
 }
 
-class GameData2 {
-  final String gametype;
-  final GameContent content;
-  final String point;
+final List<GameBingoContent> bingoQuestions = [
+  GameBingoContent(
+      question: "What is the capital of France?", answer: "Paris", point: 10),
+  GameBingoContent(
+      question: "How many continents are there?", answer: "7", point: 10),
+  GameBingoContent(question: "What is 5 + 3?", answer: "8", point: 5),
+  GameBingoContent(
+      question: "Who wrote 'Romeo and Juliet'?",
+      answer: "Shakespeare",
+      point: 15),
+  GameBingoContent(
+      question: "What is the boiling point of water?",
+      answer: "100°C",
+      point: 10),
+  GameBingoContent(
+      question: "Which planet is known as the Red Planet?",
+      answer: "Mars",
+      point: 10),
+  GameBingoContent(
+      question: "What is the square root of 64?", answer: "8", point: 10),
+  GameBingoContent(
+      question: "What is the largest ocean on Earth?",
+      answer: "Pacific",
+      point: 15),
+  GameBingoContent(
+      question: "Who painted the Mona Lisa?",
+      answer: "Leonardo da Vinci",
+      point: 20),
+];
 
-  const GameData2({
-    required this.gametype,
-    required this.content,
-    required this.point,
-  });
+// class GameData2 {
+//   final String gametype;
+//   final GameContent content;
+//   final String point;
 
-  static GameContent createContent(
-      String gameType, Map<String, dynamic> content) {
-    switch (gameType) {
-      case 'Bingo':
-        return GameBingoContent(
-          question: content['Question'] as String,
-          answer: content['answer'] as String,
-          point: int.parse(content['point']),
-        );
-      default:
-        return GameContent();
-    }
-  }
-}
+//   const GameData2({
+//     required this.gametype,
+//     required this.content,
+//     required this.point,
+//   });
+
+//   static GameContent createContent(
+//       String gameType, Map<String, dynamic> content) {
+//     switch (gameType) {
+//       case 'Bingo':
+//         return GameBingoContent(
+//           question: content['Question'] as String,
+//           answer: content['answer'] as String,
+//           point: int.parse(content['point']),
+//         );
+//       default:
+//         return GameContent();
+//     }
+//   }
+// }

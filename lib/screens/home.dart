@@ -350,11 +350,11 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.only(top: 0),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const GameBingoPage()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => const BingoScreen()),
+                  // );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonBackground,

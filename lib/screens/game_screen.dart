@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:brainboost/screens/game_bingo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,8 @@ class GameWrapper extends StatefulWidget {
   State<GameWrapper> createState() => _GameWrapperState();
 }
 
-class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStateMixin {
+class _GameWrapperState extends State<GameWrapper>
+    with SingleTickerProviderStateMixin {
   int gameIndex = 0;
   int score = 0;
   double prevGameIndex = 0;
@@ -59,7 +61,7 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
     print('onNext: ${this.score}');
     setState(() => isTransitioning = true);
     await _pageController.reverse();
-    
+
     String? email = FirebaseAuth.instance.currentUser?.email;
     if (email == null) return;
     setState(() {
@@ -81,7 +83,7 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
       prevGameIndex = gameIndex.toDouble();
       gameIndex++;
     });
-    
+
     await _pageController.forward();
     setState(() => isTransitioning = false);
   }
@@ -145,6 +147,10 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
               content: widget.games[gameIndex].content as GameQuizContent,
               isTransitioning: isTransitioning,
             ),
+          'bingo' => BingoScreen(
+              content: widget.games[gameIndex].content as BingoContent,
+              onNext: onNext,
+              isTransitioning: isTransitioning),
           _ => const Center(child: Text('Unknown game type')),
         },
       ),

@@ -2,42 +2,61 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:brainboost/models/games.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(const MyApp());
-}
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp();
+//   runApp(const MyApp());
+// }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: BingoScreen(),
+//     );
+//   }
+// }
+
+class BingoScreen extends StatefulWidget {
+  final BingoContent content;
+  final Function onNext;
+  final bool isTransitioning;
+
+  const BingoScreen({
+    super.key,
+    required this.content,
+    required this.onNext,
+    required this.isTransitioning,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: GameBingoPage(),
-    );
-  }
+  State<BingoScreen> createState() => _BingoScreenState();
 }
 
-class GameBingoPage extends StatefulWidget {
-  const GameBingoPage({Key? key}) : super(key: key);
-
-  @override
-  _GameBingoPageState createState() => _GameBingoPageState();
-}
-
-class _GameBingoPageState extends State<GameBingoPage> {
-  List<int> numbers = [10, 25, 30, 15, 15, 25, 20, 10, 15];
-
+class _BingoScreenState extends State<BingoScreen> {
   final TextEditingController _answerController = TextEditingController();
-
   Map<int, bool> isAnswerCorrect = {};
   Map<int, bool> isAnswerChecked = {};
 
-  void _showQuestionDialog(int number) {
+  // 🔹 เพิ่มรายการคำถามบิงโก 9 ข้อ
+  final List<GameBingoContent> bingoList = [
+    GameBingoContent(question: "Question 1?", answer: "1", point: 10),
+    GameBingoContent(question: "Question 2?", answer: "2", point: 25),
+    GameBingoContent(question: "Question 3?", answer: "3", point: 30),
+    GameBingoContent(question: "Question 4?", answer: "4", point: 15),
+    GameBingoContent(question: "Question 5?", answer: "5", point: 15),
+    GameBingoContent(question: "Question 6?", answer: "6", point: 25),
+    GameBingoContent(question: "Question 7?", answer: "7", point: 20),
+    GameBingoContent(question: "Question 8?", answer: "8", point: 10),
+    GameBingoContent(question: "Question 9?", answer: "9", point: 15),
+  ];
+
+  void _showQuestionDialog(int index) {
     _answerController.clear();
     setState(() {
-      isAnswerChecked[number] = false;
+      isAnswerChecked[index] = false;
     });
 
     showDialog(
@@ -53,26 +72,25 @@ class _GameBingoPageState extends State<GameBingoPage> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF092866),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Colors.blue[900]!,
-                  ),
+                  border: Border.all(color: Colors.blue[900]!),
                 ),
                 child: Text(
-                  "$number Points",
+                  "${bingoList[index].point} Points",
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    "ภายหลังสงครามโลกครั้งที่ 2 ผู้นำฝ่ายโลกคอมมิวนิสต์ขยายอิทธิพลและการแทรกแซงการปกครองในดินแดนส่วนต่างๆ ของโลกหลายแห่งข้อนี้ข้อใด",
+                  Text(
+                    bingoList[index].question,
                     textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -92,100 +110,47 @@ class _GameBingoPageState extends State<GameBingoPage> {
                                 const BorderSide(color: Color(0xFF092866)),
                           ),
                           filled: true,
-                          fillColor: isAnswerChecked[number] == true
-                              ? (isAnswerCorrect[number] == true
+                          fillColor: isAnswerChecked[index] == true
+                              ? (isAnswerCorrect[index] == true
                                   ? Colors.green[100]
                                   : Colors.red[100])
                               : Colors.white,
-                          errorText: isAnswerChecked[number] == true &&
-                                  isAnswerCorrect[number] == false
+                          errorText: isAnswerChecked[index] == true &&
+                                  isAnswerCorrect[index] == false
                               ? 'Incorrect Answer'
                               : null,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color: Colors.grey[400]!, width: 2),
-                                ),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    shadowColor: Colors.transparent,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: Text(
-                                    "Back",
-                                    style: TextStyle(
-                                      color: Colors.grey[400],
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text("Back"),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setDialogState(() {
+                                  isAnswerCorrect[index] =
+                                      _answerController.text.trim() ==
+                                          bingoList[index].answer;
+                                  isAnswerChecked[index] = true;
+                                });
+                              },
+                              child: Text(
+                                isAnswerChecked[index] == true
+                                    ? (isAnswerCorrect[index] == true
+                                        ? 'Correct'
+                                        : 'Try Again')
+                                    : 'Submit',
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFF205ED8),
-                                      Color(0xFF092866)
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    setDialogState(() {
-                                      isAnswerCorrect[number] =
-                                          _answerController.text.trim() ==
-                                              'correct_answer';
-                                      isAnswerChecked[number] = true;
-                                    });
-                                  },
-                                  child: Text(
-                                    isAnswerChecked[number] == true
-                                        ? (isAnswerCorrect[number] == true
-                                            ? 'Correct'
-                                            : 'Try Again')
-                                        : 'Submit',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -202,52 +167,13 @@ class _GameBingoPageState extends State<GameBingoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "สงครามโลกครั้งที่ล้าน",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF092866),
-          ),
-        ),
+        title: const Text("Bingo Game"),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        toolbarHeight: 100,
       ),
-      body: Container(
-        padding: const EdgeInsets.only(
-            top: 4.0, left: 16.0, right: 16.0, bottom: 16.0),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.blueAccent],
-          ),
-        ),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 16),
-            const Text(
-              "0",
-              style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF092866)),
-            ),
-            const Text(
-              "Points",
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF092866)),
-            ),
-            const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -255,10 +181,9 @@ class _GameBingoPageState extends State<GameBingoPage> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: const [
                   BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(0, 5),
-                  ),
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: Offset(0, 5))
                 ],
               ),
               child: Column(
@@ -271,13 +196,11 @@ class _GameBingoPageState extends State<GameBingoPage> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
-                      child: Text(
-                        "Bingo Quiz",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
+                      child: Text("Bingo Quiz",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -294,23 +217,19 @@ class _GameBingoPageState extends State<GameBingoPage> {
                     itemCount: 9,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () => _showQuestionDialog(numbers[index]),
-                        child: SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.blue[900],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              "${numbers[index]}",
-                              style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
+                        onTap: () => _showQuestionDialog(index),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.blue[900],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            "${bingoList[index].point}",
+                            style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
                         ),
                       );
@@ -321,10 +240,7 @@ class _GameBingoPageState extends State<GameBingoPage> {
             ),
             const SizedBox(height: 16),
             const Text(
-              "Players must answer questions correctly to complete one row \n(vertical, horizontal, or diagonal) to win!",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Color(0xFF003366)),
-            ),
+                "Players must answer questions correctly to complete a row (vertical, horizontal, or diagonal) to win!"),
           ],
         ),
       ),
