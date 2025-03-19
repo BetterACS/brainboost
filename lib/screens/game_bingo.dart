@@ -142,7 +142,6 @@ class _BingoScreenState extends State<BingoScreen> {
                                 });
 
                                 if (isAnswerCorrect[index] == true) {
-                                  // ✅ ปิด Dialog ถ้าตอบถูก
                                   Navigator.of(context).pop();
                                   setState(() {});
                                 }
@@ -218,19 +217,38 @@ class _BingoScreenState extends State<BingoScreen> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () => _showQuestionDialog(index),
-                        child: Container(
+                        child: Stack(
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.blue[900],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "${bingoList[index].point}",
-                            style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: isAnswerCorrect[index] == true
+                                    ? Colors.green[600]
+                                    : Colors.blue[900],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: isAnswerCorrect[index] == true
+                                  ? const SizedBox()
+                                  : Text(
+                                      "${bingoList[index].point}",
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            ),
+                            if (isAnswerCorrect[index] == true)
+                              Align(
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
+                              ),
+                          ],
                         ),
                       );
                     },
