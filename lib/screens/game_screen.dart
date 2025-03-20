@@ -91,7 +91,7 @@ class _GameWrapperState extends State<GameWrapper>
     String? email = FirebaseAuth.instance.currentUser?.email;
     if (email == null) return;
     setState(() {
-      this.score += score;
+      this.score += score; // Update score for every correct answer
     });
 
     print(
@@ -153,7 +153,7 @@ class _GameWrapperState extends State<GameWrapper>
           leading: BackButton(
             color: Colors.black,
             onPressed: () => context
-                .go(Routes.gamePage), // กำหนดพฤติกรรมปุ่มย้อนกลับในแอพบาร์
+                .go(Routes.gamePage), 
           ),
           title: ClipRRect(
             borderRadius: BorderRadius.circular(20),
