@@ -1,3 +1,4 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:tcard/tcard.dart';
 import 'package:brainboost/models/games.dart';
@@ -5,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 
 class YesNoGameScreen extends StatefulWidget {
-  final List<GameYesNoContent> content; 
+  final List<GameYesNoContent> content;
   final Function onNext;
   final bool isTransitioning;
 
@@ -27,11 +28,13 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
   int _score = 0;
   int _currentQuestionIndex = 0;
 
-  void _handleSwipe(SwipInfo info) { 
+  void _handleSwipe(SwipInfo info) {
     setState(() {
       _showAnswer = true;
-      _isCorrect = (info.direction == SwipDirection.Right && widget.content[_currentQuestionIndex].correct_ans) ||
-                   (info.direction == SwipDirection.Left && !widget.content[_currentQuestionIndex].correct_ans);
+      _isCorrect = (info.direction == SwipDirection.Right &&
+              widget.content[_currentQuestionIndex].correct_ans) ||
+          (info.direction == SwipDirection.Left &&
+              !widget.content[_currentQuestionIndex].correct_ans);
       if (_isCorrect) {
         _score++;
       }
@@ -50,7 +53,8 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
   void _submitAnswer(bool answer) {
     setState(() {
       _showAnswer = true;
-      _isCorrect = (answer == widget.content[_currentQuestionIndex].correct_ans);
+      _isCorrect =
+          (answer == widget.content[_currentQuestionIndex].correct_ans);
       if (_isCorrect) {
         _score++;
       }
@@ -93,118 +97,117 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: SizedBox(
-              width: 280,
-              height: 16,
-            ),
-          ),
-        ),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                ),
-                Container(
-                  width: 340,
-                  height: 48,
-                  child: Text(
-                    "Yes or No",
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      color: Color.fromARGB(255, 13, 15, 53),
-                    ),
+        body: Container(
+          color: AppColors.mainColor,
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
                   ),
-                ),
-                Container(
-                  width: 340,
-                  child: Text(
-                    "Slide to left for No, right for Yes.",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: TCard(
-                      controller: _controller,
-                      size: Size(
-                        MediaQuery.of(context).size.width * 0.9,
-                        MediaQuery.of(context).size.height * 0.6,
+                  Container(
+                    width: 340,
+                    height: 48,
+                    child: Text(
+                      "Yes or No",
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF1A1F71),
                       ),
-                      cards: widget.content.map<Widget>((content) {
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            side: BorderSide(color: Colors.grey, width: 1),
-                          ),
-                          color: Colors.white,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Text(
-                                content.question,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                    ),
+                  ),
+                  Container(
+                    width: 340,
+                    child: Text(
+                      "Slide to left for No, right for Yes.",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF1A1F71),
+                      ),
+                    ),
+                    
+                  ),
+                  SizedBox(height: 5),
+                  Expanded(
+                    child: Center(
+                      child: TCard(
+                        controller: _controller,
+                        size: Size(
+                          MediaQuery.of(context).size.width * 0.8,
+                          MediaQuery.of(context).size.height * 0.5,
+                        ),
+                        cards: widget.content.map<Widget>((content) {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              side: BorderSide(color: Colors.grey, width:2),
+                            ),
+                            color: Colors.white,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Text(
+                                  content.question,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A1F71),
+                                  ),
                                 ),
                               ),
                             ),
+                          );
+                        }).toList(),
+                        onForward: (index, info) {
+                          _handleSwipe(info);
+                        },
+                      ),
+                    ),
+                  ),
+                  if (_showAnswer)
+                    Text(
+                      _isCorrect ? "Correct!" : "Incorrect!",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: _isCorrect ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton(
+                        onPressed: () => _submitAnswer(false),
+                        child: Text(
+                          "No",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1A1F71), // สีน้ำเงิน
                           ),
-                        );
-                      }).toList(),
-                      onForward: (index, info) {
-                        _handleSwipe(info);
-                      },
-                    ),
-                  ),
-                ),
-                if (_showAnswer)
-                  Text(
-                    _isCorrect ? "Correct!" : "Incorrect!",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: _isCorrect ? Colors.green : Colors.red,
-                    ),
-                  ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => _submitAnswer(false),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.blue, backgroundColor: Colors.white,
-                        side: BorderSide(color: Colors.blue),
+                        ),
                       ),
-                      child: Text("No", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => _submitAnswer(true),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.blue, backgroundColor: Colors.white,
-                        side: BorderSide(color: Colors.blue),
+                      TextButton(
+                        onPressed: () => _submitAnswer(true),
+                        child: Text(
+                          "Yes",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1A1F71), // สีน้ำเงิน
+                          ),
+                        ),
                       ),
-                      child: Text("Yes", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-              ],
-            ),
-          ],
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
