@@ -5,7 +5,7 @@ class HistoryItem extends StatelessWidget {
   final String title;
   final String date;
   final String imagePath;
-  final bool isDownload;
+  // final bool isDownload;
   final VoidCallback? onPressed;
 
   const HistoryItem({
@@ -13,7 +13,7 @@ class HistoryItem extends StatelessWidget {
     required this.title,
     required this.date,
     required this.imagePath,
-    required this.isDownload,
+    // required this.isDownload,
     this.onPressed,
   });
 
@@ -96,7 +96,7 @@ class HistoryItem extends StatelessWidget {
             child: IconButton(
               onPressed: onPressed,
               icon: Icon(
-                isDownload ? Icons.download : Icons.play_arrow,
+                Icons.play_arrow,
                 color: Colors.white,
                 size: 29,
               ),
