@@ -125,6 +125,7 @@ class _BottomSliderState extends State<BottomSlider>
       });
     }
 
+
     // Don't animate during transitions
     if (!widget.isTransitioning) {
       if (widget.isVisible != oldWidget.isVisible) {

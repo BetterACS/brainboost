@@ -18,16 +18,12 @@ import 'package:brainboost/services/games.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 // Add at the top of the file
-enum CreationStage {
-  extracting,
-  personalizing,
-  crafting,
-  completed
-}
+enum CreationStage { extracting, personalizing, crafting, completed }
 
 ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
 ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
-ValueNotifier<CreationStage> currentStage = ValueNotifier<CreationStage>(CreationStage.extracting);
+ValueNotifier<CreationStage> currentStage =
+    ValueNotifier<CreationStage>(CreationStage.extracting);
 
 // หน้าสร้างเกมใหม่
 class CreateGameScreen extends StatelessWidget {
@@ -504,24 +500,24 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     dialogMessage.value = "";
     creationProgress.value = 0.0;
     currentStage.value = CreationStage.extracting;
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => const CreatingDialog(),
     );
-  
+
     var httpClient = http.Client();
     dialogMessage.value = "Extract valuable information from the file";
     creationProgress.value = 0.25;
-  
+
     var extractResponse = await httpClient
         .get(Uri.https('monsh.xyz', '/extract', {'pdf_path': uploadLink}));
-  
+
     currentStage.value = CreationStage.personalizing;
     dialogMessage.value = "Get your personalize";
     creationProgress.value = 0.32;
-  
+
     String? email = FirebaseAuth.instance.currentUser!.email;
     if (email == null) {
       showDialog(
@@ -530,11 +526,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       );
       return;
     }
-  
+
     String personalize = await UserServices().getPersonalize(email: email);
-  
-    // var extractResponse = await httpClient
-    //     .get(Uri.https('monsh.xyz', '/extract', {'pdf_path': uploadLink}));
 
     // Assuming you have already decoded the response bytes as a string:
     var decodedResponse = utf8.decode(extractResponse.bodyBytes);
@@ -542,20 +535,6 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     // Convert the JSON string into a Dart map (dictionary)
     Map<String, dynamic> jsonDict = jsonDecode(decodedResponse);
 
-    // print("Extract! file");
-    // dialogMessage.value = "Get your personalize";
-
-    // String? email = FirebaseAuth.instance.currentUser!.email;
-    // if (email == null) {
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) => const ErrorDialog(),
-    //   );
-    //   return;
-    // }
-
-    // String personalize = await UserServices().getPersonalize(email: email);
-    
     currentStage.value = CreationStage.crafting;
     dialogMessage.value = "Crafting your game";
     Map<String, String> params = {
@@ -573,12 +552,11 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
       },
       body: jsonEncode(params),
     );
-    
+
     creationProgress.value = 0.80;
     print("Create Game!");
 
     // Convert the JSON string into a Dart map (dictionary)
-
     var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
 
     GameServices gamesServices = await GameServices();
@@ -586,7 +564,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
     final DocumentReference<Object?>? gameID = await gamesServices.createGame(
         name: _gameNameTextController.text,
         email: FirebaseAuth.instance.currentUser!.email!,
-        gameData: gameDict['data'] as List<dynamic>);
+        gameData: gameDict['data'] as List<dynamic>,
+        media: uploadLink!);
 
     if (gameID == null) {
       showDialog(
@@ -600,10 +579,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
 
     GameHistoryService gameHistoryService = GameHistoryService();
     await gameHistoryService.addGameHistory(
-        email: email,
-        gameId: gameID,
-        gameName: _gameNameTextController.text);
-    
+        email: email, gameId: gameID, gameName: _gameNameTextController.text);
+
     // await uploadFile();
     // จำลองโหลด
     // await Future.delayed(const Duration(seconds: 3));
