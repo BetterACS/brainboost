@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:brainboost/screens/game_quiz.dart';
+import 'package:brainboost/screens/game_yesno.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
@@ -26,19 +27,20 @@ class GameWrapper extends StatefulWidget {
   State<GameWrapper> createState() => _GameWrapperState();
 }
 
-class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStateMixin {
-    final player = AudioPlayer();
+class _GameWrapperState extends State<GameWrapper>
+    with SingleTickerProviderStateMixin {
+  final player = AudioPlayer();
   int gameIndex = 0;
   int score = 0;
   double prevGameIndex = 0;
   late AnimationController _pageController;
   late Animation<double> _pageAnimation;
   bool isTransitioning = false;
-  
+
   // Timer variables - not displayed but tracked
   Timer? _timer;
   int _seconds = 0;
-  
+
   // Format seconds into MM:SS format
   String get formattedTime {
     int minutes = _seconds ~/ 60;
@@ -61,7 +63,7 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
       curve: Curves.easeInOut,
     ));
     _pageController.forward();
-    
+
     // Start the timer when the game begins but don't display it
     startTimer();
   }
@@ -85,12 +87,15 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
     print('onNext: ${this.score}');
     setState(() => isTransitioning = true);
     await _pageController.reverse();
-    
+
     String? email = FirebaseAuth.instance.currentUser?.email;
     if (email == null) return;
     setState(() {
-      this.score += score;
+      this.score += score; // Update score for every correct answer
     });
+
+    print(
+        'gameIndex: $gameIndex, games.length: ${widget.games.length}, ${(widget.games[gameIndex].content as GameYesNoContent).correct_ans} ${(widget.games[gameIndex].content as GameYesNoContent).question}');
 
     if (gameIndex >= widget.games.length - 1) {
       await player.play(
@@ -98,9 +103,10 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
 
       // Stop the timer when all games are completed
       _timer?.cancel();
-      
+
       await GameServices().addStoreToPlayedHistory(
           email: email, gamePath: widget.reference, score: this.score);
+
       GoRouter.of(context).go(Routes.resultPage, extra: {
         'correct': this.score,
         'wrong': widget.games.length - this.score,
@@ -108,19 +114,24 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
         'reference': widget.reference,
         'games': widget.games
             .map((game) => {
+                  // Switch case for different game types
                   'game_type': game.gameType,
-                  'content': (game.content as GameQuizContent).toMap(),
+                  'content': game.content is GameQuizContent
+                      ? (game.content as GameQuizContent).toMap()
+                      : game.content is GameYesNoContent
+                          ? (game.content as GameYesNoContent).toMap()
+                          : {},
                 })
             .toList(),
       });
-    return;
-  }
+      return;
+    }
 
     setState(() {
       prevGameIndex = gameIndex.toDouble();
       gameIndex++;
     });
-    
+
     await _pageController.forward();
     setState(() => isTransitioning = false);
   }
@@ -141,7 +152,8 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
           elevation: 0,
           leading: BackButton(
             color: Colors.black,
-            onPressed: () => context.go(Routes.gamePage), // กำหนดพฤติกรรมปุ่มย้อนกลับในแอพบาร์
+            onPressed: () => context
+                .go(Routes.gamePage), 
           ),
           title: ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -182,6 +194,12 @@ class _GameWrapperState extends State<GameWrapper> with SingleTickerProviderStat
               key: ValueKey(gameIndex),
               onNext: onNext,
               content: widget.games[gameIndex].content as GameQuizContent,
+              isTransitioning: isTransitioning,
+            ),
+          'yesno' => YesNoGameScreen(
+              key: ValueKey(gameIndex),
+              onNext: onNext,
+              content: [widget.games[gameIndex].content as GameYesNoContent],
               isTransitioning: isTransitioning,
             ),
           _ => const Center(child: Text('Unknown game type')),
