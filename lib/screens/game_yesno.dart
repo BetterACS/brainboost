@@ -3,6 +3,7 @@ import 'package:tcard/tcard.dart';
 import 'package:brainboost/component/bottom_slider.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:brainboost/component/bottom_slider.dart';
 
 class YesNoGameScreen extends StatefulWidget {
   final GameYesNoContent content;
@@ -29,23 +30,31 @@ class _YesNoGameScreenState extends State<YesNoGameScreen>
   void _handleSwipe(SwipInfo info) {
     print("handle ${widget.content.correct_ans}");
     setState(() {
-      _showAnswer = true;
       _isCorrect = (info.direction == SwipDirection.Right && widget.content.correct_ans) ||
                    (info.direction == SwipDirection.Left && !widget.content.correct_ans);
     });
-    Future.delayed(Duration(seconds: 10), () {
-      widget.onNext(_isCorrect ? 1 : 0);
-      setState(() {
-        _showAnswer = false;
-      });
-    });
   }
 
-  void _submitAnswer(bool answer) {
+  void _submitAnswer() {
+    setState(() {
+      _showAnswer = true;
+      _isCorrect = (_isCorrect == widget.content.correct_ans);
+    });
+    
+    // Future.delayed(Duration(seconds: 2), () {
+    //   widget.onNext(_isCorrect ? 1 : 0);
+    //   setState(() {
+    //     _showAnswer = false;
+    //   });
+    // });
+  }
+
+  void _submitAnswerWithButton(bool answer) {
     setState(() {
       _showAnswer = true;
       _isCorrect = (answer == widget.content.correct_ans);
     });
+    
     // Future.delayed(Duration(seconds: 2), () {
     //   widget.onNext(_isCorrect ? 1 : 0);
     //   setState(() {
@@ -105,7 +114,8 @@ class _YesNoGameScreenState extends State<YesNoGameScreen>
                       ),
                     ],
                     onEnd: () {
-                      widget.onNext(1); 
+                      _submitAnswer();
+                      // widget.onNext(1); 
                     },
                     onForward: (index, info) {
                       _handleSwipe(info);
@@ -113,24 +123,24 @@ class _YesNoGameScreenState extends State<YesNoGameScreen>
                   ),
                 ),
               ),
-              if (_showAnswer)
-                Text(
-                  _isCorrect ? "Correct!" : "Incorrect!",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: _isCorrect ? Colors.green : Colors.red,
-                  ),
-                ),
+              // if (_showAnswer)
+              //   Text(
+              //     _isCorrect ? "Correct!" : "Incorrect!",
+              //     style: TextStyle(
+              //       fontSize: 24,
+              //       fontWeight: FontWeight.bold,
+              //       color: _isCorrect ? Colors.green : Colors.red,
+              //     ),
+              //   ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
-                    onPressed: () => _submitAnswer(false),
+                    onPressed: () => _submitAnswerWithButton(false),
                     child: Text("No", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                   ElevatedButton(
-                    onPressed: () => _submitAnswer(true),
+                    onPressed: () => _submitAnswerWithButton(true),
                     child: Text("Yes", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                 ],
@@ -138,11 +148,27 @@ class _YesNoGameScreenState extends State<YesNoGameScreen>
               SizedBox(height: 20),
             ],
           ),
+
+
           // BottomSlider(
           //   isVisible: false,
           //   isTransitioning: widget.isTransitioning,
           //   data: {},
           // ),
+          BottomSlider(
+            isVisible: _showAnswer,
+            isTransitioning: widget.isTransitioning,
+
+            data: {
+              "gameType": "yesno",
+              "question": widget.content.question,
+              "selectedAnswer": true, //selectedAnswerIndex != null,
+              "correctAnswer": "Yes", //widget.content.correct_ans ? "Yes" : "No",
+              "isCorrect": _isCorrect,
+            },
+          ),
+
+
         ],
       ),
     );
