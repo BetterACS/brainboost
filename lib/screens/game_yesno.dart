@@ -27,9 +27,13 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
   bool _showAnswer = false;
   bool _isCorrect = false;
   int _score = 0;
+  bool _disableSwipe = false;
+  bool _isLocked = false;
   int _currentQuestionIndex = 0;
 
   void _handleSwipe(SwipInfo info) {
+    if (_disableSwipe) return;
+
     setState(() {
       _showAnswer = true;
       _isCorrect = (info.direction == SwipDirection.Right &&
@@ -39,19 +43,14 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
       if (_isCorrect) {
         _score++;
       }
-    });
-
-    Future.delayed(Duration(seconds: 3), () {
-      print('onNext called with: ${_isCorrect ? 1 : 0}');
-      widget.onNext(_isCorrect ? 1 : 0);
-      setState(() {
-        _showAnswer = false;
-      });
-      _nextQuestion();
+      _disableSwipe = true;
     });
   }
 
   void _submitAnswerWithButton(bool answer) {
+    if (_disableSwipe) return;
+     _isLocked = true;
+
     setState(() {
       _showAnswer = true;
       _isCorrect =
@@ -59,38 +58,29 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
       if (_isCorrect) {
         _score++;
       }
-    });
-
-    Future.delayed(Duration(seconds: 2), () {
-      print('onNext called with: ${_isCorrect ? 1 : 0}');
-      widget.onNext(_isCorrect ? 1 : 0);
-      setState(() {
-        _showAnswer = false;
-      });
-      _nextQuestion();
+      _disableSwipe = true;
     });
   }
 
   void _nextQuestion() {
-    print('Current Question Index: $_currentQuestionIndex');
-    if (_currentQuestionIndex < widget.content.length + 1) {
+    if (_currentQuestionIndex < widget.content.length) {
       setState(() {
         _currentQuestionIndex++;
-        _controller.forward();
+        _showAnswer = false;
+        _disableSwipe = false;
+         _isLocked = false;
+        widget.onNext(_isCorrect ? 1 : 0);
       });
-      print('Next Question Index: $_currentQuestionIndex');
     } else {
-      print('Navigating to Results');
       _navigateToResults();
     }
   }
 
   void _navigateToResults() {
-    print('Score: $_score');
     context.go(Routes.resultPage, extra: {
       'correct': _score,
       'wrong': widget.content.length - _score,
-      'time': '00:00', // Update this with the actual time if needed
+      'time': '00:00',
     });
   }
 
@@ -104,15 +94,13 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
             children: [
               Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                  ),
+                  const Padding(padding: EdgeInsets.all(8.0)),
                   Container(
                     width: 340,
                     height: 48,
-                    child: Text(
+                    child: const Text(
                       "Yes or No",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
                         color: Color(0xFF1A1F71),
@@ -121,16 +109,15 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                   ),
                   Container(
                     width: 340,
-                    child: Text(
+                    child: const Text(
                       "Slide to left for No, right for Yes.",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         color: Color(0xFF1A1F71),
                       ),
                     ),
-                    
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Expanded(
                     child: Center(
                       child: TCard(
@@ -139,11 +126,17 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                           MediaQuery.of(context).size.width * 0.8,
                           MediaQuery.of(context).size.height * 0.5,
                         ),
+                        lockYAxis: true,
+                        slideSpeed: _isLocked ? 0 : 20,
+                        onForward: _isLocked
+                            ? null
+                            : (index, info) => _handleSwipe(info),
                         cards: widget.content.map<Widget>((content) {
                           return Card(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
-                              side: BorderSide(color: Colors.grey, width:2),
+                              side: const BorderSide(
+                                  color: Colors.grey, width: 2),
                             ),
                             color: Colors.white,
                             child: Center(
@@ -152,7 +145,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                                 child: Text(
                                   content.question,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1A1F71),
@@ -162,9 +155,6 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                             ),
                           );
                         }).toList(),
-                        onForward: (index, info) {
-                          _handleSwipe(info);
-                        },
                       ),
                     ),
                   ),
@@ -182,46 +172,78 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                     children: [
                       TextButton(
                         onPressed: () => _submitAnswerWithButton(false),
-                        child: Text(
+                        child: const Text(
                           "No",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1F71), // สีน้ำเงิน
+                            color: Color(0xFF1A1F71),
                           ),
                         ),
                       ),
                       TextButton(
                         onPressed: () => _submitAnswerWithButton(true),
-                        child: Text(
+                        child: const Text(
                           "Yes",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1F71), // สีน้ำเงิน
+                            color: Color(0xFF1A1F71),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
-                        // ),
               BottomSlider(
                 isVisible: _showAnswer,
                 isTransitioning: widget.isTransitioning,
-
-                data: {
-                  "gameType": "yesno",
-                  "question": widget.content.map((e) => e.question).toList()[0],
-                  "selectedAnswer": true, //selectedAnswerIndex != null,
-                  "correctAnswer": "Yes", //widget.content.correct_ans ? "Yes" : "No",
-                  "isCorrect": _isCorrect,
-                },
+                data: _currentQuestionIndex < widget.content.length
+                    ? {
+                        "gameType": "yesno",
+                        "question":
+                            widget.content[_currentQuestionIndex].question,
+                        "selectedAnswer": _isCorrect ? "Yes" : "No",
+                        "correctAnswer":
+                            widget.content[_currentQuestionIndex].correct_ans
+                                ? "Yes"
+                                : "No",
+                        "isCorrect": _isCorrect,
+                      }
+                    : {},
               ),
-
-
+              if (_showAnswer)
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: _nextQuestion,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              _isCorrect ? Colors.blue : Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Next",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
