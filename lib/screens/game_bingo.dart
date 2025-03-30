@@ -3,23 +3,7 @@ import 'package:brainboost/models/games.dart';
 import 'package:brainboost/screens/game_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
-
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await Firebase.initializeApp();
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: BingoScreen(),
-//     );
-//   }
-// }
+import 'package:brainboost/component/bottom_slider.dart';
 
 class BingoScreen extends StatefulWidget {
   final BingoContent content;
@@ -43,8 +27,9 @@ class _BingoScreenState extends State<BingoScreen> {
   Map<int, bool> isAnswerChecked = {};
   bool isBingoWin = false;
   int score = 0;
+  bool _showBottomSlider = false;
+  int _currentQuestionIndex = -1;
 
-  // 🔹 เพิ่มรายการคำถามบิงโก 9 ข้อ
   final List<GameBingoContent> bingoList = [
     GameBingoContent(question: "Question 1?", answer: "1", point: 10),
     GameBingoContent(question: "Question 2?", answer: "2", point: 25),
@@ -75,15 +60,19 @@ class _BingoScreenState extends State<BingoScreen> {
     });
   }
 
+  bool _areAllQuestionsAnswered() {
+    return isAnswerChecked.length == bingoList.length;
+  }
+
   void _checkBingoWin() {
+    bool hasBingo = false;
+
     for (int row = 0; row < 3; row++) {
       if (isAnswerCorrect[row * 3] == true &&
           isAnswerCorrect[row * 3 + 1] == true &&
           isAnswerCorrect[row * 3 + 2] == true) {
-        setState(() {
-          isBingoWin = true;
-        });
-        return;
+        hasBingo = true;
+        break;
       }
     }
 
@@ -91,10 +80,8 @@ class _BingoScreenState extends State<BingoScreen> {
       if (isAnswerCorrect[col] == true &&
           isAnswerCorrect[col + 3] == true &&
           isAnswerCorrect[col + 6] == true) {
-        setState(() {
-          isBingoWin = true;
-        });
-        return;
+        hasBingo = true;
+        break;
       }
     }
 
@@ -104,20 +91,29 @@ class _BingoScreenState extends State<BingoScreen> {
         (isAnswerCorrect[2] == true &&
             isAnswerCorrect[4] == true &&
             isAnswerCorrect[6] == true)) {
-      setState(() {
-        isBingoWin = true;
-      });
+      hasBingo = true;
     }
+
+    setState(() {
+      isBingoWin = hasBingo;
+      if (hasBingo || score >= 75 || _areAllQuestionsAnswered()) {
+        _showBottomSlider = true;
+        _currentQuestionIndex = -2;
+      }
+    });
   }
 
   void _showQuestionDialog(int index) {
     _answerController.clear();
     setState(() {
       isAnswerChecked[index] = false;
+      _currentQuestionIndex = index;
+      _showBottomSlider = false;
     });
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
@@ -127,8 +123,7 @@ class _BingoScreenState extends State<BingoScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               title: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
                   color: const Color(0xFF092866),
                   borderRadius: BorderRadius.circular(8),
@@ -149,102 +144,57 @@ class _BingoScreenState extends State<BingoScreen> {
                   Text(
                     bingoList[index].question,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(
-                    height: 32,
-                    width: 32,
+                  const SizedBox(height: 32),
+                  TextField(
+                    controller: _answerController,
+                    decoration: const InputDecoration(
+                      hintText: "Answer",
+                      hintStyle: TextStyle(color: Color(0xFFC2C2C2)),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF092866)),
+                      ),
+                      filled: true,
+                    ),
                   ),
                 ],
               ),
               actions: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
+                  child: Row(
                     children: [
-                      TextField(
-                        controller: _answerController,
-                        decoration: InputDecoration(
-                          hintText: "Answer",
-                          hintStyle: const TextStyle(color: Color(0xFFC2C2C2)),
-                          border: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(color: Color(0xFF092866)),
-                          ),
-                          filled: true,
-                          fillColor: isAnswerChecked[index] == true
-                              ? (isAnswerCorrect[index] == true
-                                  ? Colors.green[100]
-                                  : Colors.red[100])
-                              : Colors.white,
-                          errorText: isAnswerChecked[index] == true &&
-                                  isAnswerCorrect[index] == false
-                              ? 'Incorrect Answer'
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text("Back"),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Container(
-                              height: 32,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF092866),
-                                    Color(0xFF205ED8),
-                                  ],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  setDialogState(() {
-                                    isAnswerCorrect[index] =
-                                        _answerController.text.trim() ==
-                                            bingoList[index].answer;
-                                    isAnswerChecked[index] = true;
-                                  });
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setDialogState(() {
+                              isAnswerCorrect[index] = _answerController.text.trim() == 
+                                  bingoList[index].answer;
+                              isAnswerChecked[index] = true;
+                            });
 
-                                  if (isAnswerCorrect[index] == true) {
-                                    Navigator.of(context).pop();
-                                    setState(() {});
-                                    _checkBingoWin();
-                                  }
-                                },
-                                child: const Text(
-                                  "Submit",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                            Navigator.of(context).pop();
+                            setState(() {
+                              _showBottomSlider = true;
+                            });
+                            
+                            if (isAnswerCorrect[index] == true) {
+                              _checkAnswer(index);
+                              _checkBingoWin();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            backgroundColor: const Color(0xFF092866),
                           ),
-                        ],
+                          child: const Text(
+                            "Submit",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -258,165 +208,191 @@ class _BingoScreenState extends State<BingoScreen> {
   }
 
   @override
+  void didUpdateWidget(BingoScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isTransitioning) {
+      setState(() {
+        _showBottomSlider = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(top: 0.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              Text(
-                "Bingo Game",
+    return SafeArea(
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Column(
+                        children: [
+                          Container(
+                            width: 340,
+                            height: 48,
+                            child: Text(
+                              "เล่นบิงโก",
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w900,
+                                color: Color.fromARGB(255, 13, 15, 53),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 340,
+                            child: Text(
+                              "คุณมี $score คะแนน",
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF1A1F71),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              childAspectRatio: 1,
+                              mainAxisExtent: 60,
+                            ),
+                            itemCount: 9,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: isAnswerCorrect[index] == true
+                                    ? null
+                                    : () {
+                                        _showQuestionDialog(index);
+                                      },
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final size = MediaQuery.of(context).size;
+                                    final itemSize = size.width * 0.25;
+                                    final fontSize = itemSize * 0.25;
+                                    final iconSize = itemSize * 0.4;
+
+                                    return Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.center,
+                                          width: 120,
+                                          height: 480,
+                                          decoration: BoxDecoration(
+                                            color: isAnswerCorrect[index] == true
+                                                ? Colors.green[600]
+                                                : isAnswerChecked[index] == true
+                                                    ? Colors.red[600]
+                                                    : Colors.blue[900],
+                                            borderRadius: BorderRadius.circular(
+                                                itemSize * 0.1),
+                                          ),
+                                          child: isAnswerChecked[index] != true
+                                              ? Text(
+                                                  "${bingoList[index].point}",
+                                                  style: TextStyle(
+                                                    fontSize: fontSize,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                              : const SizedBox(),
+                                        ),
+                                        if (isAnswerChecked[index] == true)
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Icon(
+                                              isAnswerCorrect[index] == true
+                                                  ? Icons.check_circle
+                                                  : Icons.clear,
+                                              color: Colors.white,
+                                              size: iconSize,
+                                            ),
+                                          ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 24),
+                          Container(
+                            width: 340,
+                            child: Center(
+                              child: Text(
+                                "เพื่อผ่านเกมนี้ คุณต้องบิงโกหรือสะสมคะแนนให้ครบ 75 คะแนนขึ้นไป",
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xFF1A1F71),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (_currentQuestionIndex != -1) 
+            BottomSlider(
+              isVisible: isBingoWin || _areAllQuestionsAnswered(),
+              isTransitioning: widget.isTransitioning,
+              data: {
+                "gameType": "bingo",
+                "question": "Game Completed!",
+                "correctAnswer": "",
+                "selectedAnswer": "",
+                "isCorrect": isBingoWin || score >= 75,
+                "points": score,
+                "message": isBingoWin 
+                    ? "Congratulations! You got BINGO!" 
+                    : score >= 75 
+                        ? "Congratulations! You scored over 75 points!"
+                        : "Sorry, you didn't achieve BINGO or reach 75 points!",
+              },
+            ),
+          Positioned(
+            left: 24,
+            right: 24,
+            bottom: 24,
+            child: ElevatedButton(
+              onPressed: isBingoWin ? _navigateToResults : null,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                backgroundColor:
+                    isBingoWin ? const Color(0xFFFFC107) : Colors.grey,
+              ),
+              child: const Text(
+                "Next",
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                   color: Color(0xFF003366),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 14.0),
-                child: Text(
-                  "0 Point",
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF003366),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 5))
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    // Title "Bingo Game"
-                    Container(
-                      height: 60,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF003366),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Center(
-                        child: Text("Bingo Quiz",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white)),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                        childAspectRatio: 1,
-                        mainAxisExtent: 60,
-                      ),
-                      itemCount: 9,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: isAnswerCorrect[index] == true
-                              ? null
-                              : () {
-                                  _showQuestionDialog(index);
-                                  _checkAnswer(index);
-                                },
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: isAnswerCorrect[index] == true
-                                      ? Colors.green[600]
-                                      : Colors.blue[900],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: isAnswerCorrect[index] == true
-                                    ? const SizedBox()
-                                    : Text(
-                                        "${bingoList[index].point}",
-                                        style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                              ),
-                              if (isAnswerCorrect[index] == true)
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Icon(
-                                    Icons.check_circle,
-                                    color: Colors.white,
-                                    size: 32,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Players must answer questions correctly to complete a row (vertical, horizontal, or diagonal) to win!",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: isBingoWin
-                    ? () {
-                        _navigateToResults();
-                      }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 205, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  backgroundColor:
-                      isBingoWin ? const Color(0xFFFFC107) : Colors.grey,
-                ),
-                child: const Text(
-                  "Next",
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Color(0xFF003366),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+
+        ],
       ),
     );
   }

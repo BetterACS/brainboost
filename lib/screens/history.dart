@@ -4,87 +4,112 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/history_item.dart';
 
-class History extends StatelessWidget {
-  // final String email;
-  // const History({super.key, required this.email});
+class History extends StatefulWidget {
+  @override
+  _HistoryState createState() => _HistoryState();
+}
+
+class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    
+    // Add listener to prevent changing to the Coming Soon tab
+    _tabController.addListener(() {
+      if (_tabController.index == 1) {
+        _tabController.animateTo(0);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'History',
-            style: TextStyle(
-              color: AppColors.buttonText,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          backgroundColor: Colors.white,
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(48.0),
-            child: TabBar(
-              labelColor: AppColors.buttonText,
-              unselectedLabelColor: AppColors.unselectedTab,
-              indicatorColor: AppColors.buttonText,
-              indicatorWeight: 3.0,
-              tabs: [
-                Tab(text: 'All'),
-                Tab(text: 'Game'),
-                Tab(text: 'Summarize'),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'History',
+          style: TextStyle(
+            color: AppColors.buttonText,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        body: TabBarView(
-          children: [
-            _buildHistoryTab(FirebaseAuth.instance.currentUser?.email, "all"),
-            _buildHistoryTab(FirebaseAuth.instance.currentUser?.email, "game"),
-            _buildHistoryTab(FirebaseAuth.instance.currentUser?.email, "summarize"),
-          ],
+        backgroundColor: Colors.white,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(48.0),
+          child: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.buttonText,
+            unselectedLabelColor: AppColors.unselectedTab,
+            indicatorColor: AppColors.buttonText,
+            indicatorWeight: 3.0,
+            tabs: const [
+              Tab(text: 'Game'),
+              Tab(text: 'Coming Soon...'),
+            ],
+            onTap: (index) {
+              // If user taps on Coming Soon, keep them on Game tab
+              if (index == 1) {
+                _tabController.animateTo(0);
+              }
+            },
+          ),
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        physics: NeverScrollableScrollPhysics(), // Prevents swiping between tabs
+        children: [
+          _buildHistoryTab(FirebaseAuth.instance.currentUser?.email, "game"),
+          _buildComingSoonTab(), // Custom widget that will never be seen due to controller logic
+        ],
       ),
     );
   }
 
+  Widget _buildComingSoonTab() {
+    return const Center(
+      child: Text("Coming Soon..."),
+    );
+  }
+
   Widget _buildHistoryTab(String? email, String type) {
-      if (email == null) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.account_circle_outlined,
-                size: 64,
+    if (email == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.account_circle_outlined,
+              size: 64,
+              color: AppColors.buttonText,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Please sign in to view your history",
+              style: TextStyle(
+                fontSize: 18,
                 color: AppColors.buttonText,
+                fontWeight: FontWeight.w500,
               ),
-              const SizedBox(height: 16),
-              const Text(
-                "Please sign in to view your history",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: AppColors.buttonText,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              // const SizedBox(height: 16),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     // Navigate to login screen or trigger sign in
-              //     Navigator.pushNamed(context, '/login');
-              //   },
-              //   child: const Text('Sign In'),
-              // ),
-            ],
-          ),
-        );
-      }
-    
-      if (email.isEmpty) {
-        return const Center(child: Text("No user email provided"));
-      }
-    
+            ),
+          ],
+        ),
+      );
+    }
+  
+    if (email.isEmpty) {
+      return const Center(child: Text("No user email provided"));
+    }
+  
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('history')
@@ -107,17 +132,9 @@ class History extends StatelessWidget {
 
         var docData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
 
-        List<Map<String, dynamic>> allGames = docData.entries
-            .where((entry) => entry.value is List)
-            .expand((entry) =>
-                (entry.value as List).whereType<Map<String, dynamic>>())
-            .toList();
-
-        if (type != "all") {
-          allGames = allGames
-              .where((game) => game["type"]?.toString() == type)
-              .toList();
-        }
+        List<Map<String, dynamic>> allGames = (docData['data'] as List<dynamic>?)
+            ?.whereType<Map<String, dynamic>>()
+            .toList() ?? [];
 
         if (allGames.isEmpty) {
           return const Center(child: Text("No history found"));
@@ -130,115 +147,13 @@ class History extends StatelessWidget {
             var game = allGames[index];
             return HistoryItem(
               title: game['game_name'] ?? 'Unknown',
-              date: (game['play_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
+              date: (game['played_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
               imagePath: game['image_game'] ?? '',
-              isDownload: game['isDownload'] ?? false,
               onPressed: () => print(game['game_name'] ?? 'Unknown'),
             );
-
-            // _buildHistoryItem(
-            //   title: game['game_name'] ?? 'Unknown',
-            //   date: (game['play_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
-            //   imagePath: game['image_game'] ?? '',
-            //   isDownload: game['isDownload'] ?? false,
-            // );
           },
         );
       },
     );
   }
-  // Widget _buildHistoryItem({
-  //   required String title,
-  //   required String date,
-  //   required String imagePath,
-  //   required bool isDownload,
-  // }) {
-  //   return Container(
-  //     margin: const EdgeInsets.only(bottom: 16.0),
-  //     padding: const EdgeInsets.all(12.0),
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12.0),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.grey.withOpacity(0.2),
-  //           blurRadius: 6.0,
-  //           offset: const Offset(0, 3),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: [
-  //         ClipRRect(
-  //           borderRadius: BorderRadius.circular(8.0),
-  //           child: Image.asset(
-  //             'assets/images/photomain.png',
-  //             width: 80,
-  //             height: 80,
-  //             fit: BoxFit.cover,
-  //           ),
-  //         ),
-  //         const SizedBox(width: 16.0),
-  //         Expanded(
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               Text(
-  //                 title,
-  //                 style: const TextStyle(
-  //                   fontSize: 22.0,
-  //                   fontWeight: FontWeight.bold,
-  //                   color: AppColors.buttonText,
-  //                 ),
-  //                 maxLines: 1,
-  //                 overflow: TextOverflow.ellipsis,
-  //               ),
-  //               const SizedBox(height: 8.0),
-  //               Container(
-  //                 padding: const EdgeInsets.symmetric(
-  //                     horizontal: 12.0, vertical: 4.0),
-  //                 decoration: BoxDecoration(
-  //                   color: const Color(0xFF0066FF),
-  //                   borderRadius: BorderRadius.circular(8.0),
-  //                 ),
-  //                 child: Text(
-  //                   date,
-  //                   style: const TextStyle(
-  //                     fontSize: 18.0,
-  //                     fontWeight: FontWeight.bold,
-  //                     color: Colors.white,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         Container(
-  //           width: 50,
-  //           height: 50,
-  //           decoration: const BoxDecoration(
-  //             color: Color(0xFF0066FF),
-  //             shape: BoxShape.circle,
-  //           ),
-  //           child: IconButton(
-  //             onPressed: () {
-  //               if (isDownload) {
-  //                 print("Download $title");
-  //               } else {
-  //                 print("Play $title");
-  //               }
-  //             },
-  //             icon: Icon(
-  //               isDownload ? Icons.download : Icons.play_arrow,
-  //               color: Colors.white,
-  //               size: 29,
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:brainboost/component/bottom_slider.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -19,11 +20,13 @@ class QuizScreen extends StatefulWidget {
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
-class _QuizScreenState extends State<QuizScreen>
-    with SingleTickerProviderStateMixin {
+class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   int? selectedAnswerIndex;
   bool hasCheckedAnswer = false;
   int score = 0;
+
+  final player = AudioPlayer();
+// await player.play(UrlSource('https://example.com/my-audio.wav'));
 
   @override
   void initState() {
@@ -43,10 +46,17 @@ class _QuizScreenState extends State<QuizScreen>
     }
   }
 
-  void checkAnswer() {
+  void checkAnswer() async {
     if (selectedAnswerIndex == widget.content.correctAnswerIndex) {
       score++;
+      await player.play(
+          AssetSource('sounds/level-up-2-universfield-pixabay.mp3'),
+          position: const Duration(milliseconds: 10));
+    } else {
+      await player.play(AssetSource('sounds/error-8-universfield-pixabay.mp3'),
+          position: const Duration(milliseconds: 60));
     }
+
     setState(() {
       hasCheckedAnswer = true;
     });
@@ -144,6 +154,7 @@ class _QuizScreenState extends State<QuizScreen>
             isTransitioning: widget.isTransitioning,
             data: {
               "gameType": "quiz",
+              "question": widget.content.question,
               "correctAnswer":
                   widget.content.options[widget.content.correctAnswerIndex],
               "selectedAnswer": selectedAnswerIndex != null,
@@ -163,7 +174,8 @@ class _QuizScreenState extends State<QuizScreen>
                 selectedAnswerIndex: selectedAnswerIndex,
                 onCheck: checkAnswer,
                 onNext: goToNextQuestion,
-                isCorrect: selectedAnswerIndex == widget.content.correctAnswerIndex,
+                isCorrect:
+                    selectedAnswerIndex == widget.content.correctAnswerIndex,
               ),
             ),
           ),

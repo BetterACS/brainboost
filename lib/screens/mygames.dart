@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/models/games.dart';
@@ -8,7 +10,9 @@ import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/cards/profile_header.dart'; // เพิ่ม import นี้
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:brainboost/component/panel_slider.dart';
 
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/services/games.dart';
 
@@ -20,12 +24,10 @@ class MyGames extends StatefulWidget {
 }
 
 class _MyGamesState extends State<MyGames> {
-  final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
 
   final UserServices userServices = UserServices();
 
-  bool _showButtons = false;
   bool _isLoadedGames = false;
 
   int _currentPage = 0;
@@ -34,21 +36,17 @@ class _MyGamesState extends State<MyGames> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 200 && !_showButtons) {
-        setState(() {
-          _showButtons = true;
-        });
-      } else if (_scrollController.offset <= 200 && _showButtons) {
-        setState(() {
-          _showButtons = false;
-        });
-      }
-    });
   }
 
   Future<void> _loadGamesMethod() async {
     if (_isLoadedGames) return;
+
+    if (!_isLoadedGames && games.length > 0) {
+      setState(() {
+        games = [];
+      });
+      return;
+    }
 
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -68,16 +66,22 @@ class _MyGamesState extends State<MyGames> {
           path));
     }
 
-    print(games);
     setState(() {
-      games = _games;
+      games = _games.reversed.toList();
       _isLoadedGames = true;
+    });
+  }
+
+  double _slideUpPanelValue = 0.0;
+  final double slideValueThreshold = 0.4;
+  void toggleSlideUpPanel(double value) {
+    setState(() {
+      _slideUpPanelValue = value;
     });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -89,7 +93,7 @@ class _MyGamesState extends State<MyGames> {
         builder: (context, AsyncSnapshot<void> snapshot) {
           if (_isLoadedGames) {
             return Scaffold(
-              backgroundColor: AppColors.primaryBackground,
+              backgroundColor: AppColors.mainColor,
               appBar: AppBar(
                 title: const Text(""),
                 elevation: 0,
@@ -97,45 +101,56 @@ class _MyGamesState extends State<MyGames> {
               ),
               body: Stack(
                 children: [
-                  SingleChildScrollView(
-                    controller: _scrollController,
-                    physics: _currentPage < games.length
-                        ? const ClampingScrollPhysics()
-                        : const BouncingScrollPhysics(),
-                    child: Center(
-                      child: Column(
-                        children: <Widget>[
-                          //
-                          //  Player Name
-                          const ProfileContainer(),
-                          const SizedBox(height: 20),
+                  if (_currentPage < games.length)
+                    PanelSlider(
+                      games: games,
+                      currentPage: _currentPage,
+                      slidePanelFunction: toggleSlideUpPanel,
+                    ),
+                  Column(
+                    children: <Widget>[
+                      //
+                      //  Player Name
+                      const ProfileContainer(),
+                      const SizedBox(height: 40),
 
-                          //
-                          // Game Title
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            child: Text(
-                              _currentPage < games.length
-                                  ? games[_currentPage].name
-                                  : "",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                      //
+                      // Game Title
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 180),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Text(
+                          _currentPage < games.length
+                              ? games[_currentPage].name
+                              : "",
+                          style: TextStyle(
+                            color: _slideUpPanelValue <= slideValueThreshold
+                                ? AppColors.cardBackground
+                                : Colors.white,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 20),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
 
+                      Stack(
+                        children: [
                           //
                           // Game Icon
                           SizedBox(
                             height: 300,
-                            width: 300,
+                            // width: 400,
+                            width: double.infinity,
                             child: PageView.builder(
-                              controller: _pageController,
+                              controller: PageController(viewportFraction: 0.7),
                               onPageChanged: (index) {
+                                bool isChangePanelValue = index == games.length;
+
+                                if (isChangePanelValue) {
+                                  toggleSlideUpPanel(0.0);
+                                }
                                 setState(() {
                                   _currentPage = index;
                                 });
@@ -143,27 +158,58 @@ class _MyGamesState extends State<MyGames> {
                               },
                               itemCount: games.length + 1,
                               itemBuilder: (context, index) {
-                                return AnimatedContainer(
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Curves.easeInOut,
-                                  decoration: BoxDecoration(
-                                    color: index == games.length
-                                        ? Colors.transparent
-                                        : const Color.fromARGB(255, 0, 38, 84),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(150),
-                                    child: Image.asset(
-                                      index >= games.length
-                                          ? "assets/images/Add.png"
-                                          : "assets/images/${games[index].icon}",
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Icon(Icons.error,
-                                            size: 80, color: Colors.red);
-                                      },
+                                bool isSelected = index == _currentPage;
+                                double selectedSize = isSelected ? 340 : 300;
+                                double backgroundSize = isSelected ? 400 : 400;
+
+                                bool isAddButton = index == games.length;
+
+                                return Transform.scale(
+                                  scale: isSelected ? 1.0 : 0.85,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    transform: Matrix4.identity()
+                                      ..translate(0.0, isSelected ? -2.0 : 12.0,
+                                          isSelected ? 10.0 : 0.0),
+                                    child: Stack(
+                                      children: [
+                                        if (index < games.length)
+                                          Positioned(
+                                            height: isSelected ? 265 : 240,
+                                            top: 26,
+                                            left: 0,
+                                            right: 0,
+                                            child: Center(
+                                              child: ClipOval(
+                                                child: AnimatedContainer(
+                                                  duration: const Duration(
+                                                      milliseconds: 150),
+                                                  width: backgroundSize,
+                                                  color: _slideUpPanelValue <=
+                                                          slideValueThreshold
+                                                      ? Colors.grey.shade300
+                                                      : Color(0xFF102247),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(150),
+                                          child: Image.asset(
+                                            isAddButton
+                                                ? "assets/images/Add.png"
+                                                : "assets/images/${games[index].icon}",
+                                            width: selectedSize,
+                                            height: selectedSize,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return const Icon(Icons.error,
+                                                  size: 80, color: Colors.red);
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );
@@ -171,283 +217,155 @@ class _MyGamesState extends State<MyGames> {
                             ),
                           ),
 
-                          // Description
-                          const SizedBox(height: 5),
-                          if (_currentPage >= games.length)
+                          // Options Icons
+                          if (_slideUpPanelValue > slideValueThreshold)
+                            Center(
+                                child: Container(
+                                    height: 32,
+                                    width: 32,
+                                    margin:
+                                        EdgeInsets.only(right: 172, top: 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Center(
+                                        child: IconButton(
+                                            iconSize: 16,
+                                            color: Colors.white,
+                                            onPressed: () => {
+                                                  GameServices().deleteGame(
+                                                      path: games[_currentPage]
+                                                          .ref,
+                                                      email: FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .email as String),
 
-                            //
-                            // Create New Game Button
-                            Column(
-                              children: [
-                                const SizedBox(height: 20),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const UploadFileScreen(),
-                                      ),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        AppColors.neutralBackground,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                                  setState(() => _isLoadedGames =
+                                                      false), // ลบเกมจาก Firebase
+                                                  // _isLoadedGames = false,
+                                                },
+                                            icon: Icon(Icons.delete))))),
+                          if (_slideUpPanelValue > slideValueThreshold)
+                            Center(
+                                child: Container(
+                                    height: 32,
+                                    width: 32,
+                                    margin:
+                                        EdgeInsets.only(right: 246, top: 48),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
+                                    child: Center(
+                                        child: IconButton(
+                                            iconSize: 16,
+                                            color: Colors.white,
+                                            onPressed: () => print("Share"),
+                                            icon: Icon(Icons.share))))),
+                        ],
+                      ),
+                      // Description
+                      const SizedBox(height: 5),
+                      if (_currentPage >= games.length)
+
+                        //
+                        // Create New Game Button
+                        Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const UploadFileScreen(),
                                   ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/images/game.svg',
-                                        width: 24,
-                                        height: 24,
-                                        color: Colors.white,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Text(
-                                        'Create new game',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.neutralBackground,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                              ],
-                            )
-                          else
-
-                            //
-                            // Play Game Button
-                            Column(
-                              children: [
-                                ElevatedButton.icon(
-                                  onPressed: () => context
-                                      .push(Routes.playGamePage, extra: {
-                                    'games': games[_currentPage].gameList,
-                                    'reference': games[_currentPage].ref
-                                  }),
-                                  icon: SvgPicture.asset(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 22,
+                                  vertical: 14,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SvgPicture.asset(
                                     'assets/images/game.svg',
-                                    width: 35,
-                                    height: 35,
+                                    width: 24,
+                                    height: 24,
+                                    color: Colors.white,
                                   ),
-                                  label: const Text(
-                                    "Play",
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    'Create new game',
                                     style: TextStyle(
-                                      fontSize: 25,
+                                      color: Colors.white,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: AppColors.buttonText,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 25,
-                                      vertical: 10,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    side: BorderSide(
-                                      color: AppColors.buttonBorder,
-                                      width: 2,
-                                    ),
-                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+
+                      //
+                      // Play Game Button
+                      else if (_currentPage != games.length &&
+                          _slideUpPanelValue <= slideValueThreshold)
+                        Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => context.push(Routes.playGamePage,
+                                  extra: {
+                                    'games': games[_currentPage].gameList,
+                                    'reference': games[_currentPage].ref
+                                  }),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.neutralBackground,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                                const SizedBox(height: 10),
-                                const Text(
-                                  "You have played 2 days ago",
-                                  style: TextStyle(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 22,
+                                  vertical: 14,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/images/game.svg',
+                                    width: 24,
+                                    height: 24,
                                     color: Colors.white,
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    'Play Game',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-
-                          //
-                          // Show Scoreboard when the game is not the last one
-                          if (_currentPage < games.length)
-                            Column(
-                              children: [
-                                const SizedBox(height: 10),
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.only(top: 20),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.cardBackground,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      const Text(
-                                        "History",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      SizedBox(
-                                        height: 120,
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            children: List.generate(
-                                                games[_currentPage]
-                                                    .played_history
-                                                    .length, (index) {
-                                              return Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8),
-                                                child: Column(
-                                                  children: [
-                                                    CircleAvatar(
-                                                      radius: 25,
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      child: CircleAvatar(
-                                                        radius: 22,
-                                                        backgroundImage: AssetImage(
-                                                            'assets/images/profile.jpg'),
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 5),
-                                                    Text(
-                                                      games[_currentPage]
-                                                          .played_history[index]
-                                                              ['score']
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            }),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          const SizedBox(height: 400),
-                        ],
-                      ),
-                    ),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
+                    ],
                   ),
-
-                  // Show Buttons
-                  if (_showButtons)
-                    Positioned(
-                      bottom: 90,
-                      left: 20,
-                      right: 20,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.buttonText,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                                child: const Text("Re version"),
-                              ),
-
-                              // Delete Game
-                              ElevatedButton(
-                                onPressed: () async {
-                                  String? email =
-                                      FirebaseAuth.instance.currentUser!.email;
-                                  if (email == null) return;
-
-                                  final List<String> paths =
-                                      await userServices.getGames(email: email);
-                                  GameServices().deleteGame(
-                                      path: paths[_currentPage], email: email);
-
-                                  setState(() {
-                                    _isLoadedGames = false;
-                                    _currentPage = 0;
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.buttonText,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                                child: const Text("Delete game"),
-                              ),
-
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Handle "Add Lecture"
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.buttonText,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                                child: const Text("Add Lecture"),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: SvgPicture.asset(
-                              'assets/images/game.svg',
-                              width: 35,
-                              height: 35,
-                            ),
-                            label: const Text(
-                              "Play",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: AppColors.buttonText,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 240, 239, 240),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                 ],
               ),
             );
@@ -455,55 +373,5 @@ class _MyGamesState extends State<MyGames> {
             return Center(child: CircularProgressIndicator());
           }
         });
-  }
-}
-
-class IconTitleButton extends StatelessWidget {
-  final String title;
-  final String iconPath;
-  final VoidCallback onPressed;
-
-  const IconTitleButton({
-    required this.title,
-    required this.iconPath,
-    required this.onPressed,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.neutralBackground,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            iconPath,
-            width: 24,
-            height: 24,
-            color: Colors.white,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

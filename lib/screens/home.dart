@@ -43,14 +43,14 @@ var histories = [
     title: "World war 2",
     date: "11 Dec 2024",
     imagePath: 'assets/images/photomain.png',
-    isDownload: false,
+    // isDownload: false,
     onPressed: () => print("Play Software Engine.."),
   ),
   HistoryItem(
     title: "World war 2",
     date: "11 Dec 2024",
     imagePath: 'assets/images/photomain.png',
-    isDownload: false,
+    // isDownload: false,
     onPressed: () => print("Play Software Engine.."),
   )
 ];
@@ -196,12 +196,12 @@ class _HomeState extends State<Home> {
         await UserServices().getGames(email: email as String);
     int _games = 0;
     int _score = 0;
-
     for (String gamePath in gamesPath) {
       Map<String, dynamic> game =
           await GameServices().getGame(path: gamePath) as Map<String, dynamic>;
 
-      _games += game['game_list'].length as int;
+      if (game['played_history'] == null) continue;
+
       int currentScore = 0;
       for (Map<String, dynamic> playedHistory in game['played_history']) {
         DocumentReference userPath = playedHistory['player'];
@@ -213,6 +213,8 @@ class _HomeState extends State<Home> {
           }
         }
       }
+
+      _games += game['game_list'].length as int;
       _score += currentScore;
     }
 
@@ -528,6 +530,8 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildHistorySection() {
+    final String? email = FirebaseAuth.instance.currentUser?.email;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
@@ -546,9 +550,7 @@ class _HomeState extends State<Home> {
               ),
               GestureDetector(
                 onTap: () {
-                  final userEmail =
-                      FirebaseAuth.instance.currentUser?.email ?? '';
-                  context.push(Routes.historyPage, extra: userEmail);
+                  context.push(Routes.historyPage, extra: email);
                 },
                 child: const Row(
                   children: [
@@ -571,22 +573,51 @@ class _HomeState extends State<Home> {
             ],
           ),
           const SizedBox(height: 10),
-          for (var history in histories) history,
+          StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('history')
+                .doc(email)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          // HistoryItem(
-          //   title: "World war 2",
-          //   date: "11 Dec 2024",
-          //   imagePath: 'assets/images/photomain.png',
-          //   isDownload: false,
-          //   onPressed: () => print("Play Software Engine.."),
-          // ),
-          // HistoryItem(
-          //   title: "Object oriented..",
-          //   date: "11 Dec 2024",
-          //   imagePath: 'assets/images/photomain3.png',
-          //   isDownload: false,
-          //   onPressed: () => print("Play Software Engine.."),
-          // ),
+              if (!snapshot.hasData || !snapshot.data!.exists) {
+                return const Center(child: Text("No history found"));
+              }
+
+              var docData =
+                  snapshot.data!.data() as Map<String, dynamic>? ?? {};
+              List<Map<String, dynamic>> allGames =
+                  (docData['data'] as List<dynamic>?)
+                          ?.whereType<Map<String, dynamic>>()
+                          .toList() ??
+                      [];
+
+              if (allGames.isEmpty) {
+                return const Center(child: Text("No history found"));
+              }
+
+              // Show only the last 2 games
+              final gamesToShow = allGames.take(2).toList();
+
+              return Column(
+                children: gamesToShow
+                    .map((game) => HistoryItem(
+                          title: game['game_name'] ?? 'Unknown',
+                          date: (game['played_at'] as Timestamp?)
+                                  ?.toDate()
+                                  .toString() ??
+                              'No date',
+                          imagePath: game['image_game'] ?? '',
+                          onPressed: () =>
+                              print(game['game_name'] ?? 'Unknown'),
+                        ))
+                    .toList(),
+              );
+            },
+          ),
         ],
       ),
     );

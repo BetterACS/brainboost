@@ -41,7 +41,6 @@ class QuizOption extends StatefulWidget {
 }
 
 class _QuizOptionState extends State<QuizOption> {
-  double width = 300;
   bool _isClicked = false;
 
   void _handleTap() {
@@ -98,58 +97,73 @@ class _QuizOptionState extends State<QuizOption> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 88, // Fixed outer height
-      width: width,
-      child: Stack(
-        children: [
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 80),
-            bottom: _isClicked ? -0.5 : 0, // Move down a little when clicked
-            left: 2,
-            right: 2,
-            child: GestureDetector(
-              onTap: _handleTap,
-              child: Container(
-                width: width,
-                padding: const EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  color: _getBorderColor(),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: _getBorderColor(),
-                    width: 2,
-                  ),
-                ),
-                child: AnimatedContainer(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10.0),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: widget.hasCheckedAnswer ? null : _handleTap,
+          borderRadius: BorderRadius.circular(16),
+          child: SizedBox(
+            height: 78, // Fixed outer height
+            width: double.infinity,
+            child: Stack(
+              children: [
+                AnimatedPositioned(
                   duration: const Duration(milliseconds: 80),
-                  margin: EdgeInsets.only(bottom: _isClicked ? 1 : 5),
-                  constraints: BoxConstraints(
-                    minHeight: 64.0,
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  width: width,
-                  decoration: BoxDecoration(
-                    color: _getBackgroundColor(),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      widget.text,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: _getTextColor(),
+                  bottom: _isClicked ? -0.5 : 0, // Move down a little when clicked
+                  left: 2,
+                  right: 2,
+                  child: GestureDetector(
+                    onTap: _handleTap,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(1),
+                      decoration: BoxDecoration(
+                        color: _getBorderColor(),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: _getBorderColor(),
+                          width: 1, // Reduced the border width
+                        ),
+                      ),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 80),
+                        margin: EdgeInsets.only(bottom: _isClicked ? 1 : 5),
+                        constraints: BoxConstraints(
+                          minHeight: 64.0,
+                        ),
+                        padding: const EdgeInsets.all(4),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: _getBackgroundColor(),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            widget.text,
+                            textAlign:
+                                TextAlign.center, // จัดให้ข้อความอยู่ตรงกลาง
+                            softWrap: true, // ให้ตัดบรรทัดอัตโนมัติ
+                            maxLines: 2, // จำกัดจำนวนบรรทัด
+                            overflow: TextOverflow
+                                .ellipsis, // แสดง ... หากข้อความยาวเกินไป
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: _getTextColor(),
+                              height:
+                                  1.2, // ปรับระยะห่างระหว่างบรรทัดให้เหมาะสม
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
-
-          // Lottie.asset("assets/animations/quiz_correct_answer.json",
-          //     height: 48, width: 48, repeat: false),
-        ],
+        ),
       ),
     );
   }
