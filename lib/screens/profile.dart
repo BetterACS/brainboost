@@ -2,6 +2,7 @@ import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:brainboost/screens/edit_porfile.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -132,7 +133,12 @@ class ProfilePage extends StatelessWidget {
           _buildOption(
             icon: Icons.edit,
             title: "Edit Profile",
-            onTap: () => context.push(Routes.settingsPage),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditProfilePage()),
+              );
+            },
           ),
           const SizedBox(height: 20),
           _buildOption(
