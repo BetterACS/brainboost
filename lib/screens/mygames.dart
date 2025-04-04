@@ -494,17 +494,51 @@ class _MyGamesState extends State<MyGames> {
                       try {
                         String gameRefToDelete = games[_currentPage].ref;
                         String userEmail = FirebaseAuth.instance.currentUser!.email!;
+                        
+                        // Prep for transition - store info for animation
+                        int deletedPageIndex = _currentPage;
+                        int newPageIndex = _currentPage > 0 ? _currentPage - 1 : 0;
+                        
+                        // First close the panel
+                        setState(() {
+                          _slideUpPanelValue = 0;
+                          toggleSlideUpPanel(0.0);
+                        });
 
+                        // Delete the game
                         await gameServices.deleteGame(
                           path: gameRefToDelete,
                           email: userEmail,
                         );
-
-                        setState(() {
-                           _isLoadedGames = false;
-                           _slideUpPanelValue = 0;
-                           toggleSlideUpPanel(0.0);
-                        });
+                        
+                        // Show loading indicator
+                        if (mounted) {
+                          setState(() {
+                            // Move to a safe page index before reload
+                            if (games.length > 1) {
+                              _pageController.animateToPage(
+                                newPageIndex, 
+                                duration: Duration(milliseconds: 300), 
+                                curve: Curves.easeInOut
+                              );
+                            }
+                          });
+                        }
+                        
+                        // Small delay to let animations complete
+                        await Future.delayed(Duration(milliseconds: 300));
+                        
+                        // Complete reload
+                        if (mounted) {
+                          setState(() {
+                            _isLoadedGames = false;
+                            games = [];
+                            _currentPage = 0; 
+                          });
+                          
+                          // Reload games data
+                          await _loadGamesMethod();
+                        }
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Game deleted.'), duration: Duration(seconds: 2)),
@@ -517,7 +551,9 @@ class _MyGamesState extends State<MyGames> {
                          );
                          if (!mounted) return;
                            setState(() {
-                             _isLoadedGames = true;
+                             // Make sure we still load games even on error
+                             _isLoadedGames = false;
+                             _loadGamesMethod();
                            });
                       }
                     }
