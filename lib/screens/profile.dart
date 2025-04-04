@@ -1,12 +1,49 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
-import 'package:go_router/go_router.dart';
 import 'package:brainboost/screens/edit_porfile.dart';
 import 'package:brainboost/screens/support.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:brainboost/services/user.dart';
+import 'package:go_router/go_router.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String username = 'Loading...';
+  String email = 'Loading...';
+  bool isProfileLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUsername();
+  }
+
+  Future<void> fetchUsername() async {
+    String? email = UserServices().getCurrentUserEmail();
+    final DocumentSnapshot userDoc =
+        await UserServices().users.doc(email).get();
+
+    if (userDoc.exists) {
+      setState(() {
+        username = userDoc['username'] ?? 'No username';
+        this.email = userDoc['email'] ?? 'No email';
+        isProfileLoaded = true;
+      });
+    } else {
+      setState(() {
+        username = 'No data';
+        email = 'No data';
+        isProfileLoaded = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +92,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Profile Header
   Widget _buildProfileHeader() {
     return Container(
       decoration: const BoxDecoration(
@@ -89,28 +125,31 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          const Text(
-            "Mon Chinawat",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+          isProfileLoaded
+              ? Text(
+                  username,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                )
+              : const CircularProgressIndicator(),
           const SizedBox(height: 4),
-          const Text(
-            "Monchinawat@gmail.com",
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white70,
-            ),
-          ),
+          isProfileLoaded
+              ? Text(
+                  email,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                )
+              : const CircularProgressIndicator(),
         ],
       ),
     );
   }
 
-  // Options List
   Widget _buildOptionsList(BuildContext context) {
     return Container(
       width: 380,
@@ -137,7 +176,7 @@ class ProfilePage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EditProfilePage()),
+                MaterialPageRoute(builder: (context) => EditProfileScreen()),
               );
             },
           ),
@@ -191,7 +230,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Individual Option
   Widget _buildOption({
     required IconData icon,
     required String title,
@@ -227,7 +265,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  //Log Out Button
   Widget _buildLogOutButton(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
