@@ -168,4 +168,20 @@ class GameServices {
       print("Failed to add score: $error");
     }
   }
+
+
+  /// Updates the name of a specific game document.
+  Future<void> updateGameName({
+    required String path,
+    required String newName,
+  }) async {
+    try {
+      // Ensure the path is a valid Firestore document path
+      DocumentReference gameRef = FirebaseFirestore.instance.doc(path);
+      await gameRef.update({'name': newName});
+      print("Game name updated successfully for path: $path");
+    } catch (error) {
+      print("Failed to update game name for path $path: $error");
+    }
+  }
 }
