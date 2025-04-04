@@ -32,7 +32,8 @@ class GameServices {
             'name': name,
             'author': email,
             'description': "This is a game",
-            'icon': "photomain.png",
+            'icon': (["animations/map1.GIF", "animations/map2.GIF"]..shuffle())
+                .first,
             'media': media,
             'game_list': gameData,
           })

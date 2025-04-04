@@ -66,7 +66,6 @@ class _MyGamesState extends State<MyGames> {
           path));
     }
 
-    
     setState(() {
       games = _games.reversed.toList();
       _isLoadedGames = true;
@@ -160,7 +159,7 @@ class _MyGamesState extends State<MyGames> {
                               itemCount: games.length + 1,
                               itemBuilder: (context, index) {
                                 bool isSelected = index == _currentPage;
-                                double selectedSize = isSelected ? 340 : 300;
+                                double selectedSize = isSelected ? 400 : 300;
                                 double backgroundSize = isSelected ? 400 : 400;
 
                                 bool isAddButton = index == games.length;
@@ -194,19 +193,18 @@ class _MyGamesState extends State<MyGames> {
                                               ),
                                             ),
                                           ),
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(150),
+                                        Transform.scale(
+                                          scale: 1.08,
                                           child: Image.asset(
                                             isAddButton
                                                 ? "assets/images/Add.png"
-                                                : "assets/images/${games[index].icon}",
-                                            width: selectedSize,
-                                            height: selectedSize,
+                                                : games[index].icon,
                                             errorBuilder:
                                                 (context, error, stackTrace) {
-                                              return const Icon(Icons.error,
-                                                  size: 80, color: Colors.red);
+                                              return Image.asset(
+                                                'animations/map2.GIF',
+                                                fit: BoxFit.cover,
+                                              );
                                             },
                                           ),
                                         ),
