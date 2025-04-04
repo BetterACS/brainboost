@@ -24,6 +24,24 @@ class GameQuizContent extends GameContent {
   }
 }
 
+class GameYesNoContent extends GameContent {
+  final String question;
+  final bool correct_ans;
+
+  const GameYesNoContent({
+    required this.correct_ans,
+    required this.question,
+  }) : super();
+
+  // เพิ่มเมธอด toMap()
+  Map<String, dynamic> toMap() {
+    return {
+      'question': question,
+      'correct_ans': correct_ans,
+    };
+  }
+}
+
 class GameData {
   final String gameType;
   final GameContent content;
@@ -35,9 +53,9 @@ class GameData {
   Map<String, dynamic> toMap() {
     return {
       'game_type': gameType,
-      'content': content is GameQuizContent 
-        ? (content as GameQuizContent).toMap() 
-        : content
+      'content': content is GameQuizContent
+          ? (content as GameQuizContent).toMap()
+          : content
     };
   }
 
@@ -52,6 +70,17 @@ class GameData {
               .map((e) => e as String)
               .toList(),
         );
+      case 'yesno':
+        // print('content ${content}');
+        return GameYesNoContent(
+          correct_ans: content['correct_ans'] as bool,
+          question: content['question'] as String,
+          // yesOption: content['yes_option'] as String,
+          // noOption: content['no_option'] as String,
+        );
+      // Add more cases here for future game types
+      // case 'memory':
+      //   return GameMemoryContent(...);
       case 'bingo':
 
         //     question;
@@ -102,7 +131,7 @@ class GamesType {
 
   /// Factory constructor to create a GamesType instance from Firestore data
   factory GamesType.fromMap(Map<String, dynamic> data, dynamic ref) {
-    print(ref);
+    // print(ref);
     return GamesType(
       ref: ref,
       author: data['author'] ?? '',
@@ -126,6 +155,12 @@ class BingoContent extends GameContent {
   final List<GameBingoContent> bingo_list;
 
   const BingoContent({required this.bingo_list}) : super();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'bingo_list': bingo_list.map((e) => e.toMap()).toList(),
+    };
+  }
 }
 
 class GameBingoContent {
@@ -138,60 +173,12 @@ class GameBingoContent {
     required this.answer,
     required this.point,
   }) : super();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'question': question,
+      'answer': answer,
+      'point': point,
+    };
+  }
 }
-
-final List<GameBingoContent> bingoQuestions = [
-  GameBingoContent(
-      question: "What is the capital of France?", answer: "Paris", point: 10),
-  GameBingoContent(
-      question: "How many continents are there?", answer: "7", point: 10),
-  GameBingoContent(question: "What is 5 + 3?", answer: "8", point: 5),
-  GameBingoContent(
-      question: "Who wrote 'Romeo and Juliet'?",
-      answer: "Shakespeare",
-      point: 15),
-  GameBingoContent(
-      question: "What is the boiling point of water?",
-      answer: "100°C",
-      point: 10),
-  GameBingoContent(
-      question: "Which planet is known as the Red Planet?",
-      answer: "Mars",
-      point: 10),
-  GameBingoContent(
-      question: "What is the square root of 64?", answer: "8", point: 10),
-  GameBingoContent(
-      question: "What is the largest ocean on Earth?",
-      answer: "Pacific",
-      point: 15),
-  GameBingoContent(
-      question: "Who painted the Mona Lisa?",
-      answer: "Leonardo da Vinci",
-      point: 20),
-];
-
-// class GameData2 {
-//   final String gametype;
-//   final GameContent content;
-//   final String point;
-
-//   const GameData2({
-//     required this.gametype,
-//     required this.content,
-//     required this.point,
-//   });
-
-//   static GameContent createContent(
-//       String gameType, Map<String, dynamic> content) {
-//     switch (gameType) {
-//       case 'Bingo':
-//         return GameBingoContent(
-//           question: content['Question'] as String,
-//           answer: content['answer'] as String,
-//           point: int.parse(content['point']),
-//         );
-//       default:
-//         return GameContent();
-//     }
-//   }
-// }
