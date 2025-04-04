@@ -94,8 +94,8 @@ class _GameWrapperState extends State<GameWrapper>
       this.score += score; // Update score for every correct answer
     });
 
-    print(
-        'gameIndex: $gameIndex, games.length: ${widget.games.length}, ${(widget.games[gameIndex].content as GameYesNoContent).correct_ans} ${(widget.games[gameIndex].content as GameYesNoContent).question}');
+    // print(
+    //     'gameIndex: $gameIndex, games.length: ${widget.games.length}, ${(widget.games[gameIndex].content as GameYesNoContent).correct_ans} ${(widget.games[gameIndex].content as GameYesNoContent).question}');
 
     if (gameIndex >= widget.games.length - 1) {
       await player.play(
@@ -152,8 +152,7 @@ class _GameWrapperState extends State<GameWrapper>
           elevation: 0,
           leading: BackButton(
             color: Colors.black,
-            onPressed: () => context
-                .go(Routes.gamePage), 
+            onPressed: () => context.go(Routes.gamePage),
           ),
           title: ClipRRect(
             borderRadius: BorderRadius.circular(20),
