@@ -43,11 +43,7 @@ class _BingoScreenState extends State<BingoScreen> {
   ];
 
   void goToNextQuestion() {
-    // setState(() {
-    //   // selectedAnswerIndex = null;
-    //   hasCheckedAnswer = false;
-    // });
-    widget.onNext(score);
+    widget.onNext(isBingoWin ? 1 : 0);
   }
 
   dynamic getNextButtonColor() {
@@ -80,7 +76,9 @@ class _BingoScreenState extends State<BingoScreen> {
   }
 
   bool _areAllQuestionsAnswered() {
-    return isAnswerChecked.length == bingoList.length;
+    bool cond1 = isAnswerChecked.length == bingoList.length;
+    bool cond2 = isAnswerChecked.values.every((isChecked) => isChecked == true);
+    return cond1 && cond2;
   }
 
   void _checkBingoWin() {
