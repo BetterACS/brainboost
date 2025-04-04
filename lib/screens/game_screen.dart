@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 
+import 'package:brainboost/screens/game_bingo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/games.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:brainboost/screens/game_bingo.dart';
 
 class GameWrapper extends StatefulWidget {
   final List<GameData> games;
@@ -120,7 +122,9 @@ class _GameWrapperState extends State<GameWrapper>
                       ? (game.content as GameQuizContent).toMap()
                       : game.content is GameYesNoContent
                           ? (game.content as GameYesNoContent).toMap()
-                          : {},
+                          : game.content is BingoContent
+                              ? (game.content as BingoContent).toMap()
+                              : {}
                 })
             .toList(),
       });
@@ -195,6 +199,10 @@ class _GameWrapperState extends State<GameWrapper>
               content: widget.games[gameIndex].content as GameQuizContent,
               isTransitioning: isTransitioning,
             ),
+          'bingo' => BingoScreen(
+              content: widget.games[gameIndex].content as BingoContent,
+              onNext: onNext,
+              isTransitioning: isTransitioning),
           'yesno' => YesNoGameScreen(
               key: ValueKey(gameIndex),
               onNext: onNext,

@@ -37,6 +37,7 @@ final router = GoRouter(
         path: Routes.playGamePage,
         builder: (context, state) {
           final extra = state.extra as dynamic;
+          // print(extra['games'][0]['content']);
           final List<GameData> games = [];
 
           for (var item in extra['games']) {
