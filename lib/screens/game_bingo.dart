@@ -42,6 +42,25 @@ class _BingoScreenState extends State<BingoScreen> {
     GameBingoContent(question: "Question 9?", answer: "9", point: 15),
   ];
 
+  void goToNextQuestion() {
+    // setState(() {
+    //   // selectedAnswerIndex = null;
+    //   hasCheckedAnswer = false;
+    // });
+    widget.onNext(score);
+  }
+
+  dynamic getNextButtonColor() {
+    //  isBingoWin ?  : Colors.red
+    if (isBingoWin) {
+      return Colors.blue;
+    } else if (!isBingoWin && _areAllQuestionsAnswered()) {
+      return Colors.red;
+    } else {
+      return Colors.grey[300];
+    }
+  }
+
   void _navigateToResults() {
     int _score = isAnswerCorrect.values.where((correct) => correct).length;
 
@@ -123,7 +142,8 @@ class _BingoScreenState extends State<BingoScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               title: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
                   color: const Color(0xFF092866),
                   borderRadius: BorderRadius.circular(8),
@@ -144,7 +164,8 @@ class _BingoScreenState extends State<BingoScreen> {
                   Text(
                     bingoList[index].question,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 32),
                   TextField(
@@ -169,8 +190,9 @@ class _BingoScreenState extends State<BingoScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             setDialogState(() {
-                              isAnswerCorrect[index] = _answerController.text.trim() == 
-                                  bingoList[index].answer;
+                              isAnswerCorrect[index] =
+                                  _answerController.text.trim() ==
+                                      bingoList[index].answer;
                               isAnswerChecked[index] = true;
                             });
 
@@ -178,7 +200,7 @@ class _BingoScreenState extends State<BingoScreen> {
                             setState(() {
                               _showBottomSlider = true;
                             });
-                            
+
                             if (isAnswerCorrect[index] == true) {
                               _checkAnswer(index);
                               _checkBingoWin();
@@ -290,7 +312,8 @@ class _BingoScreenState extends State<BingoScreen> {
                                           width: 120,
                                           height: 480,
                                           decoration: BoxDecoration(
-                                            color: isAnswerCorrect[index] == true
+                                            color: isAnswerCorrect[index] ==
+                                                    true
                                                 ? Colors.green[600]
                                                 : isAnswerChecked[index] == true
                                                     ? Colors.red[600]
@@ -350,7 +373,7 @@ class _BingoScreenState extends State<BingoScreen> {
               ),
             ],
           ),
-          if (_currentQuestionIndex != -1) 
+          if (_currentQuestionIndex != -1)
             BottomSlider(
               isVisible: isBingoWin || _areAllQuestionsAnswered(),
               isTransitioning: widget.isTransitioning,
@@ -361,9 +384,9 @@ class _BingoScreenState extends State<BingoScreen> {
                 "selectedAnswer": "",
                 "isCorrect": isBingoWin || score >= 75,
                 "points": score,
-                "message": isBingoWin 
-                    ? "Congratulations! You got BINGO!" 
-                    : score >= 75 
+                "message": isBingoWin
+                    ? "Congratulations! You got BINGO!"
+                    : score >= 75
                         ? "Congratulations! You scored over 75 points!"
                         : "Sorry, you didn't achieve BINGO or reach 75 points!",
               },
@@ -373,25 +396,25 @@ class _BingoScreenState extends State<BingoScreen> {
             right: 24,
             bottom: 24,
             child: ElevatedButton(
-              onPressed: isBingoWin ? _navigateToResults : null,
+              onPressed: goToNextQuestion,
               style: ElevatedButton.styleFrom(
+                backgroundColor: getNextButtonColor(),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                backgroundColor:
-                    isBingoWin ? const Color(0xFFFFC107) : Colors.grey,
+                elevation: 0,
               ),
-              child: const Text(
-                "Next",
+              child: Text(
+                'Next',
                 style: TextStyle(
                   fontSize: 18,
-                  color: Color(0xFF003366),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
           ),
-
         ],
       ),
     );
