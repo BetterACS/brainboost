@@ -45,7 +45,7 @@ class PanelSlider extends StatelessWidget {
         ),
       ),
       onPanelSlide: (double value) => slidePanelFunction(value),
-      minHeight: 240,
+      minHeight: games[currentPage].played_history.isEmpty ? 172 : 240,
       maxHeight: 780,
       borderRadius: radius,
 
@@ -236,15 +236,18 @@ class PanelSlider extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 10),
-                const Text(
-                  "Played history",
+                Text(
+                  games[currentPage].played_history.isEmpty
+                      ? "No played history"
+                      : "Played history",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(
+                    height: games[currentPage].played_history.isEmpty ? 0 : 20),
                 SizedBox(
                   height: 120,
                   child: SingleChildScrollView(
@@ -253,50 +256,38 @@ class PanelSlider extends StatelessWidget {
                       width: MediaQuery.of(context).size.width,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: games[currentPage].played_history.isEmpty
-                            ? [
-                                const Text(
-                                  "No play history yet",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ]
-                            : List.generate(
-                                games[currentPage].played_history.length,
-                                (index) {
-                                  return Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8),
-                                    child: Column(
-                                      children: [
-                                        CircleAvatar(
-                                          radius: 24,
-                                          backgroundColor: Colors.white,
-                                          child: CircleAvatar(
-                                            radius: 22,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/profile.jpg'),
-                                          ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          games[currentPage]
-                                              .played_history[index]['score']
-                                              .toString(),
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                        children: List.generate(
+                          games[currentPage].played_history.length,
+                          (index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: Colors.white,
+                                    child: CircleAvatar(
+                                      radius: 22,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/profile.jpg'),
                                     ),
-                                  );
-                                },
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    games[currentPage]
+                                        .played_history[index]['score']
+                                        .toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -307,39 +298,5 @@ class PanelSlider extends StatelessWidget {
         ],
       ),
     );
-
-// Delete Game Button
-// ElevatedButton(
-//   onPressed: () async {
-//     String? email = FirebaseAuth
-//         .instance.currentUser!.email;
-//     if (email == null) return;
-
-//     final List<String> paths =
-//         await userServices.getGames(
-//             email: email);
-//     GameServices().deleteGame(
-//         path: paths[_currentPage],
-//         email: email);
-
-//     setState(() {
-//       _isLoadedGames = false;
-//       _currentPage = 0;
-//     });
-//   },
-//   style: ElevatedButton.styleFrom(
-//     shape: const CircleBorder(),
-//     padding: const EdgeInsets.all(8),
-//     backgroundColor: Colors.red,
-//     foregroundColor: Colors.white,
-//     elevation: 3,
-//   ),
-//   child: const Icon(
-//     Icons.delete,
-//     size: 24,
-//     color: Colors.white,
-//   ),
-// ),
-// ),
   }
 }
