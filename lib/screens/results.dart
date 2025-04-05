@@ -198,7 +198,7 @@ class ResultsPage extends StatelessWidget {
           title: 'Time',
           value: time,
           icon: Icons.watch_later,
-          cardColor: timeColor,
+          cardColor: AppColors.yellowButton, // Updated to use AppColors
         )
       ],
     );
