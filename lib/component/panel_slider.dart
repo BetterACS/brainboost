@@ -7,27 +7,121 @@ import 'package:brainboost/services/user.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
-class PanelSlider extends StatelessWidget {
+class PanelSlider extends StatefulWidget {
   final UserServices userServices = UserServices();
-  List<GamesType> games;
-  int currentPage;
-  void Function(double) slidePanelFunction;
+  final List<GamesType> games;
+  final int currentPage;
+  final void Function(double) slidePanelFunction;
+  final bool isUploading;
+  final double uploadProgress;
+  final String? fileName;
+  final PanelController? panelController;
+  final String? gameName;
+  final bool uploadSuccess;
+  final VoidCallback? onCreateGamePressed;
 
-  PanelSlider(
-      {Key? key,
-      required this.games,
-      required this.currentPage,
-      required this.slidePanelFunction})
-      : super(key: key);
+  PanelSlider({
+    Key? key,
+    required this.games,
+    required this.currentPage,
+    required this.slidePanelFunction,
+    this.isUploading = false,
+    this.uploadProgress = 0.0,
+    this.fileName,
+    this.panelController,
+    this.gameName,
+    this.uploadSuccess = false,
+    this.onCreateGamePressed,
+  }) : super(key: key);
+
+  @override
+  State<PanelSlider> createState() => _PanelSliderState();
+}
+
+class _PanelSliderState extends State<PanelSlider> {
+  late PanelController _panelController;
+
+  @override
+  void initState() {
+    super.initState();
+    _panelController = widget.panelController ?? PanelController();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final bool isValidIndex =
+        widget.games.isNotEmpty && widget.currentPage < widget.games.length;
+
     BorderRadiusGeometry radius = BorderRadius.only(
       topLeft: Radius.circular(40.0),
       topRight: Radius.circular(40.0),
     );
 
+    if (!isValidIndex) {
+      return SlidingUpPanel(
+        controller: _panelController,
+        header: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.center,
+            child: Container(
+              margin: EdgeInsets.only(top: 8),
+              height: 4,
+              width: 160,
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+            ),
+          ),
+        ),
+        onPanelSlide: (double value) => widget.slidePanelFunction(value),
+        onPanelOpened: () => widget.slidePanelFunction(1.0),
+        onPanelClosed: () => widget.slidePanelFunction(0.0),
+        minHeight: 240,
+        maxHeight: 780,
+        borderRadius: radius,
+        panel: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground,
+            borderRadius: radius,
+          ),
+          child: _buildUploadingPanel(context),
+        ),
+        collapsed: Container(
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground,
+            borderRadius: radius,
+          ),
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 8, bottom: 4),
+                height: 4,
+                width: 160,
+                decoration: BoxDecoration(
+                  color: Colors.white54,
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+              ),
+              SizedBox(height: 40),
+                  Text(
+                      "Slide up to create a new game",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return SlidingUpPanel(
+      controller: _panelController,
       header: Center(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -44,13 +138,15 @@ class PanelSlider extends StatelessWidget {
           ),
         ),
       ),
-      onPanelSlide: (double value) => slidePanelFunction(value),
-      minHeight: games[currentPage].played_history.isEmpty ? 172 : 240,
+      onPanelSlide: (double value) => widget.slidePanelFunction(value),
+      onPanelOpened: () => widget.slidePanelFunction(1.0),
+      onPanelClosed: () => widget.slidePanelFunction(0.0),
+      minHeight: isValidIndex &&
+              widget.games[widget.currentPage].played_history.isEmpty
+          ? 172
+          : 240,
       maxHeight: 780,
       borderRadius: radius,
-
-      //
-      // Panel
       panel: Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
@@ -126,7 +222,8 @@ class PanelSlider extends StatelessWidget {
                   child: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: games[currentPage].played_history.isEmpty
+                      children: widget
+                              .games[widget.currentPage].played_history.isEmpty
                           ? [
                               const Text(
                                 "No play history yet",
@@ -138,8 +235,8 @@ class PanelSlider extends StatelessWidget {
                               ),
                             ]
                           : List.generate(
-                              games[currentPage].played_history.length,
-                              (index) {
+                              widget.games[widget.currentPage].played_history
+                                  .length, (index) {
                               return Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 4),
                                 child: Column(
@@ -155,7 +252,7 @@ class PanelSlider extends StatelessWidget {
                                     ),
                                     SizedBox(height: 2),
                                     Text(
-                                      games[currentPage]
+                                      widget.games[widget.currentPage]
                                           .played_history[index]['score']
                                           .toString(),
                                       style: TextStyle(
@@ -179,8 +276,8 @@ class PanelSlider extends StatelessWidget {
                 height: 86,
                 child: ElevatedButton(
                   onPressed: () => context.push(Routes.playGamePage, extra: {
-                    'games': games[currentPage].gameList,
-                    'reference': games[currentPage].ref
+                    'games': widget.games[widget.currentPage].gameList,
+                    'reference': widget.games[widget.currentPage].ref
                   }),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.neutralBackground,
@@ -199,7 +296,8 @@ class PanelSlider extends StatelessWidget {
                         'assets/images/game.svg',
                         width: 24,
                         height: 24,
-                        color: Colors.white,
+                        colorFilter:
+                            ColorFilter.mode(Colors.white, BlendMode.srcIn),
                       ),
                       const SizedBox(width: 8),
                       const Text(
@@ -237,7 +335,7 @@ class PanelSlider extends StatelessWidget {
               children: [
                 const SizedBox(height: 10),
                 Text(
-                  games[currentPage].played_history.isEmpty
+                  widget.games[widget.currentPage].played_history.isEmpty
                       ? "No played history"
                       : "Played history",
                   style: TextStyle(
@@ -247,7 +345,10 @@ class PanelSlider extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                    height: games[currentPage].played_history.isEmpty ? 0 : 20),
+                    height:
+                        widget.games[widget.currentPage].played_history.isEmpty
+                            ? 0
+                            : 20),
                 SizedBox(
                   height: 120,
                   child: SingleChildScrollView(
@@ -257,7 +358,8 @@ class PanelSlider extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
-                          games[currentPage].played_history.length,
+                          widget
+                              .games[widget.currentPage].played_history.length,
                           (index) {
                             return Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8),
@@ -274,7 +376,7 @@ class PanelSlider extends StatelessWidget {
                                   ),
                                   SizedBox(height: 5),
                                   Text(
-                                    games[currentPage]
+                                    widget.games[widget.currentPage]
                                         .played_history[index]['score']
                                         .toString(),
                                     style: TextStyle(
@@ -298,5 +400,199 @@ class PanelSlider extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildUploadingPanel(BuildContext context) {
+    final bool isButtonEnabled = widget.uploadSuccess &&
+        widget.gameName != null &&
+        widget.gameName!.isNotEmpty;
+        
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: 360),
+        
+        // Add PDF upload instruction box when no file is selected
+        if (!widget.isUploading && widget.uploadProgress <= 0 && !widget.uploadSuccess)
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Color(0xFF152A56),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                // Container(
+                //   width: 80,
+                //   height: 80,
+                //   decoration: BoxDecoration(
+                //     color: Colors.blue.shade700,
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: Icon(
+                //     Icons.picture_as_pdf_rounded,
+                //     color: Colors.white,
+                //     size: 40,
+                //   ),
+                // ),
+                // SizedBox(height: 20),
+                Text(
+                  "Upload PDF file to continue",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Select a PDF document to create your game",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+        // SizedBox(height: !widget.isUploading && widget.uploadProgress <= 0 && !widget.uploadSuccess ? 20 : 260),
+        
+        // Show progress if uploading
+        if (widget.isUploading || widget.uploadSuccess)
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Color(0xFF152A56),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: widget.uploadSuccess
+                            ? Colors.green.shade700
+                            : Colors.blue.shade700,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        widget.uploadSuccess
+                            ? Icons.check_circle
+                            : Icons.upload_file,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.uploadSuccess
+                                ? "Upload Complete!"
+                                : "Uploading File...",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (widget.fileName != null)
+                            Text(
+                              widget.fileName!.length > 30
+                                  ? widget.fileName!.substring(0, 30) + '...'
+                                  : widget.fileName!,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: LinearProgressIndicator(
+                    backgroundColor: Colors.white24,
+                    color: widget.uploadSuccess
+                        ? Color(0xFF4CD964)
+                        : Color(0xFF5AC8FA),
+                    minHeight: 16,
+                    value: widget.uploadSuccess ? 1.0 : widget.uploadProgress,
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+            ),
+          ),
+
+        Spacer(),
+        Container(
+          margin: EdgeInsets.only(bottom: 120),
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: 56,
+          child: ElevatedButton(
+            onPressed: isButtonEnabled
+                ? widget.onCreateGamePressed
+                : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isButtonEnabled
+                  ? AppColors.neutralBackground
+                  : Colors.grey.shade700,
+              disabledBackgroundColor: Colors.grey.shade400,
+              disabledForegroundColor: Colors.grey,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: isButtonEnabled ? 4 : 0,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (isButtonEnabled)
+                  SvgPicture.asset(
+                    'assets/images/game.svg',
+                    width: 24,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                SizedBox(width: 10),
+                Text(
+                  'Create Game',
+                  style: TextStyle(
+                    color:
+                        isButtonEnabled ? Colors.white : Colors.grey.shade600,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void openPanel() {
+    _panelController.open();
+  }
+
+  void closePanel() {
+    _panelController.close();
   }
 }

@@ -11,7 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/cards/profile_header.dart';
-import 'package:brainboost/screens/creategame.dart';
+// import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
@@ -486,12 +486,12 @@ class _HomeState extends State<Home> {
                         const SizedBox(height: 50),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CreateGameScreen()),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) =>
+                            //           const CreateGameScreen()),
+                            // );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.yellow[700],
