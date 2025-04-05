@@ -29,10 +29,8 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController personalizeController =
-      TextEditingController(); // เปลี่ยนจาก password เป็น personalize
+  final TextEditingController personalizeController = TextEditingController();
 
-  // ฟังก์ชันดึงข้อมูลผู้ใช้จาก Firestore
   Future<DocumentSnapshot> fetchUserData() async {
     final String? email = UserServices().getCurrentUserEmail();
     final DocumentSnapshot userDoc =
@@ -41,7 +39,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return userDoc;
   }
 
-  // ฟังก์ชันอัพเดตข้อมูลผู้ใช้
   Future<void> updateUserProfile() async {
     final String? email = UserServices().getCurrentUserEmail();
 
@@ -52,7 +49,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ? userDoc['personalize']
         : '';
 
-    // ตรวจสอบว่ามีการเปลี่ยนแปลงข้อมูลหรือไม่
     if (nameController.text == currentUsername &&
         emailController.text == currentEmail &&
         personalizeController.text == currentPersonalize) {
@@ -66,7 +62,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await UserServices().users.doc(email).update({
         'username': nameController.text,
         'email': emailController.text,
-        'personalize': personalizeController.text, // อัพเดตเป็น personalize
+        'personalize': personalizeController.text,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -87,7 +83,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
-          backgroundColor: const Color(0xFFECF5FF), // สีพื้นหลัง
+          backgroundColor: const Color(0xFFECF5FF),
           leading: Padding(
             padding: const EdgeInsets.only(top: 20),
             child: IconButton(
@@ -138,7 +134,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ? userDoc['personalize']
                       : '';
 
-              // ตั้งค่าตัวแปร controller
               nameController.text = username;
               emailController.text = email;
               personalizeController.text = personalize;
@@ -146,12 +141,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildTextField("Name", nameController),
+                  buildTextField("Username", nameController),
                   const SizedBox(height: 20),
                   buildTextField("Email", emailController),
                   const SizedBox(height: 20),
-                  buildTextField("Personalize",
-                      personalizeController), // เปลี่ยนจาก Password เป็น Personalize
+                  buildTextField("Personalize", personalizeController),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -177,7 +171,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // สร้าง Widget สำหรับ TextField
   Widget buildTextField(String label, TextEditingController controller,
       {bool obscureText = false}) {
     return Column(
