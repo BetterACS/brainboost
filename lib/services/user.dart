@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class UserServices {
   final CollectionReference users =
@@ -86,4 +87,41 @@ class UserServices {
     }
   }
   
+  Future<void> addSharedGame({required String email, required String gamePath}) async {
+    try {
+      // Get the current user document
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
+      
+      if (userDoc.docs.isEmpty) {
+        throw Exception('User not found');
+      }
+      
+      final docId = userDoc.docs[0].id;
+      
+      // Get current games list
+      List<dynamic> currentGames = userDoc.docs[0].data()['games'] ?? [];
+      DocumentReference gameRef = FirebaseFirestore.instance.doc("/games/" + gamePath);
+
+      // Check if game is already in user's collection
+      if (currentGames.contains(gameRef)) {
+        throw Exception('Game already in your collection');
+      }
+      
+      // Add the new game path as a DocumentReference
+      currentGames.add(gameRef);
+      
+      // Update the user document
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(docId)
+          .update({'games': currentGames});
+    } catch (e) {
+      print('Error in addSharedGame: $e');
+      throw e;
+    }
+  }
 }

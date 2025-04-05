@@ -32,7 +32,8 @@ class GameServices {
             'name': name,
             'author': email,
             'description': "This is a game",
-            'icon': "photomain.png",
+            'icon': (["animations/map1.GIF", "animations/map2.GIF"]..shuffle())
+                .first,
             'media': media,
             'game_list': gameData,
           })
@@ -165,6 +166,34 @@ class GameServices {
       print("Added to played history");
     } catch (error) {
       print("Failed to add score: $error");
+    }
+  }
+
+
+  /// Updates the name of a specific game document.
+  Future<void> updateGameName({
+    required String path,
+    required String newName,
+  }) async {
+    try {
+      // Ensure the path is a valid Firestore document path
+      DocumentReference gameRef = FirebaseFirestore.instance.doc(path);
+      await gameRef.update({'name': newName});
+      print("Game name updated successfully for path: $path");
+    } catch (error) {
+      print("Failed to update game name for path $path: $error");
+    }
+  }
+
+  Future<void> updateGameIcon({required String path, required String newIcon}) async {
+    try {
+      await FirebaseFirestore.instance
+          .doc(path)
+          .update({'icon': newIcon});
+      return;
+    } catch (e) {
+      print('Error updating game icon: $e');
+      throw Exception('Failed to update game icon: $e');
     }
   }
 }
