@@ -1,4 +1,5 @@
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -9,85 +10,80 @@ class Navbar extends StatelessWidget {
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('Navbar'));
 
-  /// The [StatefulNavigationShell] widget is used to define the app's main content. (e.g. [HomePage], [ProfilePage], [SettingsPage])
   final StatefulNavigationShell navigationShell;
 
-  /// The [_handleTap] function is used to handle the tap event on the bottom navigation bar.
   VoidCallback _handleTap(int index) {
-    // Original code from the tutorial.
-    // navigationShell.goBranch!(index);z
-    // return navigationShell.goBranch != null
-    //     ? () => navigationShell.goBranch!(index)
-    //     : () {};
-
-    if (navigationShell.goBranch != null) 
+    if (navigationShell.goBranch != null) {
       navigationShell.goBranch!(index);
-    
+    }
     return () {};
   }
 
   @override
   Widget build(BuildContext context) {
-    /// The [Container] widget is used to contain the [BottomNavigationBar] widget. (Design purpose)
-    return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier, 
+      builder: (context, currentTheme, child) {
+        final isDark = currentTheme == ThemeMode.dark;
 
-        /// The [BottomNavigationBar] widget is used to define the bottom navigation bar.
-        child: BottomNavigationBar(
-          onTap: _handleTap, // Handle the tap event on the bottom navigation bar.
-          type: BottomNavigationBarType.fixed,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          currentIndex: navigationShell.currentIndex,
-
-          /// Generate the bottom navigation bar items based on the [destinations] list.
-          items: <BottomNavigationBarItem>[
-            for (int i = 0; i < destinations.length; i++)
-              BottomNavigationBarItem(
-
-                /// Active icon.
-                activeIcon: Column(
-                  children: [
-                    SvgPicture.asset(
+        final activeColor = isDark ? AppColors.accentDarkmode : AppColors.activeColor;
+        final inactiveColor = isDark ? AppColors.accentDarkmode : AppColors.inactiveColor;
+        final backgroundColor = isDark ? AppColors.white : AppColors.white;
+        return Container(
+          decoration: BoxDecoration(
+      color: backgroundColor,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            child: BottomNavigationBar(
+              onTap: _handleTap,
+              type: BottomNavigationBarType.fixed,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              currentIndex: navigationShell.currentIndex,
+               backgroundColor: backgroundColor,
+              items: <BottomNavigationBarItem>[
+                for (int i = 0; i < destinations.length; i++)
+                  BottomNavigationBarItem(
+                    activeIcon: Column(
+                      children: [
+                        SvgPicture.asset(
+                          destinations[i].assetPath,
+                          width: 34,
+                          height: 34,
+                          color: activeColor, // ใช้ activeColor
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 4),
+                          height: 3,
+                          width: 30,
+                          decoration: BoxDecoration(
+                            color: activeColor, // ใช้ activeColor
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ],
+                    ),
+                    icon: SvgPicture.asset(
                       destinations[i].assetPath,
                       width: 34,
                       height: 34,
-                      color: AppColors.activeColor,
+                      color: inactiveColor, // ใช้ inactiveColor
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 4),
-                      height: 3,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        color: AppColors.activeColor,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ],
-                ),
-
-                /// Inactive icon. (Default)
-                icon: SvgPicture.asset(
-                  destinations[i].assetPath,
-                  width: 34,
-                  height: 34,
-                  color: AppColors.inactiveColor,
-                ),
-                label: destinations[i].label,
-              )
-          ],
-        ),
-      ),
+                    label: destinations[i].label,
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
