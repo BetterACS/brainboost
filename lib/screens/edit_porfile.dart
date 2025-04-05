@@ -29,8 +29,10 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController personalizeController =
+      TextEditingController(); // เปลี่ยนจาก password เป็น personalize
 
+  // ฟังก์ชันดึงข้อมูลผู้ใช้จาก Firestore
   Future<DocumentSnapshot> fetchUserData() async {
     final String? email = UserServices().getCurrentUserEmail();
     final DocumentSnapshot userDoc =
@@ -39,17 +41,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return userDoc;
   }
 
+  // ฟังก์ชันอัพเดตข้อมูลผู้ใช้
   Future<void> updateUserProfile() async {
     final String? email = UserServices().getCurrentUserEmail();
 
     final userDoc = await UserServices().users.doc(email).get();
     final currentUsername = userDoc['username'] ?? '';
     final currentEmail = userDoc['email'] ?? '';
-    final currentPassword = userDoc['password'] ?? '';
+    final currentPersonalize = userDoc.data().toString().contains('personalize')
+        ? userDoc['personalize']
+        : '';
 
+    // ตรวจสอบว่ามีการเปลี่ยนแปลงข้อมูลหรือไม่
     if (nameController.text == currentUsername &&
         emailController.text == currentEmail &&
-        passwordController.text == currentPassword) {
+        personalizeController.text == currentPersonalize) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("No changes made")),
       );
@@ -60,7 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await UserServices().users.doc(email).update({
         'username': nameController.text,
         'email': emailController.text,
-        'password': passwordController.text,
+        'personalize': personalizeController.text, // อัพเดตเป็น personalize
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -127,11 +133,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               final userDoc = snapshot.data!;
               final username = userDoc['username'] ?? 'ไม่มีชื่อผู้ใช้';
               final email = userDoc['email'] ?? 'ไม่มีอีเมล';
-              final password = userDoc['password'] ?? 'ไม่มีรหัสผ่าน';
+              final personalize =
+                  userDoc.data().toString().contains('personalize')
+                      ? userDoc['personalize']
+                      : '';
 
+              // ตั้งค่าตัวแปร controller
               nameController.text = username;
               emailController.text = email;
-              passwordController.text = password;
+              personalizeController.text = personalize;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +150,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 20),
                   buildTextField("Email", emailController),
                   const SizedBox(height: 20),
-                  PasswordField(controller: passwordController),
+                  buildTextField("Personalize",
+                      personalizeController), // เปลี่ยนจาก Password เป็น Personalize
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -166,6 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  // สร้าง Widget สำหรับ TextField
   Widget buildTextField(String label, TextEditingController controller,
       {bool obscureText = false}) {
     return Column(
@@ -187,55 +199,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               borderSide: BorderSide(color: Colors.grey.shade300),
             ),
             suffixIcon: const Icon(Icons.edit, color: Colors.grey),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class PasswordField extends StatefulWidget {
-  final TextEditingController controller;
-  const PasswordField({required this.controller});
-
-  @override
-  _PasswordFieldState createState() => _PasswordFieldState();
-}
-
-class _PasswordFieldState extends State<PasswordField> {
-  bool _isPasswordVisible = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Password',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: widget.controller,
-          obscureText: !_isPasswordVisible,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
-            ),
           ),
         ),
       ],
