@@ -19,6 +19,8 @@ class PanelSlider extends StatefulWidget {
   final String? gameName;
   final bool uploadSuccess;
   final VoidCallback? onCreateGamePressed;
+  final VoidCallback? onImportSuccess;
+  final bool isCurrentUserAuthor; // New property to check if user is the author
 
   PanelSlider({
     Key? key,
@@ -32,6 +34,8 @@ class PanelSlider extends StatefulWidget {
     this.gameName,
     this.uploadSuccess = false,
     this.onCreateGamePressed,
+    this.onImportSuccess,
+    this.isCurrentUserAuthor = false, // Default to false for safety
   }) : super(key: key);
 
   @override
@@ -40,11 +44,20 @@ class PanelSlider extends StatefulWidget {
 
 class _PanelSliderState extends State<PanelSlider> {
   late PanelController _panelController;
+  final TextEditingController _importPathController = TextEditingController();
+  bool _isImporting = false;
+  String? _importError;
 
   @override
   void initState() {
     super.initState();
     _panelController = widget.panelController ?? PanelController();
+  }
+
+  @override
+  void dispose() {
+    _importPathController.dispose();
+    super.dispose();
   }
 
   @override
@@ -106,14 +119,14 @@ class _PanelSliderState extends State<PanelSlider> {
                 ),
               ),
               SizedBox(height: 40),
-                  Text(
-                      "Slide up to create a new game",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              Text(
+                "Slide up to create a new game",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
@@ -162,14 +175,17 @@ class _PanelSliderState extends State<PanelSlider> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: widget.isCurrentUserAuthor ? () {} : null,
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.buttonText,
+                      backgroundColor: widget.isCurrentUserAuthor ? Colors.white : Colors.grey.shade300,
+                      foregroundColor: widget.isCurrentUserAuthor ? AppColors.buttonText : Colors.grey.shade600,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      side: const BorderSide(color: Colors.white, width: 2),
+                      side: BorderSide(
+                        color: widget.isCurrentUserAuthor ? Colors.white : Colors.grey.shade400, 
+                        width: 2
+                      ),
                       minimumSize: const Size(160, 40),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
@@ -179,21 +195,21 @@ class _PanelSliderState extends State<PanelSlider> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.buttonText,
                       ),
                     ),
                   ),
                   OutlinedButton(
-                    onPressed: () {
-                      // Handle "Add Lecture"
-                    },
+                    onPressed: widget.isCurrentUserAuthor ? () {} : null,
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.buttonText,
+                      backgroundColor: widget.isCurrentUserAuthor ? Colors.white : Colors.grey.shade300,
+                      foregroundColor: widget.isCurrentUserAuthor ? AppColors.buttonText : Colors.grey.shade600,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      side: const BorderSide(color: Colors.white, width: 2),
+                      side: BorderSide(
+                        color: widget.isCurrentUserAuthor ? Colors.white : Colors.grey.shade400, 
+                        width: 2
+                      ),
                       minimumSize: const Size(160, 40),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
@@ -203,7 +219,6 @@ class _PanelSliderState extends State<PanelSlider> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.buttonText,
                       ),
                     ),
                   ),
@@ -406,12 +421,12 @@ class _PanelSliderState extends State<PanelSlider> {
     final bool isButtonEnabled = widget.uploadSuccess &&
         widget.gameName != null &&
         widget.gameName!.isNotEmpty;
-        
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(height: 360),
-        
+
         // Add PDF upload instruction box when no file is selected
         if (!widget.isUploading && widget.uploadProgress <= 0 && !widget.uploadSuccess)
           Container(
@@ -423,20 +438,26 @@ class _PanelSliderState extends State<PanelSlider> {
             ),
             child: Column(
               children: [
-                // Container(
-                //   width: 80,
-                //   height: 80,
-                //   decoration: BoxDecoration(
-                //     color: Colors.blue.shade700,
-                //     shape: BoxShape.circle,
-                //   ),
-                //   child: Icon(
-                //     Icons.picture_as_pdf_rounded,
-                //     color: Colors.white,
-                //     size: 40,
-                //   ),
-                // ),
-                // SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () => _showImportDialog(context),
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade700,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.file_download_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 Text(
                   "Upload PDF file to continue",
                   textAlign: TextAlign.center,
@@ -458,9 +479,7 @@ class _PanelSliderState extends State<PanelSlider> {
               ],
             ),
           ),
-          
-        // SizedBox(height: !widget.isUploading && widget.uploadProgress <= 0 && !widget.uploadSuccess ? 20 : 260),
-        
+
         // Show progress if uploading
         if (widget.isUploading || widget.uploadSuccess)
           Container(
@@ -543,9 +562,7 @@ class _PanelSliderState extends State<PanelSlider> {
           width: MediaQuery.of(context).size.width * 0.8,
           height: 56,
           child: ElevatedButton(
-            onPressed: isButtonEnabled
-                ? widget.onCreateGamePressed
-                : null,
+            onPressed: isButtonEnabled ? widget.onCreateGamePressed : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: isButtonEnabled
                   ? AppColors.neutralBackground
@@ -585,6 +602,126 @@ class _PanelSliderState extends State<PanelSlider> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showImportDialog(BuildContext context) {
+    _importPathController.clear();
+    _importError = null;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                "Import Game",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: Container(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: _importPathController,
+                      decoration: InputDecoration(
+                        labelText: "Game Path",
+                        hintText: "Paste the game path here",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        prefixIcon: Icon(Icons.link),
+                        errorText: _importError,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "Enter the path of the game you want to import to your collection",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: _isImporting
+                      ? null
+                      : () async {
+                          if (_importPathController.text.trim().isEmpty) {
+                            setState(() {
+                              _importError = "Game path cannot be empty";
+                            });
+                            return;
+                          }
+
+                          setState(() {
+                            _isImporting = true;
+                            _importError = null;
+                          });
+
+                          try {
+                            final email =
+                                widget.userServices.getCurrentUserEmail();
+                            if (email != null) {
+                              await widget.userServices.addSharedGame(
+                                  email: email,
+                                  gamePath: _importPathController.text.trim());
+
+                              Navigator.of(context).pop();
+                              if (widget.onImportSuccess != null) {
+                                widget.onImportSuccess!();
+                              }
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                content: Text("Game imported successfully"),
+                                backgroundColor: Colors.green,
+                              ));
+                            } else {
+                              throw Exception("User not logged in");
+                            }
+                          } catch (e) {
+                            setState(() {
+                              _importError = e.toString();
+                              _isImporting = false;
+                            });
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.neutralBackground,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: _isImporting
+                      ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ))
+                      : Text(
+                          "Import",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

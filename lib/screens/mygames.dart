@@ -14,15 +14,10 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/services/games.dart';
 import 'package:file_picker/file_picker.dart';
-// import 'dart:convert';
 import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:io';
-// import 'package:brainboost/services/history.dart';
 import 'package:brainboost/utils/game_creator.dart';
 import 'dart:io' as io;
 import 'package:flutter/services.dart';
-// import 'package:brainboost/component/dialogs/error_dialog.dart';
 
 ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
 ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
@@ -333,8 +328,6 @@ class _MyGamesState extends State<MyGames> {
         availableIcons = [
           'assets/animations/map1.GIF', 
           'assets/animations/map2.GIF',
-          // 'assets/animations/map3.GIF',
-          // 'assets/animations/map4.GIF',
         ];
       });
     }
@@ -460,6 +453,18 @@ class _MyGamesState extends State<MyGames> {
     );
   }
 
+  // Helper method to extract hash from game reference path
+  String _extractHashFromPath(String path) {
+    // print(refpath.path);
+    // String path = refpath.path;
+
+    // Extract just the hash part after "/games/"
+    if (path.contains('games/')) {
+      return path.split('games/').last;
+    }
+    return path; // Return original if format is unexpected
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
@@ -493,6 +498,9 @@ class _MyGamesState extends State<MyGames> {
                 ? AppColors.cardBackground
                 : Colors.white;
 
+            // Get current user email for author check
+            final String? currentUserEmail = FirebaseAuth.instance.currentUser?.email;
+
             return Scaffold(
               backgroundColor: AppColors.mainColor,
               appBar: AppBar(
@@ -518,6 +526,9 @@ class _MyGamesState extends State<MyGames> {
                           _isLoadedGames = false;
                           games = [];
                           _currentPage = 0;
+
+                          _slideUpPanelValue = 0;
+                          toggleSlideUpPanel(0.0);
                         });
                       },
                       tooltip: 'Refresh Games',
@@ -539,6 +550,9 @@ class _MyGamesState extends State<MyGames> {
                         : _newGameTitle, // Use our stored variable here
                     uploadSuccess: uploadSuccess,
                     onCreateGamePressed: onCreateGamePressed, // Add this callback
+                    isCurrentUserAuthor: _currentPage < games.length && games.isNotEmpty
+                        ? games[_currentPage].author == currentUserEmail
+                        : true, // Default to true for new games
                   ),
                   Column(
                     children: <Widget>[
@@ -1017,14 +1031,99 @@ class _MyGamesState extends State<MyGames> {
                 color: Colors.white,
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
-                tooltip: 'Share Game (Not Implemented)',
+                tooltip: 'Share Game',
                 onPressed: () {
-                  print("Share button pressed for ${games[_currentPage].name}");
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text('Share feature coming soon!'),
-                        duration: Duration(seconds: 1)),
-                  );
+                  if (_currentPage < games.length) {
+                    // Get just the hash part
+                    String gameHash = _extractHashFromPath(games[_currentPage].ref);
+                    
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Share Game",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 15),
+                              Text(
+                                "Share this game code with others:",
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Container(
+                                padding: EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF102247),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        gameHash,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontFamily: 'Monospace',
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.copy, color: Colors.white),
+                                      onPressed: () {
+                                        Clipboard.setData(ClipboardData(text: gameHash));
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Game code copied to clipboard!'),
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 15),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    "Close",
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }
                 },
                 icon: Icon(Icons.share),
               ),
