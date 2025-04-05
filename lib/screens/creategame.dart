@@ -32,7 +32,7 @@ class CreateGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFECF5FF), // สีพื้นหลังหลักของแอป
+      backgroundColor: AppColors.accentBackground, // Updated to use AppColors
       appBar: AppBar(
         backgroundColor: AppColors.appBarBackground,
         elevation: 0,
@@ -69,7 +69,7 @@ class ProfileSection extends StatelessWidget {
             // รูปโปรไฟล์แบบวงกลมซ้อนกัน
             CircleAvatar(
               radius: 25,
-              backgroundColor: AppColors.white, // สีขอบนอก
+              backgroundColor: AppColors.white, // Use AppColors
               child: CircleAvatar(
                 radius: 22,
                 backgroundImage: AssetImage('assets/images/profile.jpg'),
@@ -79,7 +79,7 @@ class ProfileSection extends StatelessWidget {
             Text(
               "Mon Chinawat",
               style: TextStyle(
-                color: AppColors.white,
+                color: AppColors.white, // Use AppColors
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -103,7 +103,7 @@ class MainContent extends StatelessWidget {
           const Text(
             "Create New Game",
             style: TextStyle(
-              color: AppColors.primaryBackground,
+              color: AppColors.primaryBackground, // Use AppColors
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -114,7 +114,7 @@ class MainContent extends StatelessWidget {
           const Text(
             "Learn more about Lecture?",
             style: TextStyle(
-              color: AppColors.primaryBackground,
+              color: AppColors.primaryBackground, // Use AppColors
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -132,7 +132,7 @@ class MainContent extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryBackground,
+              backgroundColor: AppColors.primaryBackground, // Use AppColors
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -146,13 +146,13 @@ class MainContent extends StatelessWidget {
                   'assets/images/game.svg',
                   width: 24,
                   height: 24,
-                  color: AppColors.white,
+                  color: AppColors.white, // Use AppColors
                 ),
                 const SizedBox(width: 8),
                 const Text(
                   'Create Summary',
                   style: TextStyle(
-                    color: AppColors.white,
+                    color: AppColors.white, // Use AppColors
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -188,7 +188,7 @@ class UploadCircleButton extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: AppColors.primaryBackground,
+            color: AppColors.primaryBackground, // Use AppColors
             width: 3,
           ),
         ),
@@ -196,7 +196,7 @@ class UploadCircleButton extends StatelessWidget {
           child: Icon(
             Icons.add,
             size: 50,
-            color: AppColors.primaryBackground,
+            color: AppColors.primaryBackground, // Use AppColors
           ),
         ),
       ),
@@ -297,23 +297,22 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFECF5FF),
+      backgroundColor: AppColors.accentBackground, // Use AppColors
       appBar: AppBar(
         backgroundColor: AppColors.appBarBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: AppColors.containerBackground),
+          icon: Icon(Icons.arrow_back, color: AppColors.containerBackground),
           onPressed: () => Navigator.pop(context), // ปุ่มกลับ
         ),
-        title: const Text(
+        title: Text(
           'Create game',
           style: TextStyle(color: AppColors.containerBackground),
         ),
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: AppColors.containerBackground,
+          color: AppColors.containerBackground, // Use AppColors
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -328,7 +327,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                 child: Text(
                   'Upload your files',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white, // Use AppColors
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -347,7 +346,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
               const Text(
                 'Game name',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white, // Use AppColors
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -357,7 +356,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                 controller: _gameNameTextController,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: AppColors.white, // Use AppColors
                   hintText: 'Enter your game name',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -376,7 +375,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.white70,
+                    color:AppColors.white,
                     width: 2,
                   ),
                   color: Colors.transparent,
@@ -386,15 +385,15 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                   children: [
                     const Icon(
                       Icons.cloud_upload_outlined,
-                      color: Colors.white,
+                      color: AppColors.white, // Use AppColors
                       size: 88,
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: pickFile,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue.shade900,
+                        backgroundColor: AppColors.white, // Use AppColors
+                        foregroundColor: AppColors.buttonForeground, // Use AppColors
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -419,7 +418,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                 Text(
                   '$fileName',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white, // Use AppColors
                     fontSize: 16,
                   ),
                 ),
@@ -428,8 +427,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: LinearProgressIndicator(
-                          backgroundColor: Color(0xFFE9E9E9),
-                          color: Colors.green,
+                          backgroundColor: AppColors.progressBar, // Use AppColors
+                          color: AppColors.successColor, // Use AppColors
                           minHeight: 10,
                           value: progress,
                         ),
@@ -440,11 +439,11 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                               Text(
                                 "Upload complete!",
                                 style: TextStyle(
-                                  color: Colors.green,
+                                  color: AppColors.successColor, // Use AppColors
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Icon(Icons.check_circle, color: Colors.green),
+                              Icon(Icons.check_circle, color: AppColors.successColor), // Use AppColors
                             ],
                           )
                         : Container(),
@@ -458,17 +457,17 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
                       (states) {
                         if (uploadSuccess) {
-                          return Colors.white;
+                          return AppColors.white; // Use AppColors
                         }
-                        return const Color(0xFFE5E5E5);
+                        return AppColors.createButtonForeground; // Use AppColors
                       },
                     ),
                     foregroundColor: MaterialStateProperty.resolveWith<Color>(
                       (states) {
                         if (uploadSuccess) {
-                          return AppColors.primaryBackground;
+                          return AppColors.primaryBackground; // Use AppColors
                         }
-                        return const Color(0xFFABABAB);
+                        return AppColors.createButtonBackground; // Use AppColors
                       },
                     ),
                     padding: MaterialStateProperty.all(
@@ -651,7 +650,7 @@ class _CreatingDialogState extends State<CreatingDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white, // Use AppColors
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -671,7 +670,7 @@ class _CreatingDialogState extends State<CreatingDialog> {
                         width: 200,
                         height: 160,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE9E9E9),
+                          color: AppColors.progressBar, // Use AppColors
                           borderRadius: BorderRadius.circular(80),
                         ),
                       ),
@@ -696,8 +695,8 @@ class _CreatingDialogState extends State<CreatingDialog> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
-                    backgroundColor: Color(0xFFE9E9E9),
-                    color: Colors.blue.shade800,
+                    backgroundColor: AppColors.progressBar, // Use AppColors
+                    color: AppColors.progressBlue, // Use AppColors
                     minHeight: 10,
                     value: creationProgress.value,
                   ),
@@ -709,7 +708,7 @@ class _CreatingDialogState extends State<CreatingDialog> {
             top: 5,
             right: 5,
             child: IconButton(
-              icon: const Icon(Icons.close, color: Color(0xFF838383)),
+              icon: Icon(Icons.close, color: AppColors.closeIconColor), // Use AppColors
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
@@ -736,7 +735,7 @@ class SuccessDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white, // Use AppColors
       child: Stack(
         children: [
           Padding(
@@ -752,7 +751,7 @@ class SuccessDialog extends StatelessWidget {
                       width: 150,
                       height: 150,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF20BF4D).withOpacity(0.25),
+                        color: AppColors.successColor.withOpacity(0.25), // Use AppColors
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -761,7 +760,7 @@ class SuccessDialog extends StatelessWidget {
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF20BF4D).withOpacity(0.5),
+                        color: AppColors.successColor.withOpacity(0.5), // Use AppColors
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -770,11 +769,11 @@ class SuccessDialog extends StatelessWidget {
                       width: 90,
                       height: 90,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF20BF4D),
+                        color: AppColors.successColor, // Use AppColors
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.check,
-                          color: Colors.white, size: 48),
+                          color: AppColors.white, size: 48), // Use AppColors
                     ),
                   ],
                 ),
@@ -787,10 +786,12 @@ class SuccessDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text(
+                Text(
                   "Your game has been created successfully",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textQuizOption), 
                 ),
                 const SizedBox(height: 28),
                 // ปุ่ม Start Playing
@@ -806,8 +807,8 @@ class SuccessDialog extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF20BF4D),
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.successColor, // Use AppColors
+                      foregroundColor: AppColors.white, // Use AppColors
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -834,8 +835,8 @@ class SuccessDialog extends StatelessWidget {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF20BF4D),
-                      side: const BorderSide(color: Color(0xFF20BF4D)),
+                      foregroundColor: AppColors.successColor, // Use AppColors
+                      side: const BorderSide(color: AppColors.successColor), // Use AppColors
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -856,7 +857,7 @@ class SuccessDialog extends StatelessWidget {
             top: 8,
             right: 8,
             child: IconButton(
-              icon: const Icon(Icons.close, color: Color(0xFF838383)),
+              icon: Icon(Icons.close, color: AppColors.closeIconColor), // Use AppColors
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
@@ -883,7 +884,7 @@ class ErrorDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white, // Use AppColors
       child: Stack(
         children: [
           Padding(
@@ -899,7 +900,7 @@ class ErrorDialog extends StatelessWidget {
                       width: 150,
                       height: 150,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE04545).withOpacity(0.25),
+                        color: AppColors.errorColor.withOpacity(0.25), // Use AppColors
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -908,7 +909,7 @@ class ErrorDialog extends StatelessWidget {
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE04545).withOpacity(0.5),
+                        color: AppColors.errorColor.withOpacity(0.5), // Use AppColors
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -917,11 +918,11 @@ class ErrorDialog extends StatelessWidget {
                       width: 90,
                       height: 90,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFE04545),
+                        color: AppColors.errorColor, // Use AppColors
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.close,
-                          color: Colors.white, size: 48),
+                          color: AppColors.white, size: 48), // Use AppColors
                     ),
                   ],
                 ),
@@ -934,10 +935,12 @@ class ErrorDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text(
+                Text(
                   "Something went wrong\nPlease try again or upload a new file.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textQuizOption), // ✅ ใช้สีจาก AppColors
                 ),
                 const SizedBox(height: 28),
                 SizedBox(
@@ -960,8 +963,8 @@ class ErrorDialog extends StatelessWidget {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
+                      backgroundColor:AppColors.errorColor, 
+                      foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -986,8 +989,9 @@ class ErrorDialog extends StatelessWidget {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
+                      foregroundColor:
+                          AppColors.errorColor, // Changed from Colors.red
+                      side: BorderSide(color: AppColors.errorColor),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -1006,7 +1010,7 @@ class ErrorDialog extends StatelessWidget {
             top: 8,
             right: 8,
             child: IconButton(
-              icon: const Icon(Icons.close, color: Color(0xFF838383)),
+              icon: Icon(Icons.close, color: AppColors.closeIconColor),
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(

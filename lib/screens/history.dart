@@ -42,7 +42,7 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48.0),
           child: TabBar(
@@ -77,7 +77,14 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
 
   Widget _buildComingSoonTab() {
     return const Center(
-      child: Text("Coming Soon..."),
+      child: Text(
+        "Coming Soon...",
+        style: TextStyle(
+          color: AppColors.buttonText,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     );
   }
 
@@ -107,7 +114,16 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
     }
   
     if (email.isEmpty) {
-      return const Center(child: Text("No user email provided"));
+      return const Center(
+        child: Text(
+          "No user email provided",
+          style: TextStyle(
+            color: AppColors.buttonText,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
     }
   
     return StreamBuilder<DocumentSnapshot>(
@@ -117,17 +133,39 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.progressBlue,
+            ),
+          );
         }
 
         if (snapshot.hasError) {
-          return const Center(child: Text("Error loading history"));
+          return const Center(
+            child: Text(
+              "Error loading history",
+              style: TextStyle(
+                color: AppColors.errorColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
         }
 
         if (!snapshot.hasData ||
             snapshot.data == null ||
             !snapshot.data!.exists) {
-          return const Center(child: Text("No history found"));
+          return const Center(
+            child: Text(
+              "No history found",
+              style: TextStyle(
+                color: AppColors.buttonText,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
         }
 
         var docData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
@@ -137,7 +175,16 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
             .toList() ?? [];
 
         if (allGames.isEmpty) {
-          return const Center(child: Text("No history found"));
+          return const Center(
+            child: Text(
+              "No history found",
+              style: TextStyle(
+                color: AppColors.buttonText,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
         }
 
         return ListView.builder(

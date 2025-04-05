@@ -1,9 +1,11 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:brainboost/screens/game_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/bottom_slider.dart';
+// Added import for AppColors
 
 class BingoScreen extends StatefulWidget {
   final BingoContent content;
@@ -46,14 +48,13 @@ class _BingoScreenState extends State<BingoScreen> {
     widget.onNext(isBingoWin ? 1 : 0);
   }
 
-  dynamic getNextButtonColor() {
-    //  isBingoWin ?  : Colors.red
+  Color getNextButtonColor() {
     if (isBingoWin) {
-      return Colors.blue;
+      return AppColors.progressBlue;
     } else if (!isBingoWin && _areAllQuestionsAnswered()) {
-      return Colors.red;
+      return AppColors.errorColor;
     } else {
-      return Colors.grey[300];
+      return AppColors.gray;
     }
   }
 
@@ -135,7 +136,7 @@ class _BingoScreenState extends State<BingoScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -143,16 +144,16 @@ class _BingoScreenState extends State<BingoScreen> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF092866),
+                  color: AppColors.gradient1,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue[900]!),
+                  border: Border.all(color: AppColors.neutralBackground),
                 ),
                 child: Text(
                   "${bingoList[index].point} Points",
                   style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: AppColors.white),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -170,9 +171,9 @@ class _BingoScreenState extends State<BingoScreen> {
                     controller: _answerController,
                     decoration: const InputDecoration(
                       hintText: "Answer",
-                      hintStyle: TextStyle(color: Color(0xFFC2C2C2)),
+                      hintStyle: TextStyle(color: AppColors.gray3),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF092866)),
+                        borderSide: BorderSide(color: AppColors.gradient1),
                       ),
                       filled: true,
                     ),
@@ -208,11 +209,11 @@ class _BingoScreenState extends State<BingoScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            backgroundColor: const Color(0xFF092866),
+                            backgroundColor: AppColors.gradient1,
                           ),
                           child: const Text(
                             "Submit",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: AppColors.white),
                           ),
                         ),
                       ),
@@ -261,7 +262,7 @@ class _BingoScreenState extends State<BingoScreen> {
                               style: const TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w900,
-                                color: Color.fromARGB(255, 13, 15, 53),
+                                color: AppColors.customDarkBlue,
                               ),
                             ),
                           ),
@@ -272,7 +273,7 @@ class _BingoScreenState extends State<BingoScreen> {
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFF1A1F71),
+                                color: AppColors.primaryBackground,
                               ),
                             ),
                           ),
@@ -312,10 +313,10 @@ class _BingoScreenState extends State<BingoScreen> {
                                           decoration: BoxDecoration(
                                             color: isAnswerCorrect[index] ==
                                                     true
-                                                ? Colors.green[600]
+                                                ? AppColors.successColor
                                                 : isAnswerChecked[index] == true
-                                                    ? Colors.red[600]
-                                                    : Colors.blue[900],
+                                                    ? AppColors.errorColor
+                                                    : AppColors.containerBackground,
                                             borderRadius: BorderRadius.circular(
                                                 itemSize * 0.1),
                                           ),
@@ -325,7 +326,7 @@ class _BingoScreenState extends State<BingoScreen> {
                                                   style: TextStyle(
                                                     fontSize: fontSize,
                                                     fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
+                                                    color: AppColors.white,
                                                   ),
                                                 )
                                               : const SizedBox(),
@@ -337,7 +338,7 @@ class _BingoScreenState extends State<BingoScreen> {
                                               isAnswerCorrect[index] == true
                                                   ? Icons.check_circle
                                                   : Icons.clear,
-                                              color: Colors.white,
+                                              color: AppColors.white,
                                               size: iconSize,
                                             ),
                                           ),
@@ -358,7 +359,7 @@ class _BingoScreenState extends State<BingoScreen> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   fontSize: 18,
-                                  color: Color(0xFF1A1F71),
+                                  color: AppColors.primaryBackground,
                                 ),
                               ),
                             ),
@@ -408,7 +409,7 @@ class _BingoScreenState extends State<BingoScreen> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.white, 
                 ),
               ),
             ),

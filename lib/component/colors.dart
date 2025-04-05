@@ -28,7 +28,7 @@ class AppColors {
   static const Color mainColor = Color.fromRGBO(236, 245, 255, 1.0);
   static const Color gray4 = Color.fromRGBO(225, 228, 232, 1.0);
   static const Color gray5 = Color(0xFF888888);
-
+ static const Color customDarkBlue = Color(0xFF0D0F35); 
   static const LinearGradient circleGradient = LinearGradient(
     colors: [
       gradient1,
@@ -37,6 +37,7 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
+  
   static const LinearGradient buttonGradient = LinearGradient(
     colors: [
       gradient1,
@@ -45,31 +46,36 @@ class AppColors {
     begin: Alignment.bottomCenter,
     end: Alignment.topCenter,
   );
+  
   // Additional colors from the CreateGameScreen
   static const Color screenBackground = Color(0xFFECF5FF);
   static const Color createButtonBackground = Color(0xFFABABAB);
   static const Color createButtonForeground = Color(0xFFE5E5E5);
-
-  // Quiz button colors.
+  
+  // Quiz button colors
   static const Color borderQuizOption = Color.fromARGB(255, 201, 201, 201);
   static const Color borderQuizSelectedOption = Colors.blue;
   static const Color borderQuizCorrectOption = Colors.green;
   static const Color borderQuizIncorrectOption = Colors.red;
   static const Color borderQuizNonSelectedOption = Color.fromARGB(255, 201, 201, 201);
-
   static const Color backgroundQuizOption = Colors.white;
   static const Color backgroundQuizSelectedOption = Color(0xFFE4F4FF);
   static const Color backgroundQuizCorrectOption = Color(0xFFDCFFCF);
   static const Color backgroundQuizIncorrectOption = Color(0xFFFF9EA0);
   static const Color backgroundQuizNonSelectedOption = Colors.white;
-
   static const Color textQuizOption = Colors.black87;
   static const Color textQuizSelectedOption = Colors.blue;
   static const Color textQuizCorrectOption = Color(0xFF229749);
   static const Color textQuizIncorrectOption = Color(0xFFCF1717);
   static const Color textQuizNonSelectedOption = Colors.black87;
-
+  
   // Games Screen components
   static const Color gameScreenBackground = Color(0xFFF0F7FF);
   static const Color progressBar = Color(0xFFE9E9E9);
+  static const Color yellowButton = Color(0xFFFFB700);
+  // เพิ่มสีใหม่ที่จำเป็น
+  static const Color closeIconColor = Color(0xFF838383);
+  static const Color successColor = Color(0xFF20BF4D);
+  static const Color errorColor = Color(0xFFE04545);
+  static const Color progressBlue = Color(0xFF205ED8);
 }

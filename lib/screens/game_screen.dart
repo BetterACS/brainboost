@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:async';
 
-import 'package:brainboost/screens/game_bingo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +12,6 @@ import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/games.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:brainboost/screens/game_bingo.dart';
 
 class GameWrapper extends StatefulWidget {
   final List<GameData> games;
@@ -96,8 +94,8 @@ class _GameWrapperState extends State<GameWrapper>
       this.score += score; // Update score for every correct answer
     });
 
-    // print(
-    //     'gameIndex: $gameIndex, games.length: ${widget.games.length}, ${(widget.games[gameIndex].content as GameYesNoContent).correct_ans} ${(widget.games[gameIndex].content as GameYesNoContent).question}');
+    print(
+        'gameIndex: $gameIndex, games.length: ${widget.games.length}, ${(widget.games[gameIndex].content as GameYesNoContent).correct_ans} ${(widget.games[gameIndex].content as GameYesNoContent).question}');
 
     if (gameIndex >= widget.games.length - 1) {
       await player.play(
@@ -122,9 +120,7 @@ class _GameWrapperState extends State<GameWrapper>
                       ? (game.content as GameQuizContent).toMap()
                       : game.content is GameYesNoContent
                           ? (game.content as GameYesNoContent).toMap()
-                          : game.content is BingoContent
-                              ? (game.content as BingoContent).toMap()
-                              : {}
+                          : {},
                 })
             .toList(),
       });
@@ -155,8 +151,9 @@ class _GameWrapperState extends State<GameWrapper>
           backgroundColor: AppColors.gameScreenBackground,
           elevation: 0,
           leading: BackButton(
-            color: Colors.black,
-            onPressed: () => context.go(Routes.gamePage),
+            color: AppColors.textQuizOption, // เปลี่ยนจาก Colors.black เป็น AppColors.textQuizOption
+            onPressed: () => context
+                .go(Routes.gamePage), 
           ),
           title: ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -199,10 +196,6 @@ class _GameWrapperState extends State<GameWrapper>
               content: widget.games[gameIndex].content as GameQuizContent,
               isTransitioning: isTransitioning,
             ),
-          'bingo' => BingoScreen(
-              content: widget.games[gameIndex].content as BingoContent,
-              onNext: onNext,
-              isTransitioning: isTransitioning),
           'yesno' => YesNoGameScreen(
               key: ValueKey(gameIndex),
               onNext: onNext,
@@ -234,7 +227,7 @@ class GameScreenProgressBar extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: AppColors.progressBar, // เปลี่ยนจาก Colors.grey[300] เป็น AppColors.progressBar
         borderRadius: BorderRadius.circular(20),
       ),
       child: Stack(
@@ -243,7 +236,7 @@ class GameScreenProgressBar extends StatelessWidget {
             width: width * progress,
             height: height,
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: AppColors.progressBlue, // เปลี่ยนจาก Colors.blue เป็น AppColors.progressBlue
               borderRadius: BorderRadius.circular(20),
             ),
             child: Align(
@@ -255,7 +248,7 @@ class GameScreenProgressBar extends StatelessWidget {
                     height: height / 3,
                     margin: const EdgeInsets.only(top: 3),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.white, // เปลี่ยนจาก Colors.white เป็น AppColors.white
                       borderRadius: BorderRadius.circular(20),
                     ),
                   )),

@@ -1,3 +1,4 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
@@ -100,7 +101,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                                 style: const TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w900,
-                                  color: Color.fromARGB(255, 13, 15, 53),
+                                  color: AppColors.customDarkBlue,
                                 ),
                               ),
                             ),
@@ -112,7 +113,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF1A1F71),
+                                  color: AppColors.buttonText,
                                 ),
                               ),
                             ),

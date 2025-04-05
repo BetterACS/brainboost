@@ -26,7 +26,7 @@ class ProfilePage extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(top: 80),
             decoration: const BoxDecoration(
-              color: Color(0xFF002D72),
+              color: AppColors.containerBackground, // Changed from Color(0xFF002D72)
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(50),
                 topRight: Radius.circular(50),
@@ -79,7 +79,7 @@ class ProfilePage extends StatelessWidget {
                   icon: const Icon(
                     Icons.camera_alt,
                     size: 16,
-                    color: Colors.white,
+                    color: AppColors.white, // Changed from Colors.white
                   ),
                   onPressed: () {},
                 ),
@@ -92,7 +92,7 @@ class ProfilePage extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: AppColors.white, // Changed from Colors.white
             ),
           ),
           const SizedBox(height: 4),
@@ -100,7 +100,7 @@ class ProfilePage extends StatelessWidget {
             "Monchinawat@gmail.com",
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white70,
+              color: AppColors.gray2, // Changed from Colors.white70
             ),
           ),
         ],
@@ -115,11 +115,11 @@ class ProfilePage extends StatelessWidget {
       height: 300,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white, // Changed from Colors.white
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: AppColors.customDarkBlue.withOpacity(0.1), // Changed from Colors.black.withOpacity(0.1)
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -145,13 +145,13 @@ class ProfilePage extends StatelessWidget {
             icon: Icons.palette,
             title: "Theme",
             trailing: RichText(
-              text: const TextSpan(
+              text: TextSpan(
                 children: [
                   TextSpan(
                     text: "Light ",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: AppColors.textQuizOption, // Changed from Colors.black
                       fontSize: 14,
                     ),
                   ),
@@ -159,7 +159,7 @@ class ProfilePage extends StatelessWidget {
                     text: "Open",
                     style: TextStyle(
                       fontWeight: FontWeight.normal,
-                      color: Color(0xFF9E9E9E),
+                      color: AppColors.gray5, // Changed from Color(0xFF9E9E9E)
                       fontSize: 14,
                     ),
                   ),
@@ -193,22 +193,22 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF2B3A67), size: 24),
+            Icon(icon, color: AppColors.buttonText, size: 24), // Changed from Color(0xFF2B3A67)
             const SizedBox(width: 16),
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppColors.textQuizOption, // Changed from Colors.black
                 ),
               ),
             ),
             if (trailing != null) trailing,
             const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Color(0xFF9E9E9E)),
+            Icon(Icons.arrow_forward_ios,
+                size: 16, color: AppColors.gray5), // Changed from Color(0xFF9E9E9E)
           ],
         ),
       ),
@@ -220,7 +220,7 @@ class ProfilePage extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.errorIcon,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.white, // Changed from Colors.white
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -234,7 +234,7 @@ class ProfilePage extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(9),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.white, // Changed from Colors.white
               content: SizedBox(
                 width: 350,
                 height: 360,
@@ -248,11 +248,12 @@ class ProfilePage extends StatelessWidget {
                       width: 180,
                     ),
                     const SizedBox(height: 10),
-                    const Text(
+                    Text(
                       "Are you sure you want to log out?",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
+                        color: AppColors.textQuizOption, // Added color
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -262,9 +263,9 @@ class ProfilePage extends StatelessWidget {
                         Expanded(
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              side: const BorderSide(
-                                color: Colors.red,
+                              foregroundColor: AppColors.errorIcon, // Changed from Colors.red
+                              side: BorderSide(
+                                color: AppColors.errorIcon, // Changed from Colors.red
                                 width: 2,
                               ),
                               shape: RoundedRectangleBorder(
@@ -289,14 +290,17 @@ class ProfilePage extends StatelessWidget {
                             onPressed: () {
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Logged Out Successfully!"),
+                                SnackBar(
+                                  content: Text(
+                                    "Logged Out Successfully!",
+                                    style: TextStyle(color: AppColors.white), // Added color
+                                  ),
                                 ),
                               );
                             },
-                            child: const Text(
+                            child: Text(
                               "Log Out",
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: AppColors.white), // Changed from Colors.white
                             ),
                           ),
                         ),

@@ -103,7 +103,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF1A1F71),
+                        color: AppColors.cardBackground,
                       ),
                     ),
                   ),
@@ -113,7 +113,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                       "Slide to left for No, right for Yes.",
                       style: TextStyle(
                         fontSize: 16,
-                        color: Color(0xFF1A1F71),
+                        color: AppColors.cardBackground,
                       ),
                     ),
                   ),
@@ -136,9 +136,9 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                               side: const BorderSide(
-                                  color: Colors.grey, width: 2),
+                                  color: AppColors.gray5, width: 2),
                             ),
-                            color: Colors.white,
+                            color: AppColors.white,
                             child: Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(20.0),
@@ -148,7 +148,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                                   style: const TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1A1F71),
+                                    color: AppColors.cardBackground,
                                   ),
                                 ),
                               ),
@@ -164,7 +164,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: _isCorrect ? Colors.green : Colors.red,
+                        color: _isCorrect ? AppColors.successColor : AppColors.errorColor,
                       ),
                     ),
                   Row(
@@ -177,7 +177,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1F71),
+                            color: AppColors.cardBackground,
                           ),
                         ),
                       ),
@@ -188,7 +188,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1F71),
+                            color: AppColors.cardBackground,
                           ),
                         ),
                       ),
@@ -227,7 +227,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                         onPressed: _nextQuestion,
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              _isCorrect ? Colors.blue : Colors.red,
+                              _isCorrect ? AppColors.progressBlue : AppColors.errorColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -237,7 +237,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.white,
                           ),
                         ),
                       ),

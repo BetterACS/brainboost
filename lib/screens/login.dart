@@ -2,6 +2,7 @@
 import 'package:brainboost/services/auth_services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:brainboost/component/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,11 +15,11 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       resizeToAvoidBottomInset: true,
       bottomNavigationBar: _signup(context),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.appBarBackground,
         elevation: 0,
         toolbarHeight: 100,
         leading: GestureDetector(
@@ -28,11 +29,11 @@ class Login extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.only(left: 10),
             decoration: const BoxDecoration(
-                color: Color(0xffF7F7F9), shape: BoxShape.circle),
+                color: AppColors.gray4, shape: BoxShape.circle),
             child: const Center(
               child: Icon(
                 Icons.arrow_back_ios_new_rounded,
-                color: Colors.black,
+                color: AppColors.customDarkBlue,
               ),
             ),
           ),
@@ -49,7 +50,7 @@ class Login extends StatelessWidget {
                   'Hello Again',
                   style: GoogleFonts.raleway(
                       textStyle: const TextStyle(
-                          color: Colors.black,
+                          color: AppColors.customDarkBlue,
                           fontWeight: FontWeight.bold,
                           fontSize: 32)),
                 ),
@@ -82,7 +83,7 @@ class Login extends StatelessWidget {
           'Email Address',
           style: GoogleFonts.raleway(
               textStyle: const TextStyle(
-                  color: Colors.black,
+                  color: AppColors.customDarkBlue,
                   fontWeight: FontWeight.normal,
                   fontSize: 16)),
         ),
@@ -95,10 +96,10 @@ class Login extends StatelessWidget {
               filled: true,
               hintText: 'mahdiforwork@gmail.com',
               hintStyle: const TextStyle(
-                  color: Color(0xff6A6A6A),
+                  color: AppColors.gray5,
                   fontWeight: FontWeight.normal,
                   fontSize: 14),
-              fillColor: const Color(0xffF7F7F9),
+              fillColor: AppColors.gray4,
               border: OutlineInputBorder(
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(14))),
@@ -116,7 +117,7 @@ class Login extends StatelessWidget {
           'Password',
           style: GoogleFonts.raleway(
               textStyle: const TextStyle(
-                  color: Colors.black,
+                  color: AppColors.customDarkBlue,
                   fontWeight: FontWeight.normal,
                   fontSize: 16)),
         ),
@@ -128,7 +129,7 @@ class Login extends StatelessWidget {
           controller: _passwordController,
           decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0xffF7F7F9),
+              fillColor: AppColors.gray4,
               border: OutlineInputBorder(
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(14))),
@@ -140,7 +141,7 @@ class Login extends StatelessWidget {
   Widget _signin(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xff0D6EFD),
+        backgroundColor: AppColors.activeColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
@@ -166,14 +167,14 @@ class Login extends StatelessWidget {
             const TextSpan(
               text: "New User? ",
               style: TextStyle(
-                  color: Color(0xff6A6A6A),
+                  color: AppColors.gray5,
                   fontWeight: FontWeight.normal,
                   fontSize: 16),
             ),
             TextSpan(
                 text: "Create Account",
                 style: const TextStyle(
-                    color: Color(0xff1A1D1E),
+                    color: AppColors.customDarkBlue,
                     fontWeight: FontWeight.normal,
                     fontSize: 16),
                 recognizer: TapGestureRecognizer()

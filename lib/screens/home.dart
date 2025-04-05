@@ -21,7 +21,7 @@ class CloudPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.white
       ..style = PaintingStyle.fill;
 
     // วงกลมก้อนเมฆ
@@ -143,7 +143,7 @@ class _HomeState extends State<Home> {
 //             children: [
 //               const CircleAvatar(
 //                 radius: 25,
-//                 backgroundColor: Colors.white,
+//                 backgroundColor: AppColors.white,
 //                 child: CircleAvatar(
 //                   radius: 22,
 //                   backgroundImage: AssetImage('assets/images/profile.jpg'),
@@ -289,8 +289,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // }
-
   Widget _buildRecentGamePage() {
     return Stack(
       alignment: Alignment.center,
@@ -334,7 +332,7 @@ class _HomeState extends State<Home> {
                 width: 160,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error, size: 80, color: Colors.red);
+                  return Icon(Icons.error, size: 80, color: AppColors.errorIcon);
                 },
               ),
             ),
@@ -429,7 +427,7 @@ class _HomeState extends State<Home> {
           gradient: AppColors.buttonGradient,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: AppColors.customDarkBlue.withOpacity(0.2),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -466,9 +464,9 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Let’s Gamify Your Learning!",
+                              "Let's Gamify Your Learning!",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -477,7 +475,7 @@ class _HomeState extends State<Home> {
                             Text(
                               "Make studying fun! Just upload your file\nand start playing.",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.white,
                                 fontSize: 14,
                               ),
                             ),
@@ -494,7 +492,7 @@ class _HomeState extends State<Home> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.yellow[700],
+                            backgroundColor: AppColors.yellowButton,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -506,7 +504,7 @@ class _HomeState extends State<Home> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF002654),
+                              color: AppColors.containerBackground,
                             ),
                           ),
                         ),
@@ -667,7 +665,7 @@ class _HomeState extends State<Home> {
                 text,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
               ),
             ),

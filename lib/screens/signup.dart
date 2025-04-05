@@ -1,4 +1,5 @@
 // import 'package:brainboost/screens/login.dart';
+import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/auth_services.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/services/user.dart';
 
+
 class Signup extends StatelessWidget {
   Signup({super.key});
 
@@ -16,42 +18,14 @@ class Signup extends StatelessWidget {
 
   final UserServices userServices = UserServices();
 
-  // Future<void> createUserWithEmailAndPassword() async {
-  //   try {
-  //     final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _emailController.text.trim(), password: _passwordController.text.trim());
-  //     final CollectionReference users = FirebaseFirestore.instance.collection("users");
-  //     // Convert DateTime objects to Timestamps for Firestore.
-  //     final userData = {
-  //       'email': email,
-  //       'icon': 'default',
-  //       'username': email,
-  //       'create_at': Timestamp.now(),
-  //       'latest_login': Timestamp.now(),
-  //       'age': 12,
-  //       'game_sets': [],
-  //     };
-
-  //     // Use the id (converted to a string) as the document ID.
-  //     await users.add(userData)
-  //       .then((value) => print("User Added"))
-  //       .catchError((error) => print("Failed to add user: $error"));
-
-      
-  //     // await userServices.addUser(email: userCredential.user?.email as String);
-  //     print(userCredential);
-
-  //   } on FirebaseAuthException catch (e) {
-  //     print(e.message);
-  //   }
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white, // Updated to use AppColors
         resizeToAvoidBottomInset: true,
         bottomNavigationBar: _signin(context),
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.appBarBackground, // Updated to use AppColors
           elevation: 0,
           toolbarHeight: 50,
         ),
@@ -64,8 +38,8 @@ class Signup extends StatelessWidget {
                   child: Text(
                     'Register Account',
                     style: GoogleFonts.raleway(
-                        textStyle: const TextStyle(
-                            color: Colors.black,
+                        textStyle: TextStyle(
+                            color: AppColors.textPrimary.withOpacity(0.8), // Updated to use AppColors
                             fontWeight: FontWeight.bold,
                             fontSize: 32)),
                   ),
@@ -96,8 +70,8 @@ class Signup extends StatelessWidget {
         Text(
           'Email Address',
           style: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                  color: Colors.black,
+              textStyle: TextStyle(
+                  color: AppColors.textPrimary.withOpacity(0.8), // Updated to use AppColors
                   fontWeight: FontWeight.normal,
                   fontSize: 16)),
         ),
@@ -109,11 +83,11 @@ class Signup extends StatelessWidget {
           decoration: InputDecoration(
               filled: true,
               hintText: 'mahdiforwork@gmail.com',
-              hintStyle: const TextStyle(
-                  color: Color(0xff6A6A6A),
+              hintStyle: TextStyle(
+                  color: AppColors.gray5, // Updated to use AppColors
                   fontWeight: FontWeight.normal,
                   fontSize: 14),
-              fillColor: const Color(0xffF7F7F9),
+              fillColor: AppColors.gray4, // Updated to use AppColors
               border: OutlineInputBorder(
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(14))),
@@ -130,8 +104,8 @@ class Signup extends StatelessWidget {
         Text(
           'Password',
           style: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                  color: Colors.black,
+              textStyle: TextStyle(
+                  color: AppColors.textPrimary.withOpacity(0.8), // Updated to use AppColors
                   fontWeight: FontWeight.normal,
                   fontSize: 16)),
         ),
@@ -143,7 +117,7 @@ class Signup extends StatelessWidget {
           obscureText: true,
           decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0xffF7F7F9),
+              fillColor: AppColors.gray4, // Updated to use AppColors
               border: OutlineInputBorder(
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(14))),
@@ -155,7 +129,7 @@ class Signup extends StatelessWidget {
   Widget _signup(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xff0D6EFD),
+        backgroundColor: AppColors.progressBlue, // Updated to use AppColors
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
@@ -168,7 +142,12 @@ class Signup extends StatelessWidget {
             password: _passwordController.text,
             context: context);
       },
-      child: const Text("Sign Up"),
+      child: Text(
+        "Sign Up",
+        style: TextStyle(
+          color: AppColors.white, // Added text color with AppColors
+        ),
+      ),
     );
   }
 
@@ -178,25 +157,21 @@ class Signup extends StatelessWidget {
       child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(children: [
-            const TextSpan(
+            TextSpan(
               text: "Already Have Account? ",
               style: TextStyle(
-                  color: Color(0xff6A6A6A),
+                  color: AppColors.gray5, // Updated to use AppColors
                   fontWeight: FontWeight.normal,
                   fontSize: 16),
             ),
             TextSpan(
                 text: "Log In",
-                style: const TextStyle(
-                    color: Color(0xff1A1D1E),
+                style: TextStyle(
+                    color: AppColors.textPrimary, // Updated to use AppColors
                     fontWeight: FontWeight.normal,
                     fontSize: 16),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => Login()),
-                    // );
                     context.push("/login");
                   }),
           ])),

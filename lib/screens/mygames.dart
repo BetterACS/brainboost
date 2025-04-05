@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
-import 'package:brainboost/component/cards/profile_header.dart'; // เพิ่ม import นี้
+import 'package:brainboost/component/cards/profile_header.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainboost/component/panel_slider.dart';
 
@@ -56,7 +56,6 @@ class _MyGamesState extends State<MyGames> {
 
     final String email = user.email as String;
     final List<String> paths = await userServices.getGames(email: email);
-    // var games = [];
 
     final List<GamesType> _games = [];
     for (var path in paths) {
@@ -98,7 +97,7 @@ class _MyGamesState extends State<MyGames> {
               appBar: AppBar(
                 title: const Text(""),
                 elevation: 0,
-                backgroundColor: Colors.transparent,
+                backgroundColor: AppColors.appBarBackground,
               ),
               body: Stack(
                 children: [
@@ -128,7 +127,7 @@ class _MyGamesState extends State<MyGames> {
                           style: TextStyle(
                             color: _slideUpPanelValue <= slideValueThreshold
                                 ? AppColors.cardBackground
-                                : Colors.white,
+                                : AppColors.white,
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
                           ),
@@ -142,7 +141,6 @@ class _MyGamesState extends State<MyGames> {
                           // Game Icon
                           SizedBox(
                             height: 300,
-                            // width: 400,
                             width: double.infinity,
                             child: PageView.builder(
                               controller: PageController(viewportFraction: 0.7),
@@ -188,8 +186,8 @@ class _MyGamesState extends State<MyGames> {
                                                   width: backgroundSize,
                                                   color: _slideUpPanelValue <=
                                                           slideValueThreshold
-                                                      ? Colors.grey.shade300
-                                                      : Color(0xFF102247),
+                                                      ? AppColors.gray4
+                                                      : AppColors.customDarkBlue,
                                                 ),
                                               ),
                                             ),
@@ -205,8 +203,8 @@ class _MyGamesState extends State<MyGames> {
                                             height: selectedSize,
                                             errorBuilder:
                                                 (context, error, stackTrace) {
-                                              return const Icon(Icons.error,
-                                                  size: 80, color: Colors.red);
+                                              return Icon(Icons.error,
+                                                  size: 80, color: AppColors.errorColor);
                                             },
                                           ),
                                         ),
@@ -227,13 +225,13 @@ class _MyGamesState extends State<MyGames> {
                                     margin:
                                         EdgeInsets.only(right: 172, top: 16),
                                     decoration: BoxDecoration(
-                                      color: Colors.red,
+                                      color: AppColors.errorColor,
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Center(
                                         child: IconButton(
                                             iconSize: 16,
-                                            color: Colors.white,
+                                            color: AppColors.white,
                                             onPressed: () => {
                                                   GameServices().deleteGame(
                                                       path: games[_currentPage]
@@ -242,10 +240,8 @@ class _MyGamesState extends State<MyGames> {
                                                           .instance
                                                           .currentUser!
                                                           .email as String),
-
                                                   setState(() => _isLoadedGames =
-                                                      false), // ลบเกมจาก Firebase
-                                                  // _isLoadedGames = false,
+                                                      false),
                                                 },
                                             icon: Icon(Icons.delete))))),
                           if (_slideUpPanelValue > slideValueThreshold)
@@ -256,13 +252,13 @@ class _MyGamesState extends State<MyGames> {
                                     margin:
                                         EdgeInsets.only(right: 246, top: 48),
                                     decoration: BoxDecoration(
-                                      color: Colors.blue,
+                                      color: AppColors.progressBlue,
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Center(
                                         child: IconButton(
                                             iconSize: 16,
-                                            color: Colors.white,
+                                            color: AppColors.white,
                                             onPressed: () => print("Share"),
                                             icon: Icon(Icons.share))))),
                         ],
@@ -302,13 +298,13 @@ class _MyGamesState extends State<MyGames> {
                                     'assets/images/game.svg',
                                     width: 24,
                                     height: 24,
-                                    color: Colors.white,
+                                    color: AppColors.white,
                                   ),
                                   const SizedBox(width: 8),
-                                  const Text(
+                                  Text(
                                     'Create new game',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: AppColors.white,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -348,13 +344,13 @@ class _MyGamesState extends State<MyGames> {
                                     'assets/images/game.svg',
                                     width: 24,
                                     height: 24,
-                                    color: Colors.white,
+                                    color: AppColors.white,
                                   ),
                                   const SizedBox(width: 8),
-                                  const Text(
+                                  Text(
                                     'Play Game',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: AppColors.white,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -371,7 +367,7 @@ class _MyGamesState extends State<MyGames> {
               ),
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: AppColors.progressBlue));
           }
         });
   }
@@ -410,13 +406,13 @@ class IconTitleButton extends StatelessWidget {
             iconPath,
             width: 24,
             height: 24,
-            color: Colors.white,
+            color: AppColors.white,
           ),
           const SizedBox(width: 4),
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppColors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

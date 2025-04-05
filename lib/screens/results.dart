@@ -1,20 +1,22 @@
 import 'package:brainboost/component/cards/info_card.dart';
 import 'package:brainboost/component/buttons/dropshadow_button.dart';
+import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:lottie/lottie.dart';
+
 int _currentPage = 0;
-  List<GamesType> games = [];
-const correctAnswersColor = Color.fromRGBO(32, 94, 216, 1);
-const wrongAnswersColor = Color.fromRGBO(223, 69, 69, 1);
-const timeColor = Color.fromRGBO(255, 193, 7, 1);
+List<GamesType> games = [];
+const correctAnswersColor = AppColors.progressBlue; // Updated to use AppColors
+const wrongAnswersColor = AppColors.errorColor; // Updated to use AppColors
+const timeColor = AppColors.yellowButton; // Updated to use AppColors
 
 class ShadowEllipse extends StatelessWidget {
   final double width;
   final double height;
-  final Color backgroundColor = const Color(0xFFE1E3E9);
+  final Color backgroundColor = AppColors.gray4; // Updated to use AppColors
 
   const ShadowEllipse({
     super.key,
@@ -50,13 +52,13 @@ class ResultsPage extends StatelessWidget {
   final int correct;
   final int wrong;
   final String time;
-  final String? gameReference; // เพิ่ม parameter นี้
+  final String? gameReference;
   final List<dynamic>? gameData;
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F7FF),
+      backgroundColor: AppColors.gameScreenBackground, // Updated to use AppColors
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -87,12 +89,12 @@ class ResultsPage extends StatelessWidget {
                   DropShadowButton(
                     width: 64,
                     height: 64,
-                    backgroundColor: const Color(0xFFCCDBFA),
-                    shadowColor: const Color(0xFF95A5C6),
+                    backgroundColor: AppColors.gray4, // Updated to use AppColors
+                    shadowColor: AppColors.gray5, // Updated to use AppColors
                     onPressed: () => context.go(Routes.homePage),
-                    child: const Icon(
+                    child: Icon(
                       Icons.home,
-                      color: Color(0xFF7184AC),
+                      color: AppColors.unselectedTab, // Updated to use AppColors
                       size: 42,
                     ),
                   ),
@@ -100,8 +102,8 @@ class ResultsPage extends StatelessWidget {
                   DropShadowButton(
                     width: 275,
                     height: 64,
-                    backgroundColor: const Color(0xFF205ED8),
-                    shadowColor: const Color(0xFF1746A2),
+                    backgroundColor: AppColors.progressBlue, // Updated to use AppColors
+                    shadowColor: AppColors.primaryBackground, // Updated to use AppColors
                     onPressed: () {
                       // ยังคงใช้ context.go เพื่อล้างประวัติการนำทาง
                       // ทำให้เมื่อกดปุ่มย้อนกลับจะไม่กลับมาที่หน้า Results
@@ -110,10 +112,10 @@ class ResultsPage extends StatelessWidget {
                         'reference': gameReference
                       });
                     },
-                    child: const Text(
+                    child: Text(
                       "Play Again",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white, // Updated to use AppColors
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -154,15 +156,23 @@ class ResultsPage extends StatelessWidget {
   }
 
   Widget _buildCongratulationsText() {
-    return const Column(
+    return Column(
       children: [
         Text(
           'Congrats!',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 32, 
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary.withOpacity(0.8), // Added color with AppColors
+          ),
         ),
         Text(
           'You are the best!',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 32, 
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary.withOpacity(0.8), // Added color with AppColors
+          ),
         ),
       ],
     );
@@ -197,12 +207,13 @@ class ResultsPage extends StatelessWidget {
   Widget _buildImprovementText() {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 250),
-      child: const Text(
+      child: Text(
         'You scored 20% more than the previous time.',
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary.withOpacity(0.7), // Added color with AppColors
         ),
       ),
     );
