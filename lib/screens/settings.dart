@@ -6,18 +6,27 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Setting',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        leading: const BackButton(),
-        backgroundColor: const Color(0xFFECF5FF),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1), // กำหนดความสูงของเส้น Divider
-          child: Container(
-            color: Colors.grey, // สีของเส้น Divider
-            height: 1, // ความหนาของเส้น Divider
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(90),
+        child: AppBar(
+          title: const Padding(
+            padding: EdgeInsets.only(top: 30),
+            child: Text(
+              'Setting',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          leading: const Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: BackButton(),
+          ),
+          backgroundColor: const Color(0xFFECF5FF),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(
+              color: const Color(0xFF092866),
+              height: 1,
+            ),
           ),
         ),
       ),
