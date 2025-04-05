@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/models/games.dart';
@@ -19,6 +20,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 // import 'dart:io';
 // import 'package:brainboost/services/history.dart';
 import 'package:brainboost/utils/game_creator.dart';
+import 'dart:io' as io;
+import 'package:flutter/services.dart';
 // import 'package:brainboost/component/dialogs/error_dialog.dart';
 
 ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
@@ -54,10 +57,15 @@ class _MyGamesState extends State<MyGames> {
   final TextEditingController _gameNameTextController = TextEditingController();
   String _newGameTitle = "New Game";
 
+  // List to hold available animation icons
+  List<String> availableIcons = [];
+  bool _isLoadingIcons = false;
+
   @override
   void initState() {
     super.initState();
     _titleEditController.addListener(() {});
+    _loadAvailableIcons();
   }
 
   @override
@@ -290,6 +298,165 @@ class _MyGamesState extends State<MyGames> {
           }
         });
       },
+    );
+  }
+
+  // Method to load available icons
+  Future<void> _loadAvailableIcons() async {
+    if (_isLoadingIcons) return;
+    
+    setState(() {
+      _isLoadingIcons = true;
+    });
+    
+    try {
+      // Load asset manifest to get all animation files
+      final manifestContent = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+      
+      // Filter for animation files in the animations directory
+      List<String> icons = manifestMap.keys
+          .where((String key) => key.startsWith('assets/animations/') && 
+              (key.endsWith('.gif') || key.endsWith('.GIF')))
+          .toList();
+      
+      setState(() {
+        availableIcons = icons;
+        _isLoadingIcons = false;
+      });
+      
+      print("Loaded ${icons.length} icons");
+    } catch (e) {
+      print("Error loading icons: $e");
+      setState(() {
+        _isLoadingIcons = false;
+        availableIcons = [
+          'assets/animations/map1.GIF', 
+          'assets/animations/map2.GIF',
+          // 'assets/animations/map3.GIF',
+          // 'assets/animations/map4.GIF',
+        ];
+      });
+    }
+  }
+  
+  // Method to update game icon
+  Future<void> _updateGameIcon(String newIcon) async {
+    if (_currentPage >= games.length) return;
+    
+    final currentGame = games[_currentPage];
+    
+    try {
+      await gameServices.updateGameIcon(
+        path: currentGame.ref,
+        newIcon: newIcon,
+      );
+      
+      setState(() {
+        games[_currentPage] = GamesType(
+          ref: currentGame.ref,
+          author: currentGame.author,
+          name: currentGame.name,
+          description: currentGame.description,
+          icon: newIcon,
+          gameList: currentGame.gameList,
+          media: currentGame.media,
+          played_history: currentGame.played_history,
+        );
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Game icon updated!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      print("Error updating icon: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update icon: $e'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+  
+  // Method to show icon selection modal
+  void _showIconSelectionModal() {
+    if (_currentPage >= games.length) return;
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.black.withOpacity(0.6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                "Select Game Icon",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: _isLoadingIcons 
+                ? Center(child: CircularProgressIndicator(color: Colors.white))
+                : availableIcons.isEmpty
+                  ? Center(child: Text("No icons available", style: TextStyle(color: Colors.white)))
+                  : GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: availableIcons.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            _updateGameIcon(availableIcons[index]);
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Color(0xFF102247),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.black.withOpacity(0.3),
+                                width: 2,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                availableIcons[index],
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Center(
+                                    child: Icon(Icons.broken_image, color: Colors.white70),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -594,18 +761,53 @@ class _MyGamesState extends State<MyGames> {
                 ),
               ),
             ),
-            SizedBox(
-              child: Transform.scale(
-                scale: 1.08,
-                child: Image.asset(
-                  games[index].icon,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      'animations/map2.GIF',
-                      fit: BoxFit.contain,
-                    );
-                  },
+            GestureDetector(
+              onTap: isSelected && _slideUpPanelValue > slideValueThreshold
+                ? _showIconSelectionModal
+                : null,
+              child: SizedBox(
+                child: Transform.scale(
+                  scale: 1.08,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        games[index].icon,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'animations/map2.GIF',
+                            fit: BoxFit.contain,
+                          );
+                        },
+                      ),
+                      if (isSelected && _slideUpPanelValue > slideValueThreshold)
+                        Positioned(
+                          bottom: 70,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.edit, color: Colors.white, size: 16),
+                                SizedBox(width: 4),
+                                Text(
+                                  "Change Icon",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),

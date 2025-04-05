@@ -184,4 +184,16 @@ class GameServices {
       print("Failed to update game name for path $path: $error");
     }
   }
+
+  Future<void> updateGameIcon({required String path, required String newIcon}) async {
+    try {
+      await FirebaseFirestore.instance
+          .doc(path)
+          .update({'icon': newIcon});
+      return;
+    } catch (e) {
+      print('Error updating game icon: $e');
+      throw Exception('Failed to update game icon: $e');
+    }
+  }
 }
