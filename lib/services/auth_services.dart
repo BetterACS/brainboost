@@ -1,13 +1,13 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart'; 
 
 class AuthService {
   final UserServices userServices = UserServices();
-
   Future<void> signup(
       {required String email,
       required String password,
@@ -15,10 +15,8 @@ class AuthService {
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-
       await Future.delayed(const Duration(seconds: 1));
       await userServices.addUser(email: email);
-
       context.push("/home");
     } on FirebaseAuthException catch (e) {
       String message = '';
@@ -31,13 +29,12 @@ class AuthService {
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
+        backgroundColor: AppColors.backgroundDarkmode.withOpacity(0.5),
+        textColor: AppColors.white, // เปลี่ยนจาก Colors.white
         fontSize: 14.0,
       );
     } catch (e) {}
   }
-
   Future<void> signin(
       {required String email,
       required String password,
@@ -45,9 +42,7 @@ class AuthService {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-
       await Future.delayed(const Duration(seconds: 1));
-
       context.push("/home");
     } on FirebaseAuthException catch (e) {
       String message = '';
@@ -60,13 +55,12 @@ class AuthService {
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
+        backgroundColor: AppColors.backgroundDarkmode.withOpacity(0.5), 
+        textColor: AppColors.white, // เปลี่ยนจาก Colors.white
         fontSize: 14.0,
       );
     } catch (e) {}
   }
-
   Future<void> signout({required BuildContext context}) async {
     await FirebaseAuth.instance.signOut();
     await Future.delayed(const Duration(seconds: 1));

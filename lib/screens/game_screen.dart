@@ -236,7 +236,7 @@ class GameScreenProgressBar extends StatelessWidget {
             width: width * progress,
             height: height,
             decoration: BoxDecoration(
-              color: AppColors.progressBlue, // เปลี่ยนจาก Colors.blue เป็น AppColors.progressBlue
+              color: AppColors.progressBlue, 
               borderRadius: BorderRadius.circular(20),
             ),
             child: Align(
@@ -248,7 +248,7 @@ class GameScreenProgressBar extends StatelessWidget {
                     height: height / 3,
                     margin: const EdgeInsets.only(top: 3),
                     decoration: BoxDecoration(
-                      color: AppColors.white, // เปลี่ยนจาก Colors.white เป็น AppColors.white
+                      color: AppColors.white, 
                       borderRadius: BorderRadius.circular(20),
                     ),
                   )),

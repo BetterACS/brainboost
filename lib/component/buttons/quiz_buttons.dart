@@ -202,8 +202,8 @@ class QuizActionButton extends StatelessWidget {
               onPressed: selectedAnswerIndex != null ? onCheck : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: selectedAnswerIndex != null
-                    ? Colors.blue
-                    : Colors.grey.shade300,
+                    ? AppColors.activeColor
+                    : AppColors.gray4,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -216,8 +216,8 @@ class QuizActionButton extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: selectedAnswerIndex != null
-                      ? Colors.white
-                      : Colors.grey.shade600,
+                      ? AppColors.white
+                      : AppColors.gray5,
                 ),
               ),
             ),
@@ -225,7 +225,7 @@ class QuizActionButton extends StatelessWidget {
             ElevatedButton(
               onPressed: onNext,
               style: ElevatedButton.styleFrom(
-                backgroundColor: isCorrect ? Colors.blue : Colors.red,
+                backgroundColor: isCorrect ? AppColors.activeColor : AppColors.errorColor,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -237,7 +237,7 @@ class QuizActionButton extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
               ),
             ),

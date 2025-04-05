@@ -37,7 +37,7 @@ class PanelSlider extends StatelessWidget {
             height: 4,
             width: 160,
             decoration: BoxDecoration(
-                color: Colors.white54,
+                color: AppColors.white.withOpacity(0.54),
                 borderRadius: BorderRadius.all(
                   Radius.circular(10.0),
                 )),
@@ -68,12 +68,12 @@ class PanelSlider extends StatelessWidget {
                   OutlinedButton(
                     onPressed: () {},
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppColors.white,
                       foregroundColor: AppColors.buttonText,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      side: const BorderSide(color: Colors.white, width: 2),
+                      side: BorderSide(color: AppColors.white, width: 2),
                       minimumSize: const Size(160, 40),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
@@ -92,12 +92,12 @@ class PanelSlider extends StatelessWidget {
                       // Handle "Add Lecture"
                     },
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppColors.white,
                       foregroundColor: AppColors.buttonText,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      side: const BorderSide(color: Colors.white, width: 2),
+                      side: BorderSide(color: AppColors.white, width: 2),
                       minimumSize: const Size(160, 40),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
@@ -121,7 +121,7 @@ class PanelSlider extends StatelessWidget {
                   height: 110,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: Color(0xFFECF5FF),
+                    color: AppColors.accentBackground,
                   ),
                   child: Center(
                     child: Row(
@@ -131,7 +131,7 @@ class PanelSlider extends StatelessWidget {
                               const Text(
                                 "No play history yet",
                                 style: TextStyle(
-                                  color: Color(0xFF05235F),
+                                  color: AppColors.customDarkBlue,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -146,7 +146,7 @@ class PanelSlider extends StatelessWidget {
                                   children: [
                                     CircleAvatar(
                                       radius: 26,
-                                      backgroundColor: Color(0xFF05235F),
+                                      backgroundColor: AppColors.customDarkBlue,
                                       child: CircleAvatar(
                                         radius: 24,
                                         backgroundImage: AssetImage(
@@ -159,7 +159,7 @@ class PanelSlider extends StatelessWidget {
                                           .played_history[index]['score']
                                           .toString(),
                                       style: TextStyle(
-                                        color: Color(0xFF05235F),
+                                        color: AppColors.customDarkBlue,
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -199,13 +199,13 @@ class PanelSlider extends StatelessWidget {
                         'assets/images/game.svg',
                         width: 24,
                         height: 24,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                       const SizedBox(width: 8),
                       const Text(
                         'Play Game',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -223,7 +223,7 @@ class PanelSlider extends StatelessWidget {
             height: 4,
             width: 160,
             decoration: BoxDecoration(
-                color: Colors.white54,
+                color: AppColors.white.withOpacity(0.54),
                 borderRadius: BorderRadius.all(
                   Radius.circular(10.0),
                 )),
@@ -239,7 +239,7 @@ class PanelSlider extends StatelessWidget {
                 const Text(
                   "Played history",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -255,10 +255,10 @@ class PanelSlider extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: games[currentPage].played_history.isEmpty
                             ? [
-                                const Text(
+                                Text(
                                   "No play history yet",
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: AppColors.white.withOpacity(0.7),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -274,7 +274,7 @@ class PanelSlider extends StatelessWidget {
                                       children: [
                                         CircleAvatar(
                                           radius: 24,
-                                          backgroundColor: Colors.white,
+                                          backgroundColor: AppColors.white,
                                           child: CircleAvatar(
                                             radius: 22,
                                             backgroundImage: AssetImage(
@@ -287,7 +287,7 @@ class PanelSlider extends StatelessWidget {
                                               .played_history[index]['score']
                                               .toString(),
                                           style: TextStyle(
-                                            color: Colors.white,
+                                            color: AppColors.white,
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -330,14 +330,14 @@ class PanelSlider extends StatelessWidget {
 //   style: ElevatedButton.styleFrom(
 //     shape: const CircleBorder(),
 //     padding: const EdgeInsets.all(8),
-//     backgroundColor: Colors.red,
-//     foregroundColor: Colors.white,
+//     backgroundColor: AppColors.errorColor,
+//     foregroundColor: AppColors.white,
 //     elevation: 3,
 //   ),
 //   child: const Icon(
 //     Icons.delete,
 //     size: 24,
-//     color: Colors.white,
+//     color: AppColors.white,
 //   ),
 // ),
 // ),

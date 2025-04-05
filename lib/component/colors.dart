@@ -68,14 +68,14 @@ class AppColors {
   static const Color textQuizCorrectOption = Color(0xFF229749);
   static const Color textQuizIncorrectOption = Color(0xFFCF1717);
   static const Color textQuizNonSelectedOption = Colors.black87;
-  
+ static const Color black54 = Color(0x8A000000); 
   // Games Screen components
   static const Color gameScreenBackground = Color(0xFFF0F7FF);
   static const Color progressBar = Color(0xFFE9E9E9);
-  static const Color yellowButton = Color(0xFFFFB700);
+  static const Color yellowButton = Color(0xFFFFB700);//time icon result
   // เพิ่มสีใหม่ที่จำเป็น
   static const Color closeIconColor = Color(0xFF838383);
-  static const Color successColor = Color(0xFF20BF4D);
+ static const Color successColor = Color(0xFF20BF4D);
   static const Color errorColor = Color(0xFFE04545);
   static const Color progressBlue = Color(0xFF205ED8);
 }

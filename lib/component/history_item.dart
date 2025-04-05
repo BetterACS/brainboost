@@ -7,7 +7,7 @@ class HistoryItem extends StatelessWidget {
   final String imagePath;
   // final bool isDownload;
   final VoidCallback? onPressed;
-
+  
   const HistoryItem({
     super.key,
     required this.title,
@@ -16,18 +16,18 @@ class HistoryItem extends StatelessWidget {
     // required this.isDownload,
     this.onPressed,
   });
-
+  
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: AppColors.gray5.withOpacity(0.2),
             blurRadius: 6.0,
             offset: const Offset(0, 3),
           ),
@@ -44,7 +44,7 @@ class HistoryItem extends StatelessWidget {
               height: 80,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.image, size: 80, color: Colors.grey);
+                return Icon(Icons.image, size: 80, color: AppColors.gray5);
               },
             ),
           ),
@@ -71,15 +71,15 @@ class HistoryItem extends StatelessWidget {
                     vertical: 4.0,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0066FF),
+                    color: AppColors.neutralBackground,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
                     date,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                   ),
                 ),
@@ -90,14 +90,14 @@ class HistoryItem extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: const BoxDecoration(
-              color: Color(0xFF0066FF),
+              color: AppColors.neutralBackground,
               shape: BoxShape.circle,
             ),
             child: IconButton(
               onPressed: onPressed,
               icon: Icon(
                 Icons.play_arrow,
-                color: Colors.white,
+                color: AppColors.white,
                 size: 29,
               ),
             ),

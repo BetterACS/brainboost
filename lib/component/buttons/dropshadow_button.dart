@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:brainboost/component/colors.dart';
 
 class DropShadowButton extends StatelessWidget {
   final VoidCallback onPressed;
-
   final double width;
   final double height;
-
   final Color backgroundColor;
   final Color shadowColor;
   // Child widget for custom content.
@@ -17,8 +16,8 @@ class DropShadowButton extends StatelessWidget {
     required this.height,
     required this.onPressed,
     required this.child,
-    this.backgroundColor = Colors.grey,
-    this.shadowColor = Colors.grey,
+    this.backgroundColor = AppColors.gray3,
+    this.shadowColor = AppColors.gray5,
   });
 
   @override
@@ -37,7 +36,6 @@ class DropShadowButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-
           // Main button
           Container(
             width: width,
