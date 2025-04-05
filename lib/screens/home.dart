@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:brainboost/main.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/screens/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,28 +77,36 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.accentBackground,
-      body: ScrollConfiguration(
-        behavior: _MouseScrollBehavior(),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50),
-              const ProfileContainer(),
-              const SizedBox(height: 20),
-              _buildPageView(),
-              const SizedBox(height: 10),
-              _buildPageIndicator(),
-              const SizedBox(height: 20),
-              _buildCreateSection(),
-              _buildCreateButtons(context),
-              _buildHistorySection(),
-            ],
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier, 
+      builder: (context, currentTheme, child) {
+         final isDarkMode = currentTheme == ThemeMode.dark;
+        return Scaffold(
+          backgroundColor: currentTheme == ThemeMode.dark
+              ? AppColors.backgroundDarkmode 
+              : AppColors.mainColor,
+          body: ScrollConfiguration(
+            behavior: _MouseScrollBehavior(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 50),
+                  const ProfileContainer(),
+                  const SizedBox(height: 20),
+                  _buildPageView(),
+                  const SizedBox(height: 10),
+                  _buildPageIndicator(),
+                  const SizedBox(height: 20),
+                  _buildCreateSection(),
+                  _buildCreateButtons(context),
+                  _buildHistorySection(),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -225,68 +234,77 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Widget _buildCircularChartPage() {
-    return FutureBuilder<void>(
-      future: fetchGamePerformance(),
-      builder: (context, snapshot) {
-        if (isLoadCircle)
-          return Center(
-            child: SizedBox(
-              height: 300,
-              width: 300,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CustomPaint(
-                    size: const Size(285, 285),
-                    painter: CircularChartPainter(
-                        (correctQuestion / numberGames) * 100),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Success rate",
-                        style: TextStyle(
-                          color: AppColors.buttonText,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        ((correctQuestion / numberGames) * 100)
-                                .toStringAsFixed(2) +
-                            "%",
-                        style: TextStyle(
-                          color: AppColors.buttonText,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        "out of ${numberGames} questions",
-                        style: TextStyle(
-                          color: AppColors.buttonText,
-                          fontSize: 17.59,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        else
-          return Center(
-              child: SizedBox(
+Widget _buildCircularChartPage() {
+  return FutureBuilder<void>(
+    future: fetchGamePerformance(),
+    builder: (context, snapshot) {
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+      if (isLoadCircle) {
+        return Center(
+          child: SizedBox(
             height: 300,
             width: 300,
-          ));
-      },
-    );
-  }
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomPaint(
+                  size: const Size(285, 285),
+                  painter: CircularChartPainter(
+                    (correctQuestion / numberGames) * 100,
+                    isDarkMode, 
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Success rate",
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText, 
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "${((correctQuestion / numberGames) * 100).toStringAsFixed(2)}%",
+                      style: TextStyle(
+                        color:  isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "out of $numberGames questions",
+                      style: TextStyle(
+                        color:  isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText,
+                        fontSize: 17.59,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        return Center(
+          child: SizedBox(
+            height: 300,
+            width: 300,
+          ),
+        );
+      }
+    },
+  );
+}
 
   // }
 
@@ -379,6 +397,8 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildPageIndicator() {
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(2, (index) {
@@ -388,7 +408,13 @@ class _HomeState extends State<Home> {
           height: 8,
           width: _currentPage == index ? 16 : 8,
           decoration: BoxDecoration(
-            color: _currentPage == index ? AppColors.gradient2 : AppColors.gray,
+            color:  _currentPage == index
+              ? (isDarkMode
+                  ? AppColors.accentDarkmode 
+                  : AppColors.gradient2) 
+              : (isDarkMode
+                  ? AppColors.gray5 
+                  : AppColors.gray), 
             borderRadius: BorderRadius.circular(4),
           ),
         );
@@ -397,14 +423,18 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildCreateSection() {
+          final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: const Text(
+        child: Text(
           "Start",
           style: TextStyle(
-            color: AppColors.gradient1,
+            color:  isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.gradient1,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -526,6 +556,7 @@ class _HomeState extends State<Home> {
 
   Widget _buildHistorySection() {
     final String? email = FirebaseAuth.instance.currentUser?.email;
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -535,10 +566,12 @@ class _HomeState extends State<Home> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "History",
                 style: TextStyle(
-                  color: AppColors.gradient1,
+                  color: isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText, 
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
