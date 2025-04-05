@@ -6,7 +6,10 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings'), leading: const BackButton(),),
+      appBar: AppBar(
+        title: const Text('Settings'),
+        leading: const BackButton(),
+      ),
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
