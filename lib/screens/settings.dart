@@ -6,15 +6,35 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings'), leading: const BackButton(),),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('This is Settings Page', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 20),
-          ],
+      appBar: AppBar(
+        title: const Text(
+          'Setting',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        leading: const BackButton(),
+        backgroundColor: const Color(0xFFECF5FF),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1), // กำหนดความสูงของเส้น Divider
+          child: Container(
+            color: Colors.grey, // สีของเส้น Divider
+            height: 1, // ความหนาของเส้น Divider
+          ),
+        ),
+      ),
+      body: ListView(
+        children: const [
+          ListTile(
+            title:
+                Text('Language', style: TextStyle(fontWeight: FontWeight.bold)),
+            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+          ),
+          Divider(),
+          ListTile(
+            title: Text('About App',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+          ),
+        ],
       ),
     );
   }
