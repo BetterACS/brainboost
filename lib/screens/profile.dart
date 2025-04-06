@@ -168,7 +168,7 @@ class ProfilePage extends StatelessWidget {
               valueListenable: themeNotifier,
               builder: (context, currentTheme, child) {
                 return Text(
-                  currentTheme == ThemeMode.light ? "Light" : "Dark",
+                  currentTheme == ThemeMode.light ? "Light Open" : "Dark Open",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isDarkMode
