@@ -296,24 +296,30 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFECF5FF),
+      backgroundColor: isDarkMode ? AppColors.backgroundDarkmode : const Color(0xFFECF5FF),
       appBar: AppBar(
-        backgroundColor: AppColors.appBarBackground,
+        backgroundColor: isDarkMode ? Colors.grey[900] : AppColors.appBarBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: AppColors.containerBackground),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDarkMode ? Colors.white : AppColors.containerBackground,
+          ),
           onPressed: () => Navigator.pop(context), // ปุ่มกลับ
         ),
-        title: const Text(
+        title: Text(
           'Create game',
-          style: TextStyle(color: AppColors.containerBackground),
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : AppColors.containerBackground,
+          ),
         ),
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: AppColors.containerBackground,
+          color: isDarkMode ? AppColors.accentDarkmode2 : AppColors.containerBackground,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -324,7 +330,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(
+              Center(
                 child: Text(
                   'Upload your files',
                   style: TextStyle(
@@ -334,17 +340,17 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                   ),
                 ),
               ),
-              const Center(
+              Center(
                 child: Text(
                   'File should be .pdf',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Colors.white,
                     fontSize: 14,
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Game name',
                 style: TextStyle(
                   color: Colors.white,
@@ -357,8 +363,11 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                 controller: _gameNameTextController,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
                   hintText: 'Enter your game name',
+                  hintStyle: TextStyle(
+                    color: isDarkMode ? Colors.white70 : Colors.black54,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -368,6 +377,9 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                     vertical: 14,
                   ),
                 ),
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
               ),
               const SizedBox(height: 24),
               Container(
@@ -376,15 +388,15 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.white70,
+                    color: Colors.white,
                     width: 2,
                   ),
-                  color: Colors.transparent,
+                  color: isDarkMode ? Colors.grey[800] : Colors.transparent,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.cloud_upload_outlined,
                       color: Colors.white,
                       size: 88,
@@ -393,8 +405,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                     ElevatedButton(
                       onPressed: pickFile,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue.shade900,
+                        backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
+                        foregroundColor: isDarkMode ? Colors.white : Colors.blue.shade900,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -403,11 +415,12 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                           vertical: 12,
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Browse files',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                     ),
@@ -418,8 +431,8 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
               if (fileName != null) ...[
                 Text(
                   '$fileName',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
                     fontSize: 16,
                   ),
                 ),
@@ -428,7 +441,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: LinearProgressIndicator(
-                          backgroundColor: Color(0xFFE9E9E9),
+                          backgroundColor: isDarkMode ? Colors.grey[700] : const Color(0xFFE9E9E9),
                           color: Colors.green,
                           minHeight: 10,
                           value: progress,
@@ -436,7 +449,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                       )
                     : uploadSuccess
                         ? Row(
-                            children: const [
+                            children: [
                               Text(
                                 "Upload complete!",
                                 style: TextStyle(
@@ -444,7 +457,7 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Icon(Icons.check_circle, color: Colors.green),
+                              const Icon(Icons.check_circle, color: Colors.green),
                             ],
                           )
                         : Container(),
@@ -458,17 +471,17 @@ class _UploadFileScreenState extends State<UploadFileScreen> {
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
                       (states) {
                         if (uploadSuccess) {
-                          return Colors.white;
+                          return isDarkMode ? Colors.green : Colors.white;
                         }
-                        return const Color(0xFFE5E5E5);
+                        return isDarkMode ? Colors.grey[700]! : const Color(0xFFE5E5E5);
                       },
                     ),
                     foregroundColor: MaterialStateProperty.resolveWith<Color>(
                       (states) {
                         if (uploadSuccess) {
-                          return AppColors.primaryBackground;
+                          return isDarkMode ? Colors.white : AppColors.primaryBackground;
                         }
-                        return const Color(0xFFABABAB);
+                        return isDarkMode ? Colors.white70 : const Color(0xFFABABAB);
                       },
                     ),
                     padding: MaterialStateProperty.all(
