@@ -25,13 +25,14 @@ class GameServices {
     required String email,
     required List<dynamic> gameData,
     required String media,
+    String? description,
   }) async {
     try {
       DocumentReference docID = await games
           .add({
             'name': name,
             'author': email,
-            'description': "This is a game",
+            'description': description ?? "This is a game",
             'icon': (["animations/map1.GIF", "animations/map2.GIF"]..shuffle())
                 .first,
             'media': media,
@@ -100,33 +101,6 @@ class GameServices {
     }
   }
 
-  // Future<void> deleteGame({required String path, required String email}) async {
-  //   print("Start remove");
-  //   try {
-  //     await FirebaseFirestore.instance
-  //         .collection("users")
-  //         .doc(email)
-  //         .update({
-  //           'games': FieldValue.arrayRemove(["/" + path]),
-  //         })
-  //         .then((value) => print("Delete Game"))
-  //         .catchError((error) => print("Failed to add game to user: $error"));
-  //   } catch (error) {
-  //     print("Failed to delete reference game $error");
-  //     return;
-  //   }
-
-  //   // try {
-  //   //   await FirebaseFirestore.instance.doc(path as String).delete();
-  //   // } catch (error) {
-  //   //   print("Failed to delete game $error");
-  //   // }
-
-  //   // await FirebaseFirestore.instance.collection("users").doc(email).update(
-  //   //   'games': ...
-  //   // );
-  // }
-
   Future<void> addStoreToPlayedHistory({
     required String email,
     required String gamePath,
@@ -169,7 +143,6 @@ class GameServices {
     }
   }
 
-
   /// Updates the name of a specific game document.
   Future<void> updateGameName({
     required String path,
@@ -194,6 +167,26 @@ class GameServices {
     } catch (e) {
       print('Error updating game icon: $e');
       throw Exception('Failed to update game icon: $e');
+    }
+  }
+
+  /// Get the media URL from a game document
+  Future<String?> getGameMediaUrl({required String path}) async {
+    try {
+      DocumentSnapshot gameDoc = await FirebaseFirestore.instance.doc(path).get();
+      
+      if (!gameDoc.exists) {
+        print("Game document does not exist");
+        return null;
+      }
+      
+      Map<String, dynamic>? gameData = gameDoc.data() as Map<String, dynamic>?;
+      if (gameData == null) return null;
+      
+      return gameData['media'] as String?;
+    } catch (error) {
+      print("Failed to get game media URL: $error");
+      return null;
     }
   }
 }

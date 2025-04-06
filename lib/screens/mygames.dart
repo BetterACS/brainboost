@@ -19,10 +19,10 @@ import 'package:brainboost/utils/game_creator.dart';
 import 'dart:io' as io;
 import 'package:flutter/services.dart';
 
-ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
-ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
-ValueNotifier<CreationStage> currentStage =
-    ValueNotifier<CreationStage>(CreationStage.extracting);
+// ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
+// ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
+// ValueNotifier<CreationStage> currentStage =
+//     ValueNotifier<CreationStage>(CreationStage.extracting);
 
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
@@ -260,9 +260,9 @@ class _MyGamesState extends State<MyGames> {
       context,
       uploadLink: uploadLink!,
       gameName: gameName, // Use the actual game name
-      dialogMessage: dialogMessage,
-      creationProgress: creationProgress,
-      currentStage: currentStage,
+      // dialogMessage: dialogMessage,
+      // creationProgress: creationProgress,
+      // currentStage: currentStage,
       onSuccess: () {
         // First update panel state
         if (_panelController.isPanelOpen) {
@@ -271,8 +271,8 @@ class _MyGamesState extends State<MyGames> {
 
         // Then reset states
         setState(() {
-          _slideUpPanelValue = 0;
-          toggleSlideUpPanel(0.0);
+          // _slideUpPanelValue = 0;
+          // toggleSlideUpPanel(0.0);
           uploadLink = null;
           fileName = null;
           pickedFile = null;
@@ -288,6 +288,106 @@ class _MyGamesState extends State<MyGames> {
         
         // Force reload games after a brief delay
         Future.delayed(Duration(milliseconds: 300), () {
+          setState(() {
+            _slideUpPanelValue = 0;
+            toggleSlideUpPanel(0.0);
+          });
+          if (mounted) {
+            _loadGamesMethod();
+          }
+        });
+      },
+    );
+  }
+
+  // Simplified method for re-versioning a game
+  void onReVersionPressed() async {
+    if (_currentPage >= games.length) {
+      return;
+    }
+
+    final currentGame = games[_currentPage];
+    
+    // Check if media URL exists
+    if (currentGame.media == null || currentGame.media.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Cannot re-version: No source file available')),
+      );
+      return;
+    }
+
+    // Show confirmation dialog
+    final bool confirmReVersion = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Re-Version'),
+          content: Text(
+            'Are you sure you want to re-version "${currentGame.name}"? '
+            'This will create a new version based on the same source file.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue,
+              ),
+              child: Text('Re-Version'),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    ) ?? false;
+
+    if (!confirmReVersion) return;
+
+    // Get the actual game name from the text controller or use the stored variable
+    String gameName = currentGame.name + " (Re-Version)";
+    // Make gameName length 20 characters
+    if (gameName.length > 20) {
+      gameName = gameName.substring(0, 20);
+    }
+
+    await createGameFunction(
+      context,
+      uploadLink: currentGame.media,
+      gameName: gameName, // Use the actual game name
+      // dialogMessage: dialogMessage,
+      // creationProgress: creationProgress,
+      // currentStage: currentStage,
+      onSuccess: () {
+        // First update panel state
+        if (_panelController.isPanelOpen) {
+          _panelController.close();
+        }
+
+        // Then reset states
+        setState(() {
+          // _slideUpPanelValue = 0;
+          // toggleSlideUpPanel(0.0);
+          uploadLink = null;
+          fileName = null;
+          pickedFile = null;
+          uploadSuccess = false;
+          _gameNameTextController.clear();
+          _newGameTitle = "New Game";
+          
+          // Mark games as needing reload
+          _isLoadedGames = false;
+          games = [];
+          _currentPage = 0;
+        });
+        
+        // Force reload games after a brief delay
+        Future.delayed(Duration(milliseconds: 300), () {
+          setState(() {
+            _slideUpPanelValue = 0;
+            toggleSlideUpPanel(0.0);
+          });
           if (mounted) {
             _loadGamesMethod();
           }
@@ -550,6 +650,7 @@ class _MyGamesState extends State<MyGames> {
                         : _newGameTitle, // Use our stored variable here
                     uploadSuccess: uploadSuccess,
                     onCreateGamePressed: onCreateGamePressed, // Add this callback
+                    onReVersionPressed: onReVersionPressed, // Add this new callback
                     isCurrentUserAuthor: _currentPage < games.length && games.isNotEmpty
                         ? games[_currentPage].author == currentUserEmail
                         : true, // Default to true for new games
