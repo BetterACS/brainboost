@@ -66,6 +66,10 @@ class Login extends StatelessWidget {
                 height: 50,
               ),
               _signin(context),
+              const SizedBox(height: 24),
+              _orDivider(),
+              const SizedBox(height: 24),
+              _googleSignIn(context),
             ],
           ),
         ),
@@ -157,6 +161,77 @@ class Login extends StatelessWidget {
     );
   }
 
+  Widget _orDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 1,
+            color: Colors.grey[300],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'OR',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 1,
+            color: Colors.grey[300],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _googleSignIn(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black87,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(color: Colors.grey[300]!),
+        ),
+        minimumSize: const Size(double.infinity, 60),
+        elevation: 0,
+      ),
+      onPressed: () async {
+        try {
+          await AuthService().signInWithGoogle(context: context);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error signing in with Google: $e')),
+          );
+        }
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/google_logo.png',
+            height: 24,
+            width: 24,
+          ),
+          const SizedBox(width: 12),
+          const Text(
+            "Continue with Google",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _signup(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -178,10 +253,6 @@ class Login extends StatelessWidget {
                     fontSize: 16),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => Signup()),
-                    // );
                     context.push("/signup");
                   }),
           ])),

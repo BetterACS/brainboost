@@ -32,9 +32,9 @@ class UserServices {
   }
 
   String? getCurrentUserEmail() {
-  final user = FirebaseAuth.instance.currentUser;
-  return user?.email;
-}
+    final user = FirebaseAuth.instance.currentUser;
+    return user?.email;
+  }
 
   Future<List<String>> getGames({
     required String email,
@@ -121,6 +121,97 @@ class UserServices {
           .update({'games': currentGames});
     } catch (e) {
       print('Error in addSharedGame: $e');
+      throw e;
+    }
+  }
+
+  Future<void> updateProfileImage(String email, String imageUrl) async {
+    try {
+      await users.doc(email).update({
+        'icon': imageUrl,
+      });
+    } catch (e) {
+      print("Error updating profile image: $e");
+      throw e;
+    }
+  }
+
+  Future<void> updateUserProfile({
+    required String email,
+    String? username,
+    int? age,
+  }) async {
+    try {
+      final Map<String, dynamic> updateData = {};
+      
+      if (username != null && username.isNotEmpty) {
+        updateData['username'] = username;
+      }
+      
+      if (age != null) {
+        updateData['age'] = age;
+      }
+      
+      if (updateData.isNotEmpty) {
+        await users.doc(email).update(updateData);
+      }
+    } catch (e) {
+      print("Error updating user profile: $e");
+      throw e;
+    }
+  }
+
+  Future<void> updateProfile({
+    required String email,
+    String? username,
+    String? profileImageUrl,
+    int? age,
+  }) async {
+    try {
+      final Map<String, dynamic> updateData = {};
+      
+      if (username != null && username.isNotEmpty) {
+        updateData['username'] = username;
+      }
+      
+      if (profileImageUrl != null) {
+        updateData['icon'] = profileImageUrl;
+      }
+      
+      if (age != null) {
+        updateData['age'] = age;
+      }
+      
+      if (updateData.isNotEmpty) {
+        await users.doc(email).update(updateData);
+        print("Profile updated successfully");
+      }
+    } catch (e) {
+      print("Error updating profile: $e");
+      throw e;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserProfile({required String email}) async {
+    try {
+      final userDoc = await users.doc(email).get();
+      if (!userDoc.exists) {
+        print("User not found");
+        return null;
+      }
+
+      return userDoc.data() as Map<String, dynamic>;
+    } catch (error) {
+      print("Failed to get user profile: $error");
+      return null;
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      print("Error during sign out: $e");
       throw e;
     }
   }

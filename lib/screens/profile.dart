@@ -1,4 +1,6 @@
+import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -68,27 +70,15 @@ class ProfilePage extends StatelessWidget {
           Stack(
             alignment: Alignment.bottomRight,
             children: [
-              const CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('assets/images/profile.jpg'),
-              ),
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: AppColors.buttonText,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.camera_alt,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {},
-                ),
+              UserAvatar(
+                width: 120,
+                imageUrl: FirebaseAuth.instance.currentUser?.photoURL,
               ),
             ],
           ),
           const SizedBox(height: 20),
-          const Text(
-            "Mon Chinawat",
+          Text(
+            FirebaseAuth.instance.currentUser?.displayName ?? 'Guest',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -96,8 +86,8 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            "Monchinawat@gmail.com",
+          Text(
+            FirebaseAuth.instance.currentUser?.email ?? 'No Email',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white70,

@@ -4,6 +4,8 @@ import 'package:brainboost/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService {
   final UserServices userServices = UserServices();
@@ -70,9 +72,69 @@ class AuthService {
   Future<void> signout({required BuildContext context}) async {
     await FirebaseAuth.instance.signOut();
     await Future.delayed(const Duration(seconds: 1));
-    // Navigator.pushReplacement(
-    //     context, MaterialPageRoute(builder: (BuildContext context) => Login()));
-    // ignore: use_build_context_synchronously
     await context.push("/login");
+  }
+
+  Future<UserCredential?> signInWithGoogle({required BuildContext context}) async {
+    // GoogleAuthProvider _googleProvider = GoogleAuthProvider();
+
+    // try {
+    //   await FirebaseAuth.instance
+    //       .signInWithProvider(_googleProvider);
+
+    //   await Future.delayed(const Duration(seconds: 1));
+
+    //   context.push("/home");
+    // } on FirebaseAuthException catch (e) {
+    //   Fluttertoast.showToast(
+    //     msg: e.message ?? 'An error occurred.',
+    //     toastLength: Toast.LENGTH_LONG,
+    //     gravity: ToastGravity.SNACKBAR,
+    //     backgroundColor: Colors.black54,
+    //     textColor: Colors.white,
+    //     fontSize: 14.0,
+    //   );
+    // }
+    try {
+      // Create a new provider
+      final googleProvider = GoogleAuthProvider();
+      
+      // For mobile, desktop, and web
+      UserCredential result;
+      if (kIsWeb) {
+        result = await FirebaseAuth.instance.signInWithPopup(googleProvider);
+      } else {
+        // First, trigger the authentication flow
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+        if (googleUser == null) {
+          return null;
+        }
+        
+        // Obtain the auth details from the request
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+        // Create a new credential
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        // Sign in to Firebase with the credential
+        result = await FirebaseAuth.instance.signInWithCredential(credential);
+      }
+      
+      if (result.user != null) {
+        // Navigate to home page after successful sign-in
+        context.go('/home');
+      }
+      
+      return result;
+    } catch (e) {
+      print('Error during Google sign in: $e');
+      rethrow;
+    }
+
+
   }
 }
