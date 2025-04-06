@@ -53,13 +53,14 @@ class GameData {
   Map<String, dynamic> toMap() {
     return {
       'game_type': gameType,
-      'content': content is GameQuizContent 
-        ? (content as GameQuizContent).toMap() 
-        : content
+      'content': content is GameQuizContent
+          ? (content as GameQuizContent).toMap()
+          : content
     };
   }
 
-  static GameContent createContent(String gameType, Map<String, dynamic> content) {
+  static GameContent createContent(
+      String gameType, Map<String, dynamic> content) {
     switch (gameType) {
       case 'quiz':
         return GameQuizContent(
@@ -70,7 +71,7 @@ class GameData {
               .toList(),
         );
       case 'yesno':
-      // print('content ${content}');
+        // print('content ${content}');
         return GameYesNoContent(
           correct_ans: content['correct_ans'] as bool,
           question: content['question'] as String,
@@ -80,6 +81,21 @@ class GameData {
       // Add more cases here for future game types
       // case 'memory':
       //   return GameMemoryContent(...);
+      case 'bingo':
+
+        //     question;
+        // final String answer;
+        // final int point;
+        print("Bingo ${content}");
+
+        return BingoContent(
+            bingo_list: (content['bingo_list'] as List<dynamic>)
+                .map((e) => GameBingoContent(
+                    answer: e['answer'],
+                    point: e['point'],
+                    question: e['question']))
+                .toList());
+
       default:
         return GameContent();
     }
@@ -90,10 +106,7 @@ class PlayerHistory {
   final DocumentReference player;
   final int score;
 
-  const PlayerHistory({
-    required this.player,
-    required this.score
-  });
+  const PlayerHistory({required this.player, required this.score});
 }
 
 class GamesType {
@@ -106,20 +119,19 @@ class GamesType {
   final String media;
   final List<Map<String, dynamic>> played_history;
 
-  GamesType({
-    required this.ref,
-    required this.author,
-    required this.name,
-    required this.description,
-    required this.icon,
-    required this.gameList,
-    required this.media,
-    required this.played_history
-  });
+  GamesType(
+      {required this.ref,
+      required this.author,
+      required this.name,
+      required this.description,
+      required this.icon,
+      required this.gameList,
+      required this.media,
+      required this.played_history});
 
   /// Factory constructor to create a GamesType instance from Firestore data
   factory GamesType.fromMap(Map<String, dynamic> data, dynamic ref) {
-    print(ref);
+    // print(ref);
     return GamesType(
       ref: ref,
       author: data['author'] ?? '',
@@ -136,5 +148,37 @@ class GamesType {
               .toList() ??
           [],
     );
+  }
+}
+
+class BingoContent extends GameContent {
+  final List<GameBingoContent> bingo_list;
+
+  const BingoContent({required this.bingo_list}) : super();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'bingo_list': bingo_list.map((e) => e.toMap()).toList(),
+    };
+  }
+}
+
+class GameBingoContent {
+  final String question;
+  final String answer;
+  final int point;
+
+  const GameBingoContent({
+    required this.question,
+    required this.answer,
+    required this.point,
+  }) : super();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'question': question,
+      'answer': answer,
+      'point': point,
+    };
   }
 }

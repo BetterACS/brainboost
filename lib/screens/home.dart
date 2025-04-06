@@ -16,6 +16,7 @@ import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
+import 'package:brainboost/screens/game_bingo.dart';
 
 class CloudPainter extends CustomPainter {
   @override
@@ -369,7 +370,11 @@ Widget _buildCircularChartPage() {
               padding: const EdgeInsets.only(top: 0),
               child: ElevatedButton(
                 onPressed: () {
-                  print("Replay pressed");
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => const BingoScreen()),
+                  // );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonBackground,
