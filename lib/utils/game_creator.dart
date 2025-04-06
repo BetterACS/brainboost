@@ -20,9 +20,6 @@ Future<void> createGameFunction(
   BuildContext context, {
   required String uploadLink,
   required String gameName,
-  // required ValueNotifier<String> dialogMessage,
-  // required ValueNotifier<double> creationProgress,
-  // required ValueNotifier<CreationStage> currentStage,
   VoidCallback? onSuccess,
   bool showInternalDialogs = true, // Add parameter to control internal dialog behavior
 }) async {
@@ -80,11 +77,11 @@ Future<void> createGameFunction(
     currentStage.value = CreationStage.crafting;
     dialogMessage.value = "Crafting your game";
     Map<String, String> params = {
-      "game_type": 'quiz',
+      // "game_types": "( 'quiz', 'yesno', 'bingo' )",
+      "request_type": 'full',
       "context": jsonDict['data'],
       "personalize": personalize,
       "language": "Thai and English upon to context.",
-      "num_games": "3",
     };
 
     var createGameResponse = await httpClient.post(
@@ -170,6 +167,144 @@ Future<void> createGameFunction(
   }
 }
 
+Future<void> addLectureToGame(
+  BuildContext context, {
+  required String uploadLink,
+  required String gamePath,
+  required List<dynamic> existingGameData,
+  VoidCallback? onSuccess,
+  bool showInternalDialogs = true, // Add parameter to control internal dialog behavior
+}) async {
+  if (uploadLink.isEmpty || gamePath.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Cannot add lecture: missing required information')),
+    );
+    return;
+  }
+
+  dialogMessage.value = "";
+  creationProgress.value = 0.0;
+  currentStage.value = CreationStage.extracting;
+
+  // Store the dialog context to safely close it later
+  BuildContext? dialogContext;
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      dialogContext = context; // Capture the dialog context
+      return const CreatingDialog();
+    },
+  );
+
+  try {
+    var httpClient = http.Client();
+    dialogMessage.value = "Extract valuable information from the file";
+    creationProgress.value = 0.25;
+
+    var extractResponse = await httpClient
+        .get(Uri.https('monsh.xyz', '/extract', {'pdf_path': uploadLink}));
+
+    currentStage.value = CreationStage.personalizing;
+    dialogMessage.value = "Get your personalize";
+    creationProgress.value = 0.32;
+
+    String? email = FirebaseAuth.instance.currentUser!.email;
+    if (email == null) {
+      if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+        Navigator.pop(dialogContext!);
+      }
+      showDialog(
+        context: context,
+        builder: (context) => const ErrorDialog(),
+      );
+      return;
+    }
+
+    String personalize = await UserServices().getPersonalize(email: email);
+
+    var decodedResponse = utf8.decode(extractResponse.bodyBytes);
+    Map<String, dynamic> jsonDict = jsonDecode(decodedResponse);
+
+    currentStage.value = CreationStage.crafting;
+    dialogMessage.value = "Crafting additional content";
+    Map<String, String> params = {
+      // "game_types": "( 'quiz', 'yesno', 'bingo' )",
+      "request_type": 'partial', // Using partial for adding to existing game
+      "context": jsonDict['data'],
+      "personalize": personalize,
+      "language": "Thai and English upon to context.",
+    };
+
+    var createGameResponse = await httpClient.post(
+      Uri.https('monsh.xyz', '/create_game'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(params),
+    );
+
+    creationProgress.value = 0.80;
+    var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
+
+    // Get the new content to append
+    List<dynamic> newGameData = gameDict['data'] as List<dynamic>;
+    
+    // Merge existing game data with new game data
+    List<dynamic> combinedGameData = [...existingGameData, ...newGameData];
+
+    // Update the existing game with combined content
+    GameServices gamesServices = GameServices();
+    await gamesServices.updateGameContent(
+      path: gamePath,
+      updatedGameData: combinedGameData,
+      additionalMedia: uploadLink, // Store the new lecture media URL
+    );
+
+    currentStage.value = CreationStage.completed;
+    creationProgress.value = 1.0;
+    dialogMessage.value = "Lecture added successfully!";
+
+    // Wait a moment to show the completed state before closing
+    await Future.delayed(Duration(seconds: 1));
+
+    // Close the dialog safely, only if we're showing internal dialogs
+    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+      Navigator.pop(dialogContext!);
+    }
+
+    // Show success dialog only if we're using internal dialogs
+    if (showInternalDialogs) {
+      showDialog(
+        context: context,
+        builder: (context) => const SuccessDialog(),
+      );
+    }
+
+    // Call onSuccess callback if provided
+    if (onSuccess != null) {
+      onSuccess();
+    }
+  } catch (e) {
+    print("Error during lecture addition: $e");
+    
+    // Make sure to close the dialog if there's an error, only if using internal dialogs
+    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+      Navigator.pop(dialogContext!);
+    }
+    
+    // Show error dialog only if using internal dialogs
+    if (showInternalDialogs) {
+      showDialog(
+        context: context,
+        builder: (context) => ErrorDialog(),
+      );
+    } else {
+      // If not using internal dialogs, just rethrow to let the caller handle it
+      throw e;
+    }
+  }
+}
 
 // Pop-up creating
 class CreatingDialog extends StatefulWidget {

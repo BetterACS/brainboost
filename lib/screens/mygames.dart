@@ -51,6 +51,12 @@ class _MyGamesState extends State<MyGames> {
   List<String> availableIcons = [];
   bool _isLoadingIcons = false;
 
+  String? lectureUploadLink;
+  bool isLectureUploading = false;
+  double lectureUploadProgress = 0.0;
+  bool lectureUploadSuccess = false;
+  String? lectureFileName;
+
   @override
   void initState() {
     super.initState();
@@ -538,6 +544,142 @@ class _MyGamesState extends State<MyGames> {
     );
   }
 
+  // Method to handle picking a lecture PDF file
+  Future<void> pickLectureFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result == null) {
+      return;
+    }
+
+    setState(() {
+      lectureFileName = result.files.single.name;
+      pickedFile = result.files.first;
+      lectureUploadSuccess = false;
+      isLectureUploading = true;
+      lectureUploadLink = null;
+      lectureUploadProgress = 0.0;
+    });
+
+    await uploadLectureFile();
+  }
+
+  // Method to handle uploading the lecture PDF file
+  Future<void> uploadLectureFile() async {
+    final path = 'files/lectures/${pickedFile!.name}';
+
+    try {
+      final ref = FirebaseStorage.instance.ref().child(path);
+
+      final uploadTask = ref.putData(pickedFile!.bytes!);
+      uploadTask.snapshotEvents.listen((event) {
+        setState(() {
+          lectureUploadProgress = event.bytesTransferred / event.totalBytes;
+        });
+        print("Lecture Upload Progress: $lectureUploadProgress");
+      });
+
+      await uploadTask;
+      final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
+      print("Lecture Download-Link: $urlDownload");
+      setState(() {
+        lectureUploadLink = urlDownload;
+        lectureUploadSuccess = true;
+        isLectureUploading = false;
+      });
+
+      // After upload is complete, initiate the add lecture process
+      await addLectureToExistingGame();
+    } catch (e) {
+      print("Error uploading lecture file: $e");
+      setState(() {
+        isLectureUploading = false;
+      });
+    }
+  }
+
+  // Method to add the lecture to the existing game
+  Future<void> addLectureToExistingGame() async {
+    if (!lectureUploadSuccess || lectureUploadLink == null || _currentPage >= games.length) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Cannot add lecture: Upload failed or invalid game')),
+      );
+      return;
+    }
+
+    final currentGame = games[_currentPage];
+
+    await addLectureToGame(
+      context,
+      uploadLink: lectureUploadLink!,
+      gamePath: currentGame.ref,
+      existingGameData: currentGame.gameList,
+      onSuccess: () {
+        // Reset lecture upload states
+        setState(() {
+          lectureUploadLink = null;
+          lectureFileName = null;
+          lectureUploadSuccess = false;
+          
+          // Mark games as needing reload
+          _isLoadedGames = false;
+          games = [];
+        });
+        
+        // Force reload games after a brief delay
+        Future.delayed(Duration(milliseconds: 300), () {
+          setState(() {
+            _slideUpPanelValue = 0;
+            toggleSlideUpPanel(0.0);
+          });
+          if (mounted) {
+            _loadGamesMethod();
+          }
+        });
+      },
+    );
+  }
+
+  // Method to handle the Add Lecture button press
+  void onAddLecturePressed() async {
+    if (_currentPage >= games.length) {
+      return;
+    }
+    
+    // Show a confirmation dialog before proceeding
+    final bool confirmAddLecture = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add Lecture'),
+          content: Text(
+            'Adding a lecture will extend the current game with new content from a PDF file. Continue?'
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue,
+              ),
+              child: Text('Continue'),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    ) ?? false;
+
+    if (confirmAddLecture) {
+      await pickLectureFile();
+    }
+  }
+
   // Helper method to extract hash from game reference path
   String _extractHashFromPath(String path) {
     // print(refpath.path);
@@ -634,8 +776,9 @@ class _MyGamesState extends State<MyGames> {
                         ? games[_currentPage].name 
                         : _newGameTitle, // Use our stored variable here
                     uploadSuccess: uploadSuccess,
-                    onCreateGamePressed: onCreateGamePressed, // Add this callback
-                    onReVersionPressed: onReVersionPressed, // Add this new callback
+                    onCreateGamePressed: onCreateGamePressed, 
+                    onReVersionPressed: onReVersionPressed,
+                    onAddLecturePressed: onAddLecturePressed, // Add this new callback
                     isCurrentUserAuthor: _currentPage < games.length && games.isNotEmpty
                         ? games[_currentPage].author == currentUserEmail
                         : true, // Default to true for new games

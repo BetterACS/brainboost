@@ -189,4 +189,40 @@ class GameServices {
       return null;
     }
   }
+
+  /// Updates the game content by appending new game data
+  Future<void> updateGameContent({
+    required String path,
+    required List<dynamic> updatedGameData,
+    String? additionalMedia,
+  }) async {
+    try {
+      // Ensure the path is a valid Firestore document path
+      DocumentReference gameRef = FirebaseFirestore.instance.doc(path);
+      
+      // Update game_list with the combined data
+      await gameRef.update({'game_list': updatedGameData});
+      
+      // If additional media is provided, store it in an array
+      if (additionalMedia != null && additionalMedia.isNotEmpty) {
+        // Get current document
+        DocumentSnapshot doc = await gameRef.get();
+        Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+        
+        if (data != null) {
+          // Create or update additional_media array
+          List<dynamic> additionalMediaList = data['additional_media'] ?? [];
+          additionalMediaList.add(additionalMedia);
+          
+          // Update the document
+          await gameRef.update({'additional_media': additionalMediaList});
+        }
+      }
+      
+      print("Game content updated successfully for path: $path");
+    } catch (error) {
+      print("Failed to update game content for path $path: $error");
+      throw Exception("Failed to update game content: $error");
+    }
+  }
 }

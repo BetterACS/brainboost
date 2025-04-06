@@ -21,6 +21,7 @@ class PanelSlider extends StatefulWidget {
   final VoidCallback? onCreateGamePressed;
   final VoidCallback? onImportSuccess;
   final VoidCallback? onReVersionPressed; // New callback for re-version
+  final VoidCallback? onAddLecturePressed; // New callback for adding lecture
   final bool isCurrentUserAuthor; // New property to check if user is the author
 
   PanelSlider({
@@ -37,6 +38,7 @@ class PanelSlider extends StatefulWidget {
     this.onCreateGamePressed,
     this.onImportSuccess,
     this.onReVersionPressed, // Add this parameter
+    this.onAddLecturePressed, // Add this parameter
     this.isCurrentUserAuthor = false, // Default to false for safety
   }) : super(key: key);
 
@@ -201,7 +203,7 @@ class _PanelSliderState extends State<PanelSlider> {
                     ),
                   ),
                   OutlinedButton(
-                    onPressed: widget.isCurrentUserAuthor ? () {} : null,
+                    onPressed: widget.isCurrentUserAuthor ? widget.onAddLecturePressed : null,
                     style: OutlinedButton.styleFrom(
                       backgroundColor: widget.isCurrentUserAuthor ? Colors.white : Colors.grey.shade300,
                       foregroundColor: widget.isCurrentUserAuthor ? AppColors.buttonText : Colors.grey.shade600,
