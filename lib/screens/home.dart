@@ -310,96 +310,100 @@ Widget _buildCircularChartPage() {
   // }
 
   Widget _buildRecentGamePage() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          height: 300,
-          width: 300,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: AppColors.circleGradient,
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+  return Stack(
+    alignment: Alignment.center,
+    children: [
+      Container(
+        height: 300,
+        width: 300,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: isDarkMode
+              ? AppColors.circleGradientdark // Gradient สำหรับ Dark Mode
+              : AppColors.circleGradient,    // Gradient สำหรับ Light Mode
+        ),
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 35),
           ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 35),
+          Text(
+            "Recent Game",
+            style: TextStyle(
+              color: isDarkMode ? Colors.white : AppColors.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
-            const Text(
-              "Recent Game",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            "World War 2",
+            style: TextStyle(
+              color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
+              fontSize: 14,
             ),
-            const SizedBox(height: 5),
-            const Text(
-              "World War 2",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 14,
-              ),
+          ),
+          const SizedBox(height: 5),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(150),
+            child: Image.asset(
+              'assets/images/photomain.png',
+              height: 140,
+              width: 160,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.error, size: 80, color: Colors.red);
+              },
             ),
-            const SizedBox(height: 5),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(150),
-              child: Image.asset(
-                'assets/images/photomain.png',
-                height: 140,
-                width: 160,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error, size: 80, color: Colors.red);
-                },
-              ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "70 / 100",
+            style: TextStyle(
+              color: isDarkMode ? Colors.white : AppColors.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 6),
-            const Text(
-              "70 / 100",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(top: 0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => const BingoScreen()),
-                  // );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonBackground,
-                  foregroundColor: AppColors.neutralBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 5,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(top: 0),
+            child: ElevatedButton(
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => const BingoScreen()),
+                // );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.buttonBackground,
+                foregroundColor: AppColors.neutralBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Text(
-                  "Replay",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                elevation: 5,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+              ),
+              child: const Text(
+                "Replay",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
             ),
-          ],
-        ),
-      ],
-    );
-  }
+          ),
+        ],
+      ),
+    ],
+  );
+}
 
   Widget _buildPageIndicator() {
       final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -449,6 +453,8 @@ Widget _buildCircularChartPage() {
   }
 
   Widget _buildCreateButtons(BuildContext context) {
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Container(
@@ -456,7 +462,9 @@ Widget _buildCircularChartPage() {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          gradient: AppColors.buttonGradient,
+          gradient: isDarkMode
+              ? AppColors.buttonGradientDark 
+              : AppColors.buttonGradient,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),

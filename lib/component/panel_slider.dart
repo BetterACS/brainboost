@@ -188,7 +188,9 @@ class PanelSlider extends StatelessWidget {
                       'reference': games[currentPage].ref
                     }),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.neutralBackground,
+                      backgroundColor: isDarkMode
+                                      ? Colors.yellow[700]
+                                      : AppColors.neutralBackground,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),

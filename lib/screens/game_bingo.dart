@@ -1,9 +1,11 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:brainboost/screens/game_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/bottom_slider.dart';
+import 'package:brainboost/main.dart';
 
 class BingoScreen extends StatefulWidget {
   final BingoContent content;
@@ -239,137 +241,147 @@ class _BingoScreenState extends State<BingoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? AppColors.backgroundDarkmode : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final cardColor = isDarkMode ? AppColors.accentDarkmode : Colors.blue[900];
+    final correctColor = isDarkMode ? Colors.blue[900] : Colors.blue[900];
+    final wrongColor = isDarkMode ? Colors.red[400] : Colors.red[600];
+
     return SafeArea(
       child: Stack(
         children: [
-          Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      Column(
-                        children: [
-                          Container(
-                            width: 340,
-                            height: 48,
-                            child: Text(
-                              "เล่นบิงโก",
-                              style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w900,
-                                color: Color.fromARGB(255, 13, 15, 53),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: 340,
-                            child: Text(
-                              "คุณมี $score คะแนน",
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF1A1F71),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          GridView.builder(
-                            shrinkWrap: true,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 8,
-                              mainAxisSpacing: 8,
-                              childAspectRatio: 1,
-                              mainAxisExtent: 60,
-                            ),
-                            itemCount: 9,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: isAnswerCorrect[index] == true
-                                    ? null
-                                    : () {
-                                        _showQuestionDialog(index);
-                                      },
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    final size = MediaQuery.of(context).size;
-                                    final itemSize = size.width * 0.25;
-                                    final fontSize = itemSize * 0.25;
-                                    final iconSize = itemSize * 0.4;
-
-                                    return Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.center,
-                                          width: 120,
-                                          height: 480,
-                                          decoration: BoxDecoration(
-                                            color: isAnswerCorrect[index] ==
-                                                    true
-                                                ? Colors.green[600]
-                                                : isAnswerChecked[index] == true
-                                                    ? Colors.red[600]
-                                                    : Colors.blue[900],
-                                            borderRadius: BorderRadius.circular(
-                                                itemSize * 0.1),
-                                          ),
-                                          child: isAnswerChecked[index] != true
-                                              ? Text(
-                                                  "${bingoList[index].point}",
-                                                  style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                )
-                                              : const SizedBox(),
-                                        ),
-                                        if (isAnswerChecked[index] == true)
-                                          Align(
-                                            alignment: Alignment.center,
-                                            child: Icon(
-                                              isAnswerCorrect[index] == true
-                                                  ? Icons.check_circle
-                                                  : Icons.clear,
-                                              color: Colors.white,
-                                              size: iconSize,
-                                            ),
-                                          ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: 24),
-                          Container(
-                            width: 340,
-                            child: Center(
+          Container(
+            color: backgroundColor,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+                        Column(
+                          children: [
+                            Container(
+                              width: 340,
+                              height: 48,
                               child: Text(
-                                "เพื่อผ่านเกมนี้ คุณต้องบิงโกหรือสะสมคะแนนให้ครบ 75 คะแนนขึ้นไป",
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Color(0xFF1A1F71),
+                                "เล่นบิงโก",
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w900,
+                                  color: textColor,
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                            Container(
+                              width: 340,
+                              child: Text(
+                                "คุณมี $score คะแนน",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w500,
+                                  color: textColor,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            GridView.builder(
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                                childAspectRatio: 1,
+                                mainAxisExtent: 60,
+                              ),
+                              itemCount: 9,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: isAnswerCorrect[index] == true
+                                      ? null
+                                      : () {
+                                          _showQuestionDialog(index);
+                                        },
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      final size = MediaQuery.of(context).size;
+                                      final itemSize = size.width * 0.25;
+                                      final fontSize = itemSize * 0.25;
+                                      final iconSize = itemSize * 0.4;
+
+                                      return Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            width: 120,
+                                            height: 480,
+                                            decoration: BoxDecoration(
+                                              color: isAnswerCorrect[index] ==
+                                                      true
+                                                  ? correctColor
+                                                  : isAnswerChecked[index] == true
+                                                      ? wrongColor
+                                                      : cardColor,
+                                              borderRadius: BorderRadius.circular(
+                                                  itemSize * 0.1),
+                                            ),
+                                            child: isAnswerChecked[index] != true
+                                                ? Text(
+                                                    "${bingoList[index].point}",
+                                                    style: TextStyle(
+                                                      fontSize: fontSize,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  )
+                                                : const SizedBox(),
+                                          ),
+                                          if (isAnswerChecked[index] == true)
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                isAnswerCorrect[index] == true
+                                                    ? Icons.check_circle
+                                                    : Icons.clear,
+                                                color: Colors.white,
+                                                size: iconSize,
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 24),
+                            Container(
+                              width: 340,
+                              child: Center(
+                                child: Text(
+                                  "เพื่อผ่านเกมนี้ คุณต้องบิงโกหรือสะสมคะแนนให้ครบ 75 คะแนนขึ้นไป",
+                                  maxLines: 2,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: textColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           if (_currentQuestionIndex != -1)
             BottomSlider(

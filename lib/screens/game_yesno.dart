@@ -86,10 +86,18 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
+    final textColor = isDarkMode ? Colors.white : const Color(0xFF1A1F71);
+    final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
+    final borderColor = isDarkMode ? Colors.grey[600]! : Colors.grey;
+    final correctColor = isDarkMode ? Colors.blue[400]! : Colors.blue;
+    final incorrectColor = isDarkMode ? Colors.red[400]! : Colors.red;
+
     return SafeArea(
       child: Scaffold(
         body: Container(
-          color: AppColors.mainColor,
+          color: backgroundColor,
           child: Stack(
             children: [
               Column(
@@ -98,22 +106,22 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                   Container(
                     width: 340,
                     height: 48,
-                    child: const Text(
+                    child: Text(
                       "Yes or No",
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF1A1F71),
+                        color: textColor,
                       ),
                     ),
                   ),
                   Container(
                     width: 340,
-                    child: const Text(
+                    child: Text(
                       "Slide to left for No, right for Yes.",
                       style: TextStyle(
                         fontSize: 16,
-                        color: Color(0xFF1A1F71),
+                        color: textColor,
                       ),
                     ),
                   ),
@@ -135,20 +143,19 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                           return Card(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
-                              side: const BorderSide(
-                                  color: Colors.grey, width: 2),
+                              side: BorderSide(color: borderColor, width: 2),
                             ),
-                            color: Colors.white,
+                            color: cardColor,
                             child: Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(20.0),
                                 child: Text(
                                   content.question,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1A1F71),
+                                    color: textColor,
                                   ),
                                 ),
                               ),
@@ -164,7 +171,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: _isCorrect ? Colors.green : Colors.red,
+                        color: _isCorrect ? correctColor : incorrectColor,
                       ),
                     ),
                   Row(
@@ -172,23 +179,23 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                     children: [
                       TextButton(
                         onPressed: () => _submitAnswerWithButton(false),
-                        child: const Text(
+                        child: Text(
                           "No",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1F71),
+                            color: textColor,
                           ),
                         ),
                       ),
                       TextButton(
                         onPressed: () => _submitAnswerWithButton(true),
-                        child: const Text(
+                        child: Text(
                           "Yes",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1F71),
+                            color: textColor,
                           ),
                         ),
                       ),
@@ -227,7 +234,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                         onPressed: _nextQuestion,
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              _isCorrect ? Colors.blue : Colors.red,
+                              _isCorrect ? correctColor : incorrectColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

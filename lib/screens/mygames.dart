@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
-import 'package:brainboost/component/cards/profile_header.dart'; 
+import 'package:brainboost/component/cards/profile_header.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainboost/component/panel_slider.dart';
 
@@ -67,7 +67,6 @@ class _MyGamesState extends State<MyGames> {
           path));
     }
 
-    
     setState(() {
       games = _games.reversed.toList();
       _isLoadedGames = true;
@@ -91,7 +90,7 @@ class _MyGamesState extends State<MyGames> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier, 
+      valueListenable: themeNotifier,
       builder: (context, currentTheme, child) {
         final isDarkMode = currentTheme == ThemeMode.dark;
 
@@ -101,14 +100,14 @@ class _MyGamesState extends State<MyGames> {
             if (_isLoadedGames) {
               return Scaffold(
                 backgroundColor: isDarkMode
-                    ? AppColors.backgroundDarkmode 
-                    : AppColors.mainColor, 
+                    ? AppColors.backgroundDarkmode
+                    : AppColors.mainColor,
                 appBar: AppBar(
                   title: const Text(""),
                   elevation: 0,
                   backgroundColor: isDarkMode
-                      ? AppColors.backgroundDarkmode 
-                      : Colors.transparent, 
+                      ? AppColors.backgroundDarkmode
+                      : Colors.transparent,
                 ),
                 body: Stack(
                   children: [
@@ -137,8 +136,8 @@ class _MyGamesState extends State<MyGames> {
                                 : "",
                             style: TextStyle(
                               color: isDarkMode
-                                  ? AppColors.textPrimary 
-                                  : AppColors.cardBackground, 
+                                  ? AppColors.textPrimary
+                                  : AppColors.cardBackground,
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                             ),
@@ -155,9 +154,11 @@ class _MyGamesState extends State<MyGames> {
                               // width: 400,
                               width: double.infinity,
                               child: PageView.builder(
-                                controller: PageController(viewportFraction: 0.7),
+                                controller:
+                                    PageController(viewportFraction: 0.7),
                                 onPageChanged: (index) {
-                                  bool isChangePanelValue = index == games.length;
+                                  bool isChangePanelValue =
+                                      index == games.length;
 
                                   if (isChangePanelValue) {
                                     toggleSlideUpPanel(0.0);
@@ -171,16 +172,20 @@ class _MyGamesState extends State<MyGames> {
                                 itemBuilder: (context, index) {
                                   bool isSelected = index == _currentPage;
                                   double selectedSize = isSelected ? 340 : 300;
-                                  double backgroundSize = isSelected ? 400 : 400;
+                                  double backgroundSize =
+                                      isSelected ? 400 : 400;
 
                                   bool isAddButton = index == games.length;
 
                                   return Transform.scale(
                                     scale: isSelected ? 1.0 : 0.85,
                                     child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 300),
+                                      duration:
+                                          const Duration(milliseconds: 300),
                                       transform: Matrix4.identity()
-                                        ..translate(0.0, isSelected ? -2.0 : 12.0,
+                                        ..translate(
+                                            0.0,
+                                            isSelected ? -2.0 : 12.0,
                                             isSelected ? 10.0 : 0.0),
                                       child: Stack(
                                         children: [
@@ -196,11 +201,18 @@ class _MyGamesState extends State<MyGames> {
                                                     duration: const Duration(
                                                         milliseconds: 150),
                                                     width: backgroundSize,
-                                                    color: _slideUpPanelValue <= slideValueThreshold
-                                                        ? (isDarkMode ? AppColors.accentDarkmode:  Colors.grey.shade300)
+                                                    color: _slideUpPanelValue <=
+                                                            slideValueThreshold
+                                                        ? (isDarkMode
+                                                            ? AppColors
+                                                                .accentDarkmode
+                                                            : Colors
+                                                                .grey.shade300)
                                                         : (isDarkMode
-                                                            ? Colors.grey.shade300 
-                                                            : Color(0xFF102247)), 
+                                                            ? AppColors
+                                                            .accentDarkmode2
+                                                            : Color(
+                                                                0xFF102247)),
                                                   ),
                                                 ),
                                               ),
@@ -217,7 +229,8 @@ class _MyGamesState extends State<MyGames> {
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return const Icon(Icons.error,
-                                                    size: 80, color: Colors.red);
+                                                    size: 80,
+                                                    color: Colors.red);
                                               },
                                             ),
                                           ),
@@ -235,8 +248,8 @@ class _MyGamesState extends State<MyGames> {
                                   child: Container(
                                       height: 32,
                                       width: 32,
-                                      margin:
-                                          const EdgeInsets.only(right: 172, top: 16),
+                                      margin: const EdgeInsets.only(
+                                          right: 172, top: 16),
                                       decoration: BoxDecoration(
                                         color: Colors.red,
                                         borderRadius: BorderRadius.circular(16),
@@ -247,8 +260,9 @@ class _MyGamesState extends State<MyGames> {
                                               color: Colors.white,
                                               onPressed: () => {
                                                     GameServices().deleteGame(
-                                                        path: games[_currentPage]
-                                                            .ref,
+                                                        path:
+                                                            games[_currentPage]
+                                                                .ref,
                                                         email: FirebaseAuth
                                                             .instance
                                                             .currentUser!
@@ -258,14 +272,15 @@ class _MyGamesState extends State<MyGames> {
                                                         false), // ลบเกมจาก Firebase
                                                     // _isLoadedGames = false,
                                                   },
-                                              icon: const Icon(Icons.delete))))),
+                                              icon:
+                                                  const Icon(Icons.delete))))),
                             if (_slideUpPanelValue > slideValueThreshold)
                               Center(
                                   child: Container(
                                       height: 32,
                                       width: 32,
-                                      margin:
-                                          const EdgeInsets.only(right: 246, top: 48),
+                                      margin: const EdgeInsets.only(
+                                          right: 246, top: 48),
                                       decoration: BoxDecoration(
                                         color: Colors.blue,
                                         borderRadius: BorderRadius.circular(16),
@@ -297,7 +312,9 @@ class _MyGamesState extends State<MyGames> {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.neutralBackground,
+                                  backgroundColor: isDarkMode
+                                      ? Colors.yellow[700]
+                                      : AppColors.neutralBackground,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
@@ -337,13 +354,15 @@ class _MyGamesState extends State<MyGames> {
                           Column(
                             children: [
                               ElevatedButton(
-                                onPressed: () => context.push(Routes.playGamePage,
-                                    extra: {
-                                      'games': games[_currentPage].gameList,
-                                      'reference': games[_currentPage].ref
-                                    }),
+                                onPressed: () => context
+                                    .push(Routes.playGamePage, extra: {
+                                  'games': games[_currentPage].gameList,
+                                  'reference': games[_currentPage].ref
+                                }),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.neutralBackground,
+                                  backgroundColor: isDarkMode
+                                      ? Colors.yellow[700]
+                                      : AppColors.neutralBackground,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
