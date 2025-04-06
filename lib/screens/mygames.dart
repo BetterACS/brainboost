@@ -19,11 +19,6 @@ import 'package:brainboost/utils/game_creator.dart';
 import 'dart:io' as io;
 import 'package:flutter/services.dart';
 
-// ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
-// ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
-// ValueNotifier<CreationStage> currentStage =
-//     ValueNotifier<CreationStage>(CreationStage.extracting);
-
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
 
@@ -260,9 +255,6 @@ class _MyGamesState extends State<MyGames> {
       context,
       uploadLink: uploadLink!,
       gameName: gameName, // Use the actual game name
-      // dialogMessage: dialogMessage,
-      // creationProgress: creationProgress,
-      // currentStage: currentStage,
       onSuccess: () {
         // First update panel state
         if (_panelController.isPanelOpen) {
@@ -271,8 +263,6 @@ class _MyGamesState extends State<MyGames> {
 
         // Then reset states
         setState(() {
-          // _slideUpPanelValue = 0;
-          // toggleSlideUpPanel(0.0);
           uploadLink = null;
           fileName = null;
           pickedFile = null;
@@ -356,9 +346,6 @@ class _MyGamesState extends State<MyGames> {
       context,
       uploadLink: currentGame.media,
       gameName: gameName, // Use the actual game name
-      // dialogMessage: dialogMessage,
-      // creationProgress: creationProgress,
-      // currentStage: currentStage,
       onSuccess: () {
         // First update panel state
         if (_panelController.isPanelOpen) {
@@ -367,8 +354,6 @@ class _MyGamesState extends State<MyGames> {
 
         // Then reset states
         setState(() {
-          // _slideUpPanelValue = 0;
-          // toggleSlideUpPanel(0.0);
           uploadLink = null;
           fileName = null;
           pickedFile = null;

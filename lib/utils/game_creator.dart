@@ -272,22 +272,6 @@ class _CreatingDialogState extends State<CreatingDialog> {
               ],
             ),
           ),
-          // Positioned(
-          //   top: 5,
-          //   right: 5,
-          //   child: IconButton(
-          //     icon: const Icon(Icons.close, color: Color(0xFF838383)),
-          //     onPressed: () {
-          //       Navigator.pop(context);
-          //       Navigator.pushReplacement(
-          //         context,
-          //         MaterialPageRoute(
-          //             builder: (context) => const UploadFileScreen()),
-          //       );
-          //     },
-          //     tooltip: 'Close',
-          //   ),
-          // ),
         ],
       ),
     );
