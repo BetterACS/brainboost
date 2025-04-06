@@ -4,6 +4,8 @@ import 'package:brainboost/screens/game_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/bottom_slider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class BingoScreen extends StatefulWidget {
   final BingoContent content;
@@ -29,25 +31,37 @@ class _BingoScreenState extends State<BingoScreen> {
   int score = 0;
   bool _showBottomSlider = false;
   int _currentQuestionIndex = -1;
+  bool _isCheckingAnswer = false;
 
-  final List<GameBingoContent> bingoList = [
-    GameBingoContent(question: "Question 1?", answer: "1", point: 10),
-    GameBingoContent(question: "Question 2?", answer: "2", point: 25),
-    GameBingoContent(question: "Question 3?", answer: "3", point: 30),
-    GameBingoContent(question: "Question 4?", answer: "4", point: 15),
-    GameBingoContent(question: "Question 5?", answer: "5", point: 15),
-    GameBingoContent(question: "Question 6?", answer: "6", point: 25),
-    GameBingoContent(question: "Question 7?", answer: "7", point: 20),
-    GameBingoContent(question: "Question 8?", answer: "8", point: 10),
-    GameBingoContent(question: "Question 9?", answer: "9", point: 15),
-  ];
+  Future<bool> checkAnswerSimilarity(String userAnswer, String correctAnswer) async {
+    try {
+      final httpClient = http.Client();
+      var extractResponse = await httpClient.get(
+        Uri.https('monsh.xyz', '/get_similarity', {
+          'context1': userAnswer.trim(),
+          'context2': correctAnswer
+        }),
+      );
+
+      if (extractResponse.statusCode == 200) {
+        final jsonResponse = jsonDecode(extractResponse.body);
+        if (jsonResponse['status'] == 200) {
+          double similarity = jsonResponse['data'];
+          return similarity >= 0.80;
+        }
+      }
+      return false;
+    } catch (e) {
+      print('Error checking answer similarity: $e');
+      return false;
+    }
+  }
 
   void goToNextQuestion() {
     widget.onNext(isBingoWin ? 1 : 0);
   }
 
   dynamic getNextButtonColor() {
-    //  isBingoWin ?  : Colors.red
     if (isBingoWin) {
       return Colors.blue;
     } else if (!isBingoWin && _areAllQuestionsAnswered()) {
@@ -62,7 +76,7 @@ class _BingoScreenState extends State<BingoScreen> {
 
     context.go(Routes.resultPage, extra: {
       'correct': _score,
-      'wrong': bingoList.length - _score,
+      'wrong': widget.content.bingo_list.length - _score,
       'time': '00:00',
     });
   }
@@ -70,13 +84,13 @@ class _BingoScreenState extends State<BingoScreen> {
   void _checkAnswer(int index) {
     setState(() {
       if (isAnswerCorrect[index] == true) {
-        score += bingoList[index].point;
+        score += widget.content.bingo_list[index].point;
       }
     });
   }
 
   bool _areAllQuestionsAnswered() {
-    bool cond1 = isAnswerChecked.length == bingoList.length;
+    bool cond1 = isAnswerChecked.length == widget.content.bingo_list.length;
     bool cond2 = isAnswerChecked.values.every((isChecked) => isChecked == true);
     return cond1 && cond2;
   }
@@ -148,7 +162,7 @@ class _BingoScreenState extends State<BingoScreen> {
                   border: Border.all(color: Colors.blue[900]!),
                 ),
                 child: Text(
-                  "${bingoList[index].point} Points",
+                  "${widget.content.bingo_list[index].point} Points",
                   style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -160,7 +174,7 @@ class _BingoScreenState extends State<BingoScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    bingoList[index].question,
+                    widget.content.bingo_list[index].question,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
@@ -186,34 +200,54 @@ class _BingoScreenState extends State<BingoScreen> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            setDialogState(() {
-                              isAnswerCorrect[index] =
-                                  _answerController.text.trim() ==
-                                      bingoList[index].answer;
-                              isAnswerChecked[index] = true;
-                            });
+                          onPressed: _isCheckingAnswer
+                              ? null
+                              : () async {
+                                  setDialogState(() {
+                                    _isCheckingAnswer = true;
+                                  });
 
-                            Navigator.of(context).pop();
-                            setState(() {
-                              _showBottomSlider = true;
-                            });
+                                  final isCorrect = await checkAnswerSimilarity(
+                                    _answerController.text,
+                                    widget.content.bingo_list[index].answer,
+                                  );
 
-                            if (isAnswerCorrect[index] == true) {
-                              _checkAnswer(index);
-                              _checkBingoWin();
-                            }
-                          },
+                                  setDialogState(() {
+                                    _isCheckingAnswer = false;
+                                  });
+
+                                  setState(() {
+                                    isAnswerCorrect[index] = isCorrect;
+                                    isAnswerChecked[index] = true;
+                                    _showBottomSlider = true;
+                                  });
+
+                                  Navigator.of(context).pop();
+
+                                  if (isCorrect) {
+                                    _checkAnswer(index);
+                                    _checkBingoWin();
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             backgroundColor: const Color(0xFF092866),
                           ),
-                          child: const Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          child: _isCheckingAnswer
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  "Submit",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                         ),
                       ),
                     ],
@@ -239,6 +273,8 @@ class _BingoScreenState extends State<BingoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bingoList = widget.content.bingo_list;
+
     return SafeArea(
       child: Stack(
         children: [
@@ -287,7 +323,7 @@ class _BingoScreenState extends State<BingoScreen> {
                               childAspectRatio: 1,
                               mainAxisExtent: 60,
                             ),
-                            itemCount: 9,
+                            itemCount: bingoList.length,
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: isAnswerCorrect[index] == true
@@ -321,7 +357,7 @@ class _BingoScreenState extends State<BingoScreen> {
                                           ),
                                           child: isAnswerChecked[index] != true
                                               ? Text(
-                                                  "${bingoList[index].point}",
+                                                  "${widget.content.bingo_list[index].point}",
                                                   style: TextStyle(
                                                     fontSize: fontSize,
                                                     fontWeight: FontWeight.bold,
