@@ -90,16 +90,12 @@ class ResultsPage extends StatelessWidget {
                   DropShadowButton(
                     width: 64,
                     height: 64,
-                    backgroundColor: isDarkMode
-                        ? Colors.grey[800]!
-                        : const Color(0xFFCCDBFA),
-                    shadowColor: isDarkMode
-                        ? Colors.grey[700]!
-                        : const Color(0xFF95A5C6),
+                    backgroundColor:  const Color(0xFFCCDBFA),
+                    shadowColor: const Color(0xFF95A5C6),
                     onPressed: () => context.go(Routes.homePage),
                     child: Icon(
                       Icons.home,
-                      color: isDarkMode ? Colors.white : const Color(0xFF7184AC),
+                      color:  const Color(0xFF7184AC),
                       size: 42,
                     ),
                   ),
@@ -107,12 +103,8 @@ class ResultsPage extends StatelessWidget {
                   DropShadowButton(
                     width: 275,
                     height: 64,
-                    backgroundColor: isDarkMode
-                        ? Colors.blueGrey[900]!
-                        : const Color(0xFF205ED8),
-                    shadowColor: isDarkMode
-                        ? Colors.blueGrey[700]!
-                        : const Color(0xFF1746A2),
+                    backgroundColor: Color(0xFF205ED8),
+                    shadowColor: const Color(0xFF1746A2),
                     onPressed: () {
                       context.go(Routes.playGamePage, extra: {
                         'games': gameData ?? [],
@@ -179,7 +171,7 @@ class ResultsPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.yellow[700] : Colors.black54,
+            color: isDarkMode ? Colors.yellow[700] : Colors.black,
           ),
         ),
       ],

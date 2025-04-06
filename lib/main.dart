@@ -6,6 +6,8 @@ import 'package:brainboost/firebase_options.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   runZonedGuarded<Future<void>>(() async {
@@ -14,8 +16,7 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    final prefs = await SharedPreferences.getInstance();
-    final isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    final isDarkMode = await loadThemeFromFirestore();
     themeNotifier.value = isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
     runApp(const MyApp());
@@ -71,4 +72,18 @@ class ThemeToggleButton extends StatelessWidget {
       },
     );
   }
+}
+
+Future<bool> loadThemeFromFirestore() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.email)
+        .get();
+    final theme = doc.data()?['Setting']['Theme'] ?? 'light';
+    print('Theme loaded from Firestore: $theme');
+    return theme == 'dark';
+  }
+  return false; // Default to light theme if user is not logged in
 }

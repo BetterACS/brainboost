@@ -1,5 +1,7 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -179,10 +181,21 @@ class ProfilePage extends StatelessWidget {
                 );
               },
             ),
-            onTap: () {
-              themeNotifier.value = themeNotifier.value == ThemeMode.light
-                  ? ThemeMode.dark
-                  : ThemeMode.light;
+            onTap: () async {
+              final isCurrentlyLight = themeNotifier.value == ThemeMode.light;
+              themeNotifier.value =
+                  isCurrentlyLight ? ThemeMode.dark : ThemeMode.light;
+
+              final user = FirebaseAuth.instance.currentUser;
+              if (user != null) {
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user.email)
+                    .update({
+                  'Setting.Theme': isCurrentlyLight ? 'dark' : 'light',
+                });
+                print('Theme saved to Firestore: ${isCurrentlyLight ? "dark" : "light"}');
+              }
             },
             isDarkMode: isDarkMode,
           ),
