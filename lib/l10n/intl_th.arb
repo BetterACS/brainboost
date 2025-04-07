@@ -119,7 +119,6 @@
   "answerQuestions": "ตอบคำถาม",
   
   "noPlayedHistory": "ไม่มีประวัติการเล่น",
-<<<<<<< HEAD
   "noUserFound": "ไม่พบบัญชี",
   "createssuccess":"สำเร็จ!",
   "successfully": "เกมของคุณถูกสร้างขึ้นสำเร็จแล้ว",
@@ -133,12 +132,11 @@
   "addLecture": "เพิ่มการบรรยาย",
   "noplayhistoryyet": "ยังไม่มีประวัติการเล่น",
   "playgames": "เล่นเกม",
-"noPlayHistory": "ไม่มีประวัติการเล่น",
-"playedhistory": "ประวัติการเล่น",
-"uploadPDFfilecontinue":"อัพโหลดไฟล์ PDF เพื่อดำเนินการต่อ",
-"selectPdfDocument": "เลือกเอกสาร PDF เพื่อสร้างเกมของคุณ",
-"usernotloggedin": "ผู้ใช้ไม่ได้เข้าสู่ระบบ"
-=======
+  "noPlayHistory": "ไม่มีประวัติการเล่น",
+  "playedhistory": "ประวัติการเล่น",
+  "uploadPDFfilecontinue":"อัพโหลดไฟล์ PDF เพื่อดำเนินการต่อ",
+  "selectPdfDocument": "เลือกเอกสาร PDF เพื่อสร้างเกมของคุณ",
+  "usernotloggedin": "ผู้ใช้ไม่ได้เข้าสู่ระบบ",
 
   "expianedmaincreategame": "มาเปลี่ยนการเรียนรู้ของคุณให้สนุกเหมือนเล่นเกมกันเถอะ!",
   "expianedcreategame": "เปลี่ยนการเรียนให้สนุก! แค่อัปโหลดไฟล์แล้วเริ่มเล่นได้เลย!",
@@ -157,6 +155,5 @@
   "playagain": "เล่นอีกครั้ง",
    "imporvetext": "เยี่ยมเลย! คุณทำได้ดีกว่าครั้งก่อน 20"
   
->>>>>>> 75c9746f3126e3afa1ec680f265c539cc791326a
 }
 
