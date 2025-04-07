@@ -8,6 +8,8 @@ import 'package:brainboost/component/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   runZonedGuarded<Future<void>>(() async {
@@ -35,6 +37,16 @@ class MyApp extends StatelessWidget {
       valueListenable: themeNotifier,
       builder: (context, currentTheme, child) {
         return MaterialApp.router(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en'), // English
+            Locale('th'), // Thai
+          ],
           theme: ThemeData(
             brightness: Brightness.light,
             primaryColor: AppColors.primaryBackground,

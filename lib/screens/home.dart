@@ -17,6 +17,7 @@ import 'package:brainboost/services/user.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
 import 'package:brainboost/screens/game_bingo.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CloudPainter extends CustomPainter {
   @override
@@ -38,23 +39,6 @@ class CloudPainter extends CustomPainter {
     return false;
   }
 }
-
-var histories = [
-  HistoryItem(
-    title: "World war 2",
-    date: "11 Dec 2024",
-    imagePath: 'assets/images/photomain.png',
-    // isDownload: false,
-    onPressed: () => print("Play Software Engine.."),
-  ),
-  HistoryItem(
-    title: "World war 2",
-    date: "11 Dec 2024",
-    imagePath: 'assets/images/photomain.png',
-    // isDownload: false,
-    onPressed: () => print("Play Software Engine.."),
-  )
-];
 
 class _MouseScrollBehavior extends ScrollBehavior {
   @override
@@ -259,7 +243,7 @@ Widget _buildCircularChartPage() {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Success rate",
+                      AppLocalizations.of(context)!.successRate,
                       style: TextStyle(
                         color: isDarkMode
                             ? AppColors.textPrimary 
@@ -280,7 +264,7 @@ Widget _buildCircularChartPage() {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "out of $numberGames questions",
+                      AppLocalizations.of(context)!.outOfQuestions(numberGames),
                       style: TextStyle(
                         color:  isDarkMode
                             ? AppColors.textPrimary 
@@ -331,7 +315,7 @@ Widget _buildCircularChartPage() {
             padding: EdgeInsets.only(bottom: 35),
           ),
           Text(
-            "Recent Game",
+            AppLocalizations.of(context)!.recentGame,
             style: TextStyle(
               color: isDarkMode ? Colors.white : AppColors.textPrimary,
               fontSize: 16,
@@ -340,7 +324,7 @@ Widget _buildCircularChartPage() {
           ),
           const SizedBox(height: 5),
           Text(
-            "World War 2",
+            AppLocalizations.of(context)!.worldWar2,
             style: TextStyle(
               color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
               fontSize: 14,
@@ -361,7 +345,7 @@ Widget _buildCircularChartPage() {
           ),
           const SizedBox(height: 6),
           Text(
-            "70 / 100",
+            AppLocalizations.of(context)!.scoreFormat('70', '100'),
             style: TextStyle(
               color: isDarkMode ? Colors.white : AppColors.textPrimary,
               fontSize: 20,
@@ -389,9 +373,9 @@ Widget _buildCircularChartPage() {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
               ),
-              child: const Text(
-                "Replay",
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.replay,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -438,7 +422,7 @@ Widget _buildCircularChartPage() {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
-          "Start",
+          AppLocalizations.of(context)!.start,
           style: TextStyle(
             color:  isDarkMode
                             ? AppColors.textPrimary 
@@ -538,8 +522,8 @@ Widget _buildCircularChartPage() {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 12),
                           ),
-                          child: const Text(
-                            "Create Game",
+                          child: Text(
+                            AppLocalizations.of(context)!.createGame,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -579,7 +563,7 @@ Widget _buildCircularChartPage() {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "History",
+                AppLocalizations.of(context)!.history,
                 style: TextStyle(
                   color: isDarkMode
                             ? AppColors.textPrimary 
@@ -592,10 +576,10 @@ Widget _buildCircularChartPage() {
                 onTap: () {
                   context.push(Routes.historyPage, extra: email);
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Text(
-                      "View all",
+                      AppLocalizations.of(context)!.viewAll,
                       style: TextStyle(
                         color: AppColors.gray2,
                         fontSize: 14,
@@ -624,7 +608,7 @@ Widget _buildCircularChartPage() {
               }
 
               if (!snapshot.hasData || !snapshot.data!.exists) {
-                return const Center(child: Text("No history found"));
+                return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
               }
 
               var docData =
@@ -636,7 +620,7 @@ Widget _buildCircularChartPage() {
                       [];
 
               if (allGames.isEmpty) {
-                return const Center(child: Text("No history found"));
+                return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
               }
 
               // Show only the last 2 games

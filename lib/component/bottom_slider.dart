@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Add this import
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BottomSlider extends StatefulWidget {
   // final Widget child;
@@ -205,7 +206,7 @@ class _BottomSliderState extends State<BottomSlider>
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    _isCorrect ? "Correct!" : "Wrong!",
+                                    _isCorrect ? AppLocalizations.of(context)!.correct : AppLocalizations.of(context)!.wrong,
                                     style: TextStyle(
                                       color:
                                           _isCorrect ? Colors.blue : Colors.red,

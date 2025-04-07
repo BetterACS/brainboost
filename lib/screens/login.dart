@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -46,7 +47,7 @@ class Login extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  'Hello Again',
+                  AppLocalizations.of(context)!.helloAgain,
                   style: GoogleFonts.raleway(
                       textStyle: const TextStyle(
                           color: Colors.black,
@@ -57,11 +58,11 @@ class Login extends StatelessWidget {
               const SizedBox(
                 height: 80,
               ),
-              _emailAddress(),
+              _emailAddress(context),
               const SizedBox(
                 height: 20,
               ),
-              _password(),
+              _password(context),
               const SizedBox(
                 height: 50,
               ),
@@ -73,13 +74,13 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget _emailAddress() {
+  Widget _emailAddress(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email Address',
+          AppLocalizations.of(context)!.emailAddress,
           style: GoogleFonts.raleway(
               textStyle: const TextStyle(
                   color: Colors.black,
@@ -93,7 +94,7 @@ class Login extends StatelessWidget {
           controller: _emailController,
           decoration: InputDecoration(
               filled: true,
-              hintText: 'mahdiforwork@gmail.com',
+              hintText: AppLocalizations.of(context)!.emailHint,
               hintStyle: const TextStyle(
                   color: Color(0xff6A6A6A),
                   fontWeight: FontWeight.normal,
@@ -107,13 +108,13 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget _password() {
+  Widget _password(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Password',
+          AppLocalizations.of(context)!.password,
           style: GoogleFonts.raleway(
               textStyle: const TextStyle(
                   color: Colors.black,
@@ -153,7 +154,7 @@ class Login extends StatelessWidget {
             password: _passwordController.text,
             context: context);
       },
-      child: const Text("Sign In"),
+      child: Text(AppLocalizations.of(context)!.signIn),
     );
   }
 
@@ -163,15 +164,15 @@ class Login extends StatelessWidget {
       child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(children: [
-            const TextSpan(
-              text: "New User? ",
-              style: TextStyle(
+            TextSpan(
+              text: AppLocalizations.of(context)!.newUser,
+              style: const TextStyle(
                   color: Color(0xff6A6A6A),
                   fontWeight: FontWeight.normal,
                   fontSize: 16),
             ),
             TextSpan(
-                text: "Create Account",
+                text: AppLocalizations.of(context)!.createAccount,
                 style: const TextStyle(
                     color: Color(0xff1A1D1E),
                     fontWeight: FontWeight.normal,
