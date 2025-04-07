@@ -25,7 +25,7 @@ class Login extends StatelessWidget {
         toolbarHeight: 100,
         leading: GestureDetector(
           onTap: () {
-            context.go('/welcome');
+            Navigator.pop(context);
           },
           child: Container(
             margin: const EdgeInsets.only(left: 10),

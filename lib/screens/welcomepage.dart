@@ -15,7 +15,7 @@ class CloudPainter extends CustomPainter {
     canvas.drawCircle(Offset(size.width * 0.1, size.height * 1.2), 114, paint);
     canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.95), 45, paint);
     canvas.drawCircle(
-        Offset(size.width * 0.75, size.height * 0.45), 50, yellowPaint);
+        Offset(size.width * 0.75, size.height * 0.40), 50, yellowPaint);
     canvas.drawCircle(Offset(size.width * 0.57, size.height * 1.15), 77, paint);
     canvas.drawCircle(Offset(size.width * 0.79, size.height * 1.5), 83, paint);
     canvas.drawCircle(Offset(size.width * 0.95, size.height * 0.97), 95, paint);
@@ -37,19 +37,17 @@ class WelcomePage extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // วาง CloudPainter บนขอบของสี่เหลี่ยมสีขาว
             Positioned(
-              top: 250, // ตั้งตำแหน่งให้ CloudPainter อยู่ที่ขอบบนของสี่เหลี่ยม
+              top: 250,
               left: 0,
               right: 0,
               child: CustomPaint(
-                size: Size(double.infinity, 100), // ขนาดของก้อนเมฆ
+                size: Size(double.infinity, 100),
                 painter: CloudPainter(),
               ),
             ),
-            // วางโลโก้ที่อยู่ข้างบนสุด
             Positioned(
-              top: 50, // ตั้งตำแหน่งให้โลโก้อยู่ที่ตำแหน่งสูงสุด
+              top: 50,
               left: 0,
               right: 0,
               child: Image.asset(
@@ -57,13 +55,12 @@ class WelcomePage extends StatelessWidget {
                 height: 200,
               ),
             ),
-            // วางสี่เหลี่ยมสีขาวที่มีข้อความและปุ่ม
             Positioned(
-              top: 370, // ขยับตำแหน่งของสี่เหลี่ยมสีขาวลงมานิดนึง
+              top: 370,
               left: 0,
               right: 0,
               child: Container(
-                height: 350, // กำหนดความสูงของสี่เหลี่ยมเป็น 400
+                height: 350,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
@@ -72,16 +69,13 @@ class WelcomePage extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center, // ปรับให้ข้อความอยู่กลาง
-                  crossAxisAlignment: CrossAxisAlignment
-                      .center, // ทำให้ข้อความอยู่กลางตามแนวนอน
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // ขยับทั้งประโยคขึ้นโดยใช้ Transform.translate
                     Transform.translate(
-                      offset: const Offset(0, -20), // ขยับขึ้น 20 หน่วย
+                      offset: const Offset(0, -20),
                       child: RichText(
-                        textAlign: TextAlign.center, // จัดข้อความให้ตรงกลาง
+                        textAlign: TextAlign.center,
                         text: TextSpan(
                           style: GoogleFonts.raleway(
                             fontSize: 28,
@@ -90,17 +84,13 @@ class WelcomePage extends StatelessWidget {
                           ),
                           children: [
                             const TextSpan(text: "Let’s "),
-                            // สี่เหลี่ยมสีเหลืองที่หมุน แต่คำ "boost" ไม่หมุน
                             WidgetSpan(
                               child: Transform.rotate(
-                                angle:
-                                    -5 * 3.14159 / 180, // หมุนไปทางซ้าย 5 องศา
+                                angle: -5 * 3.14159 / 180,
                                 child: Container(
                                   color: Colors.amber,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 12.0,
-                                      vertical:
-                                          6.0), // ขยายขนาดของสี่เหลี่ยมเหลือง
+                                      horizontal: 12.0, vertical: 6.0),
                                   child: const Text(
                                     "boost",
                                     style: TextStyle(
@@ -118,10 +108,9 @@ class WelcomePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // ข้อความนี้จะอยู่ตรงกลางตามแนวนอน
                     Text(
                       "Play to learn application make you\nmemorize class lecture more efficiently",
-                      textAlign: TextAlign.center, // จัดข้อความให้ตรงกลาง
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -134,15 +123,12 @@ class WelcomePage extends StatelessWidget {
                         backgroundColor: const Color(0xFFF2F6F9),
                         foregroundColor: Color(0xff002366),
                         elevation: 0,
-                        minimumSize: const Size(300,
-                            50), // ปรับความกว้างของปุ่มให้แคบลงที่ 250 พิกเซล
-
+                        minimumSize: const Size(300, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
                       onPressed: () {
-                        // ไปที่หน้า Login
                         Navigator.push(
                           context,
                           MaterialPageRoute(
