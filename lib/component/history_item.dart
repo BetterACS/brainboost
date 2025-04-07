@@ -5,7 +5,6 @@ class HistoryItem extends StatelessWidget {
   final String title;
   final String date;
   final String imagePath;
-  // final bool isDownload;
   final VoidCallback? onPressed;
 
   const HistoryItem({
@@ -13,25 +12,28 @@ class HistoryItem extends StatelessWidget {
     required this.title,
     required this.date,
     required this.imagePath,
-    // required this.isDownload,
     this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? AppColors.accentDarkmode : Colors.white,
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 6.0,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        boxShadow: isDarkMode
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 6.0,
+                  offset: const Offset(0, 3),
+                ),
+              ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,7 +46,11 @@ class HistoryItem extends StatelessWidget {
               height: 80,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.image, size: 80, color: Colors.grey);
+                return Icon(
+                  Icons.image,
+                  size: 80,
+                  color: isDarkMode ? Colors.grey[700] : Colors.grey,
+                );
               },
             ),
           ),
@@ -56,10 +62,12 @@ class HistoryItem extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.buttonText,
+                    color: isDarkMode
+                        ? Colors.white
+                        : AppColors.buttonText,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -71,7 +79,9 @@ class HistoryItem extends StatelessWidget {
                     vertical: 4.0,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0066FF),
+                    color: isDarkMode
+                        ? Colors.blueGrey
+                        : AppColors.neutralBackground,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
@@ -89,8 +99,10 @@ class HistoryItem extends StatelessWidget {
           Container(
             width: 50,
             height: 50,
-            decoration: const BoxDecoration(
-              color: Color(0xFF0066FF),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? Colors.yellow[700]
+                  : AppColors.neutralBackground,
               shape: BoxShape.circle,
             ),
             child: IconButton(

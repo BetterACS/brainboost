@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/history_item.dart';
+import 'package:brainboost/component/colors.dart';
 
 class History extends StatefulWidget {
   @override
@@ -33,23 +34,25 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'History',
           style: TextStyle(
-            color: AppColors.buttonText,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: isDarkMode ? AppColors.accentDarkmode : AppColors.mainColor,
+        foregroundColor: isDarkMode ? Colors.white : AppColors.buttonText,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48.0),
           child: TabBar(
             controller: _tabController,
-            labelColor: AppColors.buttonText,
-            unselectedLabelColor: AppColors.unselectedTab,
-            indicatorColor: AppColors.buttonText,
+            labelColor: isDarkMode ? Colors.white : AppColors.buttonText,
+            unselectedLabelColor: isDarkMode ? Colors.grey : AppColors.unselectedTab,
+            indicatorColor: isDarkMode ? Colors.white : AppColors.buttonText,
             indicatorWeight: 3.0,
             tabs: const [
               Tab(text: 'Game'),
@@ -64,11 +67,12 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
           ),
         ),
       ),
+      backgroundColor: isDarkMode ? Colors.black : AppColors.mainColor, 
       body: TabBarView(
         controller: _tabController,
         physics: NeverScrollableScrollPhysics(), // Prevents swiping between tabs
         children: [
-          _buildHistoryTab(FirebaseAuth.instance.currentUser?.email, "game"),
+          _buildHistoryTab(FirebaseAuth.instance.currentUser?.email, "game", isDarkMode),
           _buildComingSoonTab(), // Custom widget that will never be seen due to controller logic
         ],
       ),
@@ -81,23 +85,23 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildHistoryTab(String? email, String type) {
+  Widget _buildHistoryTab(String? email, String type, bool isDarkMode) {
     if (email == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.account_circle_outlined,
               size: 64,
-              color: AppColors.buttonText,
+              color: isDarkMode ? Colors.grey[300] : AppColors.buttonText,
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               "Please sign in to view your history",
               style: TextStyle(
                 fontSize: 18,
-                color: AppColors.buttonText,
+                color: isDarkMode ? Colors.grey[300] : AppColors.buttonText,
                 fontWeight: FontWeight.w500,
               ),
             ),
