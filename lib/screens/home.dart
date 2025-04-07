@@ -435,54 +435,46 @@ Widget _buildCircularChartPage() {
     );
   }
 
-  Widget _buildCreateButtons(BuildContext context) {
-      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+Widget _buildCreateButtons(BuildContext context) {
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Container(
-        height: 200,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: isDarkMode
-              ? AppColors.buttonGradientDark 
-              : AppColors.buttonGradient,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    child: Container(
+      height: 160,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: isDarkMode
+            ? AppColors.buttonGradientDark
+            : AppColors.buttonGradient,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
-                child: SizedBox(
-                  child: CustomPaint(
-                    size: const Size(double.infinity, 100),
-                    painter: CloudPainter(),
-                  ),
-                ),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: CloudPainter(),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   Expanded(
+                    flex: 3,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+<<<<<<< HEAD
                          Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -503,29 +495,41 @@ Widget _buildCircularChartPage() {
                               ),
                             ),
                           ],
+=======
+                        const Text(
+                          "Let’s Gamify Your Learning!",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+>>>>>>> e19d8cb03f11b1f3dbe09cc4909d983f7d606554
                         ),
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 6),
+                        const Text(
+                          "Make studying fun!\nUpload your file to play.",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const Spacer(),
                         ElevatedButton(
                           onPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) =>
-                            //           const CreateGameScreen()),
-                            // );
+                            // TODO: Add navigation or logic
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.yellow[700],
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
+                                horizontal: 16, vertical: 8),
                           ),
                           child: Text(
                             AppLocalizations.of(context)!.createGame,
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF002654),
                             ),
@@ -534,10 +538,12 @@ Widget _buildCircularChartPage() {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 155,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
                     child: Image.asset(
                       'assets/images/rockety.webp',
+                      height: 140,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -547,8 +553,10 @@ Widget _buildCircularChartPage() {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildHistorySection() {
     final String? email = FirebaseAuth.instance.currentUser?.email;
