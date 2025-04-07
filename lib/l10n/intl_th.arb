@@ -125,10 +125,17 @@
   "startplaying":"เริ่มเล่น",
   "viewgame" : "ดูเกมของฉัน",
   "tooltipclose": "ปิด",
-"noExplanationAvailable": "ไม่มีคำอธิบาย",
-"failedToLoadExplanation": "ไม่สามารถโหลดคำอธิบายได้",
-"sideuptocreateanewgame": "เลื่อนขึ้นเพื่อสร้างเกมใหม่"
-"reversion": "เวอร์ชันใหม่"
-
+  "noExplanationAvailable": "ไม่มีคำอธิบาย",
+  "failedToLoadExplanation": "ไม่สามารถโหลดคำอธิบายได้",
+  "sideuptocreateanewgame": "เลื่อนขึ้นเพื่อสร้างเกมใหม่",
+  "reversion": "เวอร์ชันใหม่",
+  "addLecture": "เพิ่มการบรรยาย",
+  "noplayhistoryyet": "ยังไม่มีประวัติการเล่น",
+  "playgames": "เล่นเกม",
+"noPlayHistory": "ไม่มีประวัติการเล่น",
+"playedhistory": "ประวัติการเล่น",
+"uploadPDFfilecontinue":"อัพโหลดไฟล์ PDF เพื่อดำเนินการต่อ",
+"selectPdfDocument": "เลือกเอกสาร PDF เพื่อสร้างเกมของคุณ",
+"usernotloggedin": "ผู้ใช้ไม่ได้เข้าสู่ระบบ"
 }
 
