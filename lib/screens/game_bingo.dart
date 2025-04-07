@@ -35,14 +35,13 @@ class _BingoScreenState extends State<BingoScreen> {
   int _currentQuestionIndex = -1;
   bool _isCheckingAnswer = false;
 
-  Future<bool> checkAnswerSimilarity(String userAnswer, String correctAnswer) async {
+  Future<bool> checkAnswerSimilarity(
+      String userAnswer, String correctAnswer) async {
     try {
       final httpClient = http.Client();
       var extractResponse = await httpClient.get(
-        Uri.https('monsh.xyz', '/get_similarity', {
-          'context1': userAnswer.trim(),
-          'context2': correctAnswer
-        }),
+        Uri.https('monsh.xyz', '/get_similarity',
+            {'context1': userAnswer.trim(), 'context2': correctAnswer}),
       );
 
       if (extractResponse.statusCode == 200) {
@@ -148,10 +147,17 @@ class _BingoScreenState extends State<BingoScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
+        final currentTheme = Theme.of(context).brightness;
+        final bool isDarkMode = currentTheme == Brightness.dark;
+        final backgroundColor =
+            isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
+        final textColor = isDarkMode ? Colors.white : Colors.black;
+        final cardColor =
+            isDarkMode ? AppColors.accentDarkmode : Colors.blue[900];
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: backgroundColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -159,9 +165,9 @@ class _BingoScreenState extends State<BingoScreen> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF092866),
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue[900]!),
+                  border: Border.all(color: Colors.white),
                 ),
                 child: Text(
                   "${widget.content.bingo_list[index].point} Points",
@@ -178,8 +184,11 @@ class _BingoScreenState extends State<BingoScreen> {
                   Text(
                     widget.content.bingo_list[index].question,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                    style:  TextStyle(
+                      color: textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 32),
                   TextField(
@@ -235,7 +244,9 @@ class _BingoScreenState extends State<BingoScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            backgroundColor: const Color(0xFF092866),
+                            backgroundColor: isDarkMode
+                                ? AppColors.accentDarkmode
+                                : Colors.blue[900],
                           ),
                           child: _isCheckingAnswer
                               ? const SizedBox(
@@ -278,7 +289,8 @@ class _BingoScreenState extends State<BingoScreen> {
     final bingoList = widget.content.bingo_list;
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? AppColors.backgroundDarkmode : Colors.white;
+    final backgroundColor =
+        isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final cardColor = isDarkMode ? AppColors.accentDarkmode : Colors.blue[900];
     final correctColor = isDarkMode ? Colors.blue[900] : Colors.blue[900];
@@ -360,22 +372,26 @@ class _BingoScreenState extends State<BingoScreen> {
                                               color: isAnswerCorrect[index] ==
                                                       true
                                                   ? correctColor
-                                                  : isAnswerChecked[index] == true
+                                                  : isAnswerChecked[index] ==
+                                                          true
                                                       ? wrongColor
                                                       : cardColor,
-                                              borderRadius: BorderRadius.circular(
-                                                  itemSize * 0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      itemSize * 0.1),
                                             ),
-                                            child: isAnswerChecked[index] != true
-                                                ? Text(
-                                                    "${widget.content.bingo_list[index].point}",
-                                                    style: TextStyle(
-                                                      fontSize: fontSize,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  )
-                                                : const SizedBox(),
+                                            child:
+                                                isAnswerChecked[index] != true
+                                                    ? Text(
+                                                        "${widget.content.bingo_list[index].point}",
+                                                        style: TextStyle(
+                                                          fontSize: fontSize,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      )
+                                                    : const SizedBox(),
                                           ),
                                           if (isAnswerChecked[index] == true)
                                             Align(

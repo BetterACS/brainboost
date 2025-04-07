@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 
+import 'package:brainboost/main.dart';
 import 'package:brainboost/screens/game_bingo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -142,6 +143,8 @@ class _GameWrapperState extends State<GameWrapper>
 
   @override
   Widget build(BuildContext context) {
+        final currentTheme = Theme.of(context).brightness;
+    final bool isDarkMode = currentTheme == Brightness.dark;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
@@ -152,10 +155,14 @@ class _GameWrapperState extends State<GameWrapper>
       child: Scaffold(
         backgroundColor: AppColors.gameScreenBackground,
         appBar: AppBar(
-          backgroundColor: AppColors.gameScreenBackground,
+          backgroundColor: isDarkMode
+                    ? AppColors.backgroundDarkmode
+                    : AppColors.gameScreenBackground,
           elevation: 0,
           leading: BackButton(
-            color: Colors.black,
+            color:  isDarkMode
+                    ? AppColors.white
+                    : Colors.black,
             onPressed: () => context.go(Routes.gamePage),
           ),
           title: ClipRRect(
@@ -230,25 +237,32 @@ class GameScreenProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            width: width * progress,
-            height: height,
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Opacity(
+  return ValueListenableBuilder<ThemeMode>(
+    valueListenable: themeNotifier,
+    builder: (context, currentTheme, child) {
+      bool isDarkMode = currentTheme == ThemeMode.dark;
+
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Stack(
+          children: [
+            Container(
+              width: width * progress,
+              height: height,
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? AppColors.textQuizNonSelectedOption
+                    : Colors.blue,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Opacity(
                   opacity: 0.2,
                   child: Container(
                     width: width * progress / 1.2,
@@ -258,11 +272,14 @@ class GameScreenProgressBar extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                  )),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
+    },
+  );
+}
 }
