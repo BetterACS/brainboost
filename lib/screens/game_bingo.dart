@@ -185,7 +185,7 @@ class _BingoScreenState extends State<BingoScreen> {
                   Text(
                     widget.content.bingo_list[index].question,
                     textAlign: TextAlign.center,
-                    style:  TextStyle(
+                    style: TextStyle(
                       color: textColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -194,9 +194,16 @@ class _BingoScreenState extends State<BingoScreen> {
                   const SizedBox(height: 32),
                   TextField(
                     controller: _answerController,
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context)!.answer,
-                      hintStyle: TextStyle(color: Color(0xFFC2C2C2)),
+                      hintStyle: TextStyle(
+                        color: isDarkMode
+                            ? AppColors.white
+                            : AppColors.accentDarkmode2,
+                      ),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFF092866)),
                       ),
@@ -328,7 +335,8 @@ class _BingoScreenState extends State<BingoScreen> {
                             Container(
                               width: 340,
                               child: Text(
-                                AppLocalizations.of(context)!.yourPoints(score.toString()),
+                                AppLocalizations.of(context)!
+                                    .yourPoints(score.toString()),
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w500,
@@ -417,7 +425,8 @@ class _BingoScreenState extends State<BingoScreen> {
                               width: 340,
                               child: Center(
                                 child: Text(
-                                  AppLocalizations.of(context)!.bingoRequirement,
+                                  AppLocalizations.of(context)!
+                                      .bingoRequirement,
                                   maxLines: 2,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(

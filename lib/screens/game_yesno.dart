@@ -241,8 +241,8 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          "Next",
+                        child:  Text(
+                          AppLocalizations.of(context)!.next,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

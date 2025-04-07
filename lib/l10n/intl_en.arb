@@ -153,5 +153,10 @@
   "wrong": "Wrong",
   "time": "Time",
   "playagain": "Play Again",
-  "imporvetext": "You scored 20% more than the previous time."
+  "imporvetext": "You scored 20% more than the previous time.",
+
+  "exitmodalmain": "Are you sure?",
+  "exitmodal1": "Your current score will not be saved if you exit now.",
+  "exitmodal2": "Are you sure you want to leave?",
+  "exit": "Exit Game"
 }
