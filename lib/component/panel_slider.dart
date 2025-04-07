@@ -1,4 +1,7 @@
 import 'package:brainboost/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -7,6 +10,7 @@ import 'package:brainboost/models/games.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:brainboost/component/avatar.dart';
 
 class PanelSlider extends StatefulWidget {
   final UserServices userServices = UserServices();
@@ -53,6 +57,22 @@ class _PanelSliderState extends State<PanelSlider> {
   bool _isImporting = false;
   String? _importError;
 
+  // Add static cache for profile images
+  static final Map<String, Widget> _profileCache = {};
+  static const int _maxCacheSize = 100; // Limit cache size
+
+  // Add cache cleanup method
+  void _cleanupCache() {
+    if (_profileCache.length > _maxCacheSize) {
+      // Remove oldest 20% of entries when cache is full
+      final entriesToRemove = (_maxCacheSize * 0.2).round();
+      final keys = _profileCache.keys.toList();
+      for (var i = 0; i < entriesToRemove && i < keys.length; i++) {
+        _profileCache.remove(keys[i]);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +82,7 @@ class _PanelSliderState extends State<PanelSlider> {
   @override
   void dispose() {
     _importPathController.dispose();
+    _cleanupCache();
     super.dispose();
   }
 
@@ -288,14 +309,24 @@ class _PanelSliderState extends State<PanelSlider> {
                                           EdgeInsets.symmetric(horizontal: 4),
                                       child: Column(
                                         children: [
-                                          CircleAvatar(
-                                            radius: 26,
-                                            backgroundColor: Color(0xFF05235F),
-                                            child: CircleAvatar(
-                                              radius: 24,
-                                              backgroundImage: AssetImage(
-                                                  'assets/images/profile.jpg'),
+                                          FutureBuilder<Widget>(
+                                            future: buildUserIconForPanel(
+                                              widget.games[widget.currentPage]
+                                                  .played_history[index]['player'], 40
                                             ),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                return SizedBox(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                                );
+                                              } else if (snapshot.hasError) {
+                                                return Icon(Icons.error, size: 40, color: Colors.red);
+                                              } else {
+                                                return snapshot.data!;
+                                              }
+                                            },
                                           ),
                                           SizedBox(height: 2),
                                           Text(
@@ -419,15 +450,25 @@ class _PanelSliderState extends State<PanelSlider> {
                                         EdgeInsets.symmetric(horizontal: 8),
                                     child: Column(
                                       children: [
-                                        CircleAvatar(
-                                          radius: 24,
-                                          backgroundColor: Colors.white,
-                                          child: CircleAvatar(
-                                            radius: 22,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/profile.jpg'),
+                                          FutureBuilder<Widget>(
+                                            future: buildUserIconForPanel(
+                                              widget.games[widget.currentPage]
+                                                  .played_history[index]['player'], 40
+                                            ),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                return SizedBox(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                                );
+                                              } else if (snapshot.hasError) {
+                                                return Icon(Icons.error, size: 40, color: Colors.red);
+                                              } else {
+                                                return snapshot.data!;
+                                              }
+                                            },
                                           ),
-                                        ),
                                         SizedBox(height: 5),
                                         Text(
                                           widget.games[widget.currentPage]
@@ -780,5 +821,45 @@ class _PanelSliderState extends State<PanelSlider> {
 
   void closePanel() {
     _panelController.close();
+  }
+
+  Future<Widget> buildUserIconForPanel(DocumentReference<Map<String, dynamic>> userEmail, double size) async {
+    final String cacheKey = '${userEmail.path}_$size';
+    
+    // Return cached version if available
+    if (_profileCache.containsKey(cacheKey)) {
+      return _profileCache[cacheKey]!;
+    }
+
+    FirebaseStorage storage = FirebaseStorage.instance;
+    String? path = await UserServices().getUserIcon(email: userEmail.path);
+    
+    Widget avatar;
+    if (path == null) {
+      avatar = UserAvatar(
+        imageUrl: 'assets/images/profile.png',
+        width: size,
+      );
+    } else {
+      try {
+        final ref = storage.ref().child(path);
+        final url = await ref.getDownloadURL();
+        avatar = UserAvatar(
+          imageUrl: url,
+          width: size,
+        );
+      } catch (e) {
+        avatar = UserAvatar(
+          imageUrl: 'assets/images/profile.png',
+          width: size,
+        );
+      }
+    }
+
+    // Store in cache
+    _profileCache[cacheKey] = avatar;
+    _cleanupCache();
+
+    return avatar;
   }
 }

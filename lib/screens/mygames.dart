@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/models/games.dart';
@@ -72,6 +73,7 @@ class _MyGamesState extends State<MyGames> {
     _gameNameTextController.dispose();
     super.dispose();
   }
+
 
   Future<void> _loadGamesMethod() async {
     if (_isLoadedGames) return;

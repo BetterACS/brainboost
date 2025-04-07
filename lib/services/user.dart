@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class UserServices {
   final CollectionReference users =
@@ -29,6 +31,24 @@ class UserServices {
         .set(userData)
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  /// Fetches a user's icon URL by email
+  Future<String?> getUserIcon({required String email}) async {
+    try {
+      final userDoc = await users.doc(email.split("/").last).get();
+      if (!userDoc.exists) {
+        print("User not found for icon fetch");
+        return null;
+      }
+      
+      final userData = userDoc.data() as Map<String, dynamic>;
+      return userData['icon'] as String?;
+
+    } catch (error) {
+      print("Failed to fetch user icon: $error");
+      return null;
+    }
   }
 
   String? getCurrentUserEmail() {
@@ -125,13 +145,48 @@ class UserServices {
     }
   }
 
-  Future<void> updateProfileImage(String email, String imageUrl) async {
+  // Updates the user's photo URL in Firestore
+  Future<void> updateUserPhotoUrl(User user) async {
+    if (user.email == null) return;
+    String imageUrl = user.photoURL ?? '';
+    if (imageUrl.isEmpty) return;
+
+
     try {
-      await users.doc(email).update({
-        'icon': imageUrl,
-      });
+      // Download image from URL
+      final response = await http.get(Uri.parse(imageUrl));
+      final bytes = response.bodyBytes;
+      
+      // Create temp file
+      final tempDir = Directory.systemTemp;
+      final tempFile = File('${tempDir.path}/temp_${DateTime.now().millisecondsSinceEpoch}.jpg');
+      await tempFile.writeAsBytes(bytes);
+
+      // Create storage reference
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child('${user.email}_${DateTime.now().millisecondsSinceEpoch}');
+
+      // Upload to Firebase Storage
+      await storageRef.putFile(tempFile);
+      final photoUrl = await storageRef.getDownloadURL();
+      
+      // Update Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.email)
+          .update({
+            'icon': photoUrl,
+            'lastLogin': FieldValue.serverTimestamp(),
+          });
+      
+      // Clean up temp file
+      await tempFile.delete();
+      
+      print('Updated user photo URL in Firestore: $photoUrl');
     } catch (e) {
-      print("Error updating profile image: $e");
+      print('Error updating user photo URL: $e');
       throw e;
     }
   }
