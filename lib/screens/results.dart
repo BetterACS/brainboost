@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:lottie/lottie.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 int _currentPage = 0;
-  List<GamesType> games = [];
+List<GamesType> games = [];
 const correctAnswersColor = Color.fromRGBO(32, 94, 216, 1);
 const wrongAnswersColor = Color.fromRGBO(223, 69, 69, 1);
 const timeColor = Color.fromRGBO(255, 193, 7, 1);
@@ -65,37 +67,27 @@ class ResultsPage extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // Padding from TOP
               const SizedBox(height: 80),
               _buildTrophy(isDarkMode),
-
-              // Padding from Trophy
               const SizedBox(height: 20),
-              _buildCongratulationsText(isDarkMode),
-
-              // Padding from Congratulations Text
+              _buildCongratulationsText(context, isDarkMode),
               const SizedBox(height: 30),
-              _buildScoreRow(correct, wrong, time, isDarkMode),
-
-              // Padding from Score Row
+              _buildScoreRow(context, correct, wrong, time, isDarkMode),
               const SizedBox(height: 20),
-              _buildImprovementText(isDarkMode),
-
-              // Padding from Improvement Text
+              _buildImprovementText(context, isDarkMode),
               const Spacer(),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   DropShadowButton(
                     width: 64,
                     height: 64,
-                    backgroundColor:  const Color(0xFFCCDBFA),
+                    backgroundColor: const Color(0xFFCCDBFA),
                     shadowColor: const Color(0xFF95A5C6),
                     onPressed: () => context.go(Routes.homePage),
-                    child: Icon(
+                    child: const Icon(
                       Icons.home,
-                      color:  const Color(0xFF7184AC),
+                      color: Color(0xFF7184AC),
                       size: 42,
                     ),
                   ),
@@ -103,7 +95,7 @@ class ResultsPage extends StatelessWidget {
                   DropShadowButton(
                     width: 275,
                     height: 64,
-                    backgroundColor: Color(0xFF205ED8),
+                    backgroundColor: const Color(0xFF205ED8),
                     shadowColor: const Color(0xFF1746A2),
                     onPressed: () {
                       context.go(Routes.playGamePage, extra: {
@@ -111,8 +103,8 @@ class ResultsPage extends StatelessWidget {
                         'reference': gameReference
                       });
                     },
-                    child: Text(
-                      "Play Again",
+                    child:  Text(
+                       AppLocalizations.of(context)!.playagain,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -122,7 +114,6 @@ class ResultsPage extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 10),
             ],
           ),
@@ -140,7 +131,8 @@ class ResultsPage extends StatelessWidget {
           child: ShadowEllipse(
             width: 280,
             height: 160,
-            backgroundColor: isDarkMode ? Colors.grey[800]! : const Color(0xFFE1E3E9),
+            backgroundColor:
+                isDarkMode ? Colors.grey[800]! : const Color(0xFFE1E3E9),
           ),
         ),
         const Center(
@@ -155,60 +147,63 @@ class ResultsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCongratulationsText(bool isDarkMode) {
+  Widget _buildCongratulationsText(BuildContext context, bool isDarkMode) {
     return Column(
       children: [
         Text(
-          'Congrats!',
+          AppLocalizations.of(context)!.resultmain,
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
             color: isDarkMode ? Colors.yellow[700] : Colors.black,
           ),
+          textAlign: TextAlign.center,
         ),
+        const SizedBox(height: 12),
         Text(
-          'You are the best!',
+          AppLocalizations.of(context)!.resultexplain,
           style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.yellow[700] : Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+            color: isDarkMode ? Colors.yellow[600] : Colors.grey[800],
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildScoreRow(int correct, int wrong, String time, bool isDarkMode) {
+  Widget _buildScoreRow(BuildContext context, int correct, int wrong, String time, bool isDarkMode) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InfoCard(
-          title: 'Correct',
+          title: AppLocalizations.of(context)!.correct,
           value: correct.toString(),
           icon: Icons.check_circle,
           cardColor: correctAnswersColor,
         ),
         InfoCard(
-          title: 'Wrong',
+          title: AppLocalizations.of(context)!.wrong,
           value: wrong.toString(),
           icon: Icons.cancel,
           cardColor: isDarkMode ? Colors.red[700]! : wrongAnswersColor,
         ),
         InfoCard(
-          title: 'Time',
+          title: AppLocalizations.of(context)!.time,
           value: time,
           icon: Icons.watch_later,
           cardColor: isDarkMode ? Colors.amber[700]! : timeColor,
-        )
+        ),
       ],
     );
   }
 
-  Widget _buildImprovementText(bool isDarkMode) {
+  Widget _buildImprovementText(BuildContext context, bool isDarkMode) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 250),
       child: Text(
-        'You scored 20% more than the previous time.',
+        AppLocalizations.of(context)!.imporvetext, 
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 20,

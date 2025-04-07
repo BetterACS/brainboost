@@ -118,5 +118,22 @@
   
   "answerQuestions": "ตอบคำถาม",
   
-  "noPlayedHistory": "No played history"
+  "noPlayedHistory": "No played history",
+  
+  "expianedmaincreategame": "Let’s Gamify Your Learning!",
+  "expianedcreategame": "Make studying fun! Just upload your file\nand start playing.",
+  "tabcomingsoon": "Coming Soon...",
+  "titleyesno": "Yes or No",
+  "expianedyesno": "Slide to left for No, right for Yes.",
+  "yes": "Yes",
+  "no": "No",
+
+  
+  "resultmain": "Congrats!",
+  "resultexplain": " You are the best!",
+  "correct": "Correct",
+  "wrong": "Wrong",
+  "time": "Time",
+  "playagain": "Play Again",
+  "imporvetext": "You scored 20% more than the previous time."
 }
