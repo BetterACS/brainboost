@@ -118,5 +118,15 @@
   
   "answerQuestions": "ตอบคำถาม",
   
-  "noPlayedHistory": "No played history"
+  "noPlayedHistory": "No played history",
+  "noUserFound": "User not found",
+  "createssuccess":"Success!",
+  "successfully": "Your game has been created successfully",
+  "startplaying":"Start Playing",
+  "viewgame" : "View My Games",
+  "tooltipclose": "Close",
+"noExplanationAvailable": "No explanation available",
+"failedToLoadExplanation": "Failed to load explanation",
+"sideuptocreateanewgame": "Slide up to create a new game"
+"reversion": "Re version"
 }

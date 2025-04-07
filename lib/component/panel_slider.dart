@@ -7,7 +7,7 @@ import 'package:brainboost/models/games.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class PanelSlider extends StatefulWidget {
   final UserServices userServices = UserServices();
   final List<GamesType> games;
@@ -131,7 +131,7 @@ class _PanelSliderState extends State<PanelSlider> {
               ),
               SizedBox(height: 40),
               Text(
-                "Slide up to create a new game",
+                AppLocalizations.of(context)!.sideuptocreateanewgame,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,

@@ -104,12 +104,12 @@ class _BottomSliderState extends State<BottomSlider>
       final decodedResponse = json.decode(utf8.decode(response.bodyBytes));
 
       setState(() {
-        _explanation = decodedResponse['data'] ?? 'No explanation available';
+        _explanation = decodedResponse['data'] ?? AppLocalizations.of(context)!.noExplanationAvailable;
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _explanation = 'Failed to load explanation';
+        _explanation = AppLocalizations.of(context)!.failedToLoadExplanation;
         _isLoading = false;
       });
     }
@@ -265,7 +265,7 @@ class _BottomSliderState extends State<BottomSlider>
                                         padding: const EdgeInsets.all(16),
                                         child: Text(
                                           _explanation ??
-                                              'No explanation available',
+                                               AppLocalizations.of(context)!.noExplanationAvailable,
                                           style: TextStyle(
                                             // Bolded the text
                                             fontWeight: FontWeight.w500,

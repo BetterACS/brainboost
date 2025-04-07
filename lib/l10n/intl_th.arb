@@ -118,5 +118,17 @@
   
   "answerQuestions": "ตอบคำถาม",
   
-  "noPlayedHistory": "ไม่มีประวัติการเล่น"
+  "noPlayedHistory": "ไม่มีประวัติการเล่น",
+  "noUserFound": "ไม่พบบัญชี",
+  "createssuccess":"สำเร็จ!",
+  "successfully": "เกมของคุณถูกสร้างขึ้นสำเร็จแล้ว",
+  "startplaying":"เริ่มเล่น",
+  "viewgame" : "ดูเกมของฉัน",
+  "tooltipclose": "ปิด",
+"noExplanationAvailable": "ไม่มีคำอธิบาย",
+"failedToLoadExplanation": "ไม่สามารถโหลดคำอธิบายได้",
+"sideuptocreateanewgame": "เลื่อนขึ้นเพื่อสร้างเกมใหม่"
+"reversion": "เวอร์ชันใหม่"
+
 }
+
