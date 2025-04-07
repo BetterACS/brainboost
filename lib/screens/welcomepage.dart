@@ -2,7 +2,7 @@ import 'package:brainboost/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class CloudPainter extends CustomPainter {
+class _CloudPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
@@ -32,6 +32,8 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: const Color(0xff002366),
       body: SafeArea(
@@ -43,7 +45,7 @@ class WelcomePage extends StatelessWidget {
               right: 0,
               child: CustomPaint(
                 size: Size(double.infinity, 100),
-                painter: CloudPainter(),
+                painter: _CloudPainter(),
               ),
             ),
             Positioned(
@@ -59,18 +61,15 @@ class WelcomePage extends StatelessWidget {
               top: 370,
               left: 0,
               right: 0,
+              bottom: 0, // Make container extend to bottom
               child: Container(
-                height: 350,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
                 ),
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Transform.translate(
                       offset: const Offset(0, -20),
@@ -83,7 +82,7 @@ class WelcomePage extends StatelessWidget {
                             color: Color(0xff002366),
                           ),
                           children: [
-                            const TextSpan(text: "Let’s "),
+                            const TextSpan(text: "Let's "),
                             WidgetSpan(
                               child: Transform.rotate(
                                 angle: -5 * 3.14159 / 180,
@@ -117,7 +116,7 @@ class WelcomePage extends StatelessWidget {
                         color: Color(0xff002366),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    Expanded(child: SizedBox()), // Push button to the bottom
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFF2F6F9),
@@ -143,7 +142,8 @@ class WelcomePage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    )
+                    ),
+                    SizedBox(height: 20), // Add some padding at the bottom
                   ],
                 ),
               ),

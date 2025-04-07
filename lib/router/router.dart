@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:brainboost/models/games.dart';
-import 'package:brainboost/screens/welcomepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/layout/layout_scaffold.dart';
@@ -14,7 +13,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/login',
+  initialLocation: '/welcome',
 
   /// Define routes here.
   routes: [

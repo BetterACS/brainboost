@@ -12,3 +12,4 @@ export 'login.dart';
 export 'signup.dart';
 export 'loading_home_wrapper.dart';
 export 'history.dart';
+export 'welcomepage.dart';
