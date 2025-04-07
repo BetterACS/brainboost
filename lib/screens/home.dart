@@ -474,7 +474,6 @@ Widget _buildCreateButtons(BuildContext context) {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-<<<<<<< HEAD
                          Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -495,15 +494,6 @@ Widget _buildCreateButtons(BuildContext context) {
                               ),
                             ),
                           ],
-=======
-                        const Text(
-                          "Let’s Gamify Your Learning!",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
->>>>>>> e19d8cb03f11b1f3dbe09cc4909d983f7d606554
                         ),
                         const SizedBox(height: 6),
                         const Text(
