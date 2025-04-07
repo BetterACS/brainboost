@@ -1,9 +1,11 @@
 // import 'package:brainboost/screens/register.dart';
+import 'package:brainboost/screens/signup.dart';
 import 'package:brainboost/services/auth_services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:brainboost/screens/welcomepage.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -23,12 +25,14 @@ class Login extends StatelessWidget {
         toolbarHeight: 100,
         leading: GestureDetector(
           onTap: () {
-            Navigator.pop(context);
+            context.go('/welcome');
           },
           child: Container(
             margin: const EdgeInsets.only(left: 10),
             decoration: const BoxDecoration(
-                color: Color(0xffF7F7F9), shape: BoxShape.circle),
+              color: Color(0xffF7F7F9),
+              shape: BoxShape.circle,
+            ),
             child: const Center(
               child: Icon(
                 Icons.arrow_back_ios_new_rounded,
@@ -178,10 +182,10 @@ class Login extends StatelessWidget {
                     fontSize: 16),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => Signup()),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Signup()),
+                    );
                     context.push("/signup");
                   }),
           ])),

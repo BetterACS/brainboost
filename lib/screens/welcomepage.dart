@@ -1,0 +1,170 @@
+import 'package:brainboost/screens/login.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class CloudPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    final Paint yellowPaint = Paint()
+      ..color = Colors.amber
+      ..style = PaintingStyle.fill;
+    // วงกลมก้อนเมฆ
+    canvas.drawCircle(Offset(size.width * 0.1, size.height * 1.2), 114, paint);
+    canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.95), 45, paint);
+    canvas.drawCircle(
+        Offset(size.width * 0.75, size.height * 0.45), 50, yellowPaint);
+    canvas.drawCircle(Offset(size.width * 0.57, size.height * 1.15), 77, paint);
+    canvas.drawCircle(Offset(size.width * 0.79, size.height * 1.5), 83, paint);
+    canvas.drawCircle(Offset(size.width * 0.95, size.height * 0.97), 95, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xff002366),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // วาง CloudPainter บนขอบของสี่เหลี่ยมสีขาว
+            Positioned(
+              top: 250, // ตั้งตำแหน่งให้ CloudPainter อยู่ที่ขอบบนของสี่เหลี่ยม
+              left: 0,
+              right: 0,
+              child: CustomPaint(
+                size: Size(double.infinity, 100), // ขนาดของก้อนเมฆ
+                painter: CloudPainter(),
+              ),
+            ),
+            // วางโลโก้ที่อยู่ข้างบนสุด
+            Positioned(
+              top: 50, // ตั้งตำแหน่งให้โลโก้อยู่ที่ตำแหน่งสูงสุด
+              left: 0,
+              right: 0,
+              child: Image.asset(
+                'assets/images/logo.png',
+                height: 200,
+              ),
+            ),
+            // วางสี่เหลี่ยมสีขาวที่มีข้อความและปุ่ม
+            Positioned(
+              top: 370, // ขยับตำแหน่งของสี่เหลี่ยมสีขาวลงมานิดนึง
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 350, // กำหนดความสูงของสี่เหลี่ยมเป็น 400
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+                ),
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                child: Column(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center, // ปรับให้ข้อความอยู่กลาง
+                  crossAxisAlignment: CrossAxisAlignment
+                      .center, // ทำให้ข้อความอยู่กลางตามแนวนอน
+                  children: [
+                    // ขยับทั้งประโยคขึ้นโดยใช้ Transform.translate
+                    Transform.translate(
+                      offset: const Offset(0, -20), // ขยับขึ้น 20 หน่วย
+                      child: RichText(
+                        textAlign: TextAlign.center, // จัดข้อความให้ตรงกลาง
+                        text: TextSpan(
+                          style: GoogleFonts.raleway(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff002366),
+                          ),
+                          children: [
+                            const TextSpan(text: "Let’s "),
+                            // สี่เหลี่ยมสีเหลืองที่หมุน แต่คำ "boost" ไม่หมุน
+                            WidgetSpan(
+                              child: Transform.rotate(
+                                angle:
+                                    -5 * 3.14159 / 180, // หมุนไปทางซ้าย 5 องศา
+                                child: Container(
+                                  color: Colors.amber,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0,
+                                      vertical:
+                                          6.0), // ขยายขนาดของสี่เหลี่ยมเหลือง
+                                  child: const Text(
+                                    "boost",
+                                    style: TextStyle(
+                                      color: Color(0xFFF5F8FC),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const TextSpan(text: " your\nbrain to the sky"),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // ข้อความนี้จะอยู่ตรงกลางตามแนวนอน
+                    Text(
+                      "Play to learn application make you\nmemorize class lecture more efficiently",
+                      textAlign: TextAlign.center, // จัดข้อความให้ตรงกลาง
+                      style: GoogleFonts.raleway(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Color(0xff002366),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF2F6F9),
+                        foregroundColor: Color(0xff002366),
+                        elevation: 0,
+                        minimumSize: const Size(300,
+                            50), // ปรับความกว้างของปุ่มให้แคบลงที่ 250 พิกเซล
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: () {
+                        // ไปที่หน้า Login
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Login(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "Sign in with google",
+                        style: TextStyle(
+                          color: Color(0xff002366),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

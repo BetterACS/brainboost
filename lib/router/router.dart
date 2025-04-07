@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:brainboost/models/games.dart';
+import 'package:brainboost/screens/welcomepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/layout/layout_scaffold.dart';
@@ -28,6 +29,10 @@ final router = GoRouter(
         builder: (context, state) => const LoadingHomeWrapper()),
     GoRoute(path: '/login', builder: (context, state) => Login()),
     GoRoute(path: '/signup', builder: (context, state) => Signup()),
+    GoRoute(
+      path: '/welcome',
+      builder: (context, state) => const WelcomePage(),
+    ),
 
     GoRoute(
         path: Routes.settingsPage,
@@ -49,7 +54,7 @@ final router = GoRouter(
               ),
             ));
           }
-          
+
           // Shuffle and select 12 random games
           if (games.length > 12) {
             final random = Random();
@@ -61,7 +66,8 @@ final router = GoRouter(
             }
           }
 
-          return GameWrapper(games: games, reference: extra['reference'] as String);
+          return GameWrapper(
+              games: games, reference: extra['reference'] as String);
         }),
 
     GoRoute(
