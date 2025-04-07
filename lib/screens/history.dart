@@ -136,7 +136,9 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
         if (!snapshot.hasData ||
             snapshot.data == null ||
             !snapshot.data!.exists) {
-          return const Center(child: Text("No history found"));
+          return Center(
+            child: Text(AppLocalizations.of(context)!.noHistoryFound),
+          );
         }
 
         var docData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
@@ -148,7 +150,8 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
                 [];
 
         if (allGames.isEmpty) {
-          return const Center(child: Text("No history found"));
+          return Center(
+              child: Text(AppLocalizations.of(context)!.noHistoryFound));
         }
 
         return ListView.builder(
