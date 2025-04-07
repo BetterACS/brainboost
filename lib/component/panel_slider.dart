@@ -1,3 +1,4 @@
+import 'package:brainboost/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -69,10 +70,16 @@ class _PanelSliderState extends State<PanelSlider> {
     final bool isValidIndex =
         widget.games.isNotEmpty && widget.currentPage < widget.games.length;
 
-    BorderRadiusGeometry radius = BorderRadius.only(
-      topLeft: Radius.circular(40.0),
-      topRight: Radius.circular(40.0),
-    );
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier, 
+      builder: (context, currentTheme, child) {
+        final isDarkMode = currentTheme == ThemeMode.dark;
+
+      
+        BorderRadiusGeometry radius = const BorderRadius.only(
+          topLeft: Radius.circular(40.0),
+          topRight: Radius.circular(40.0),
+        );
 
     if (!isValidIndex) {
       return SlidingUpPanel(
@@ -148,7 +155,7 @@ class _PanelSliderState extends State<PanelSlider> {
             height: 4,
             width: 160,
             decoration: BoxDecoration(
-                color: Colors.white54,
+                color: isDarkMode ? Colors.white54 : Colors.black54,
                 borderRadius: BorderRadius.all(
                   Radius.circular(10.0),
                 )),
@@ -167,7 +174,9 @@ class _PanelSliderState extends State<PanelSlider> {
       panel: Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: AppColors.cardBackground,
+            color: isDarkMode
+                  ? AppColors.accentDarkmode 
+                  : AppColors.cardBackground,
             borderRadius: radius,
           ),
           child: Column(
@@ -299,7 +308,9 @@ class _PanelSliderState extends State<PanelSlider> {
                     'reference': widget.games[widget.currentPage].ref
                   }),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.neutralBackground,
+                    backgroundColor: isDarkMode
+                                      ? Colors.yellow[700]
+                                      : AppColors.neutralBackground,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -419,6 +430,7 @@ class _PanelSliderState extends State<PanelSlider> {
         ],
       ),
     );
+  });
   }
 
   Widget _buildUploadingPanel(BuildContext context) {

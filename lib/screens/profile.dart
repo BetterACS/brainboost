@@ -1,4 +1,7 @@
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
@@ -8,26 +11,39 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+                title: Text(
           'My Profile',
           style: TextStyle(
-            color: AppColors.buttonText,
+            color: isDarkMode
+              ? Colors.white 
+              : AppColors.buttonText,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: AppColors.accentBackground,
-        elevation: 0,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundDarkmode 
+            : AppColors.accentBackground,
+        iconTheme: IconThemeData(
+          color:  Colors.white 
+           
+        ),
       ),
-      backgroundColor: AppColors.accentBackground,
+      backgroundColor: isDarkMode
+          ? AppColors.backgroundDarkmode 
+          : AppColors.accentBackground, 
       body: Stack(
         children: [
           Container(
             margin: const EdgeInsets.only(top: 80),
-            decoration: const BoxDecoration(
-              color: Color(0xFF002D72),
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? AppColors.accentDarkmode 
+                  : const Color(0xFF002D72), 
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(50),
                 topRight: Radius.circular(50),
               ),
@@ -35,14 +51,14 @@ class ProfilePage extends StatelessWidget {
           ),
           Column(
             children: [
-              _buildProfileHeader(),
+              _buildProfileHeader(isDarkMode),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
                   children: [
-                    _buildOptionsList(context),
+                    _buildOptionsList(context, isDarkMode),
                     const SizedBox(height: 20),
-                    _buildLogOutButton(context),
+                    _buildLogOutButton(context, isDarkMode),
                   ],
                 ),
               ),
@@ -54,7 +70,7 @@ class ProfilePage extends StatelessWidget {
   }
 
   // Profile Header
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(bool isDarkMode) {
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -74,7 +90,7 @@ class ProfilePage extends StatelessWidget {
               ),
               CircleAvatar(
                 radius: 16,
-                backgroundColor: AppColors.buttonText,
+                backgroundColor:  AppColors.buttonText, 
                 child: IconButton(
                   icon: const Icon(
                     Icons.camera_alt,
@@ -87,20 +103,20 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             "Mon Chinawat",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.white
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             "Monchinawat@gmail.com",
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white70,
+              color: Colors.white
             ),
           ),
         ],
@@ -109,19 +125,23 @@ class ProfilePage extends StatelessWidget {
   }
 
   // Options List
-  Widget _buildOptionsList(BuildContext context) {
+  Widget _buildOptionsList(BuildContext context, bool isDarkMode) {
     return Container(
       width: 380,
       height: 300,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode
+            ? AppColors.accentDarkmode 
+            : Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: isDarkMode
+                ? Colors.black.withOpacity(0.2) 
+                : Colors.grey.withOpacity(0.2), 
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -133,46 +153,58 @@ class ProfilePage extends StatelessWidget {
             icon: Icons.edit,
             title: "Edit Profile",
             onTap: () => context.push(Routes.settingsPage),
+            isDarkMode: isDarkMode,
           ),
           const SizedBox(height: 20),
           _buildOption(
             icon: Icons.settings,
             title: "Setting",
             onTap: () => context.push(Routes.settingsPage),
+            isDarkMode: isDarkMode,
           ),
           const SizedBox(height: 20),
           _buildOption(
             icon: Icons.palette,
             title: "Theme",
-            trailing: RichText(
-              text: const TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Light ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
+            trailing: ValueListenableBuilder<ThemeMode>(
+              valueListenable: themeNotifier,
+              builder: (context, currentTheme, child) {
+                return Text(
+                  currentTheme == ThemeMode.light ? "Light Open" : "Dark Open",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode
+                        ? Colors.white 
+                        : Colors.black, 
+                    fontSize: 14,
                   ),
-                  TextSpan(
-                    text: "Open",
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      color: Color(0xFF9E9E9E),
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             ),
-            onTap: () => context.push(Routes.settingsPage),
+            onTap: () async {
+              final isCurrentlyLight = themeNotifier.value == ThemeMode.light;
+              themeNotifier.value =
+                  isCurrentlyLight ? ThemeMode.dark : ThemeMode.light;
+
+              final user = FirebaseAuth.instance.currentUser;
+              if (user != null) {
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user.email)
+                    .update({
+                  'Setting.Theme': isCurrentlyLight ? 'dark' : 'light',
+                });
+                print('Theme saved to Firestore: ${isCurrentlyLight ? "dark" : "light"}');
+              }
+            },
+            isDarkMode: isDarkMode,
           ),
           const SizedBox(height: 20),
           _buildOption(
             icon: Icons.support,
             title: "Support",
             onTap: () => context.push(Routes.settingsPage),
+            isDarkMode: isDarkMode,
           ),
         ],
       ),
@@ -185,6 +217,7 @@ class ProfilePage extends StatelessWidget {
     required String title,
     Widget? trailing,
     required VoidCallback onTap,
+    required bool isDarkMode,
   }) {
     return InkWell(
       onTap: onTap,
@@ -193,33 +226,46 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF2B3A67), size: 24),
+            Icon(
+              icon,
+              color: isDarkMode
+                  ? Colors.white
+                  : const Color(0xFF2B3A67), 
+              size: 24,
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: isDarkMode
+                      ? Colors.white 
+                      : Colors.black, 
                 ),
               ),
             ),
             if (trailing != null) trailing,
             const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Color(0xFF9E9E9E)),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: isDarkMode
+                  ? Colors.white70 
+                  : const Color(0xFF9E9E9E), 
+            ),
           ],
         ),
       ),
     );
   }
 
-  //Log Out Button
-  Widget _buildLogOutButton(BuildContext context) {
+  // Log Out Button
+  Widget _buildLogOutButton(BuildContext context, bool isDarkMode) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.errorIcon,
+        backgroundColor: Colors.red,
         foregroundColor: Colors.white,
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/main.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -694,6 +695,11 @@ class _MyGamesState extends State<MyGames> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, currentTheme, child) {
+        final isDarkMode = currentTheme == ThemeMode.dark;
+
     return FutureBuilder<void>(
         future: _loadGamesMethod(),
         builder: (context, AsyncSnapshot<void> snapshot) {
@@ -973,7 +979,7 @@ class _MyGamesState extends State<MyGames> {
             );
           }
         });
-  }
+  });}
 
   Widget _buildGameCard(int index, bool isSelected) {
     double backgroundSize = 300;
