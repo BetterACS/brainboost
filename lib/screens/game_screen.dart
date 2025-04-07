@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 
+import 'package:brainboost/main.dart';
 import 'package:brainboost/screens/game_bingo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -140,23 +141,137 @@ class _GameWrapperState extends State<GameWrapper>
     setState(() => isTransitioning = false);
   }
 
+  void showExitGameConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          backgroundColor: AppColors.white,
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'assets/images/alert.png', 
+                  height: 100,
+                  width: 100,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Are you sure?',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.containerBackground, // Dark blue color
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Your current score will not be saved if you exit now.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.containerBackground, // Dark blue color
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Are you sure you want to leave?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.containerBackground, // Dark blue color
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          side: BorderSide(color: AppColors.containerBackground), // Dark blue color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: AppColors.containerBackground, // Dark blue color
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); 
+                          context.go(Routes.gamePage); 
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.errorIcon, // Red color
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Exit Game',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+        final currentTheme = Theme.of(context).brightness;
+    final bool isDarkMode = currentTheme == Brightness.dark;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
         if (didPop) return;
-        // กลับไปที่หน้า MyGames โดยตรง
-        context.go(Routes.gamePage);
+        // Show confirmation dialog instead of direct navigation
+        showExitGameConfirmation(context);
       },
       child: Scaffold(
         backgroundColor: AppColors.gameScreenBackground,
         appBar: AppBar(
-          backgroundColor: AppColors.gameScreenBackground,
+          backgroundColor: isDarkMode
+                    ? AppColors.backgroundDarkmode
+                    : AppColors.gameScreenBackground,
           elevation: 0,
           leading: BackButton(
-            color: Colors.black,
-            onPressed: () => context.go(Routes.gamePage),
+            color:  isDarkMode
+                    ? AppColors.white
+                    : Colors.black, // Using AppColors.textQuizOption instead of Colors.black
+            onPressed: () => showExitGameConfirmation(context), // Updated to show dialog
           ),
           title: ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -230,39 +345,49 @@ class GameScreenProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            width: width * progress,
-            height: height,
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Opacity(
+  return ValueListenableBuilder<ThemeMode>(
+    valueListenable: themeNotifier,
+    builder: (context, currentTheme, child) {
+      bool isDarkMode = currentTheme == ThemeMode.dark;
+
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Stack(
+          children: [
+            Container(
+              width: width * progress,
+              height: height,
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? AppColors.textQuizNonSelectedOption
+                    : Colors.blue,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Opacity(
                   opacity: 0.2,
                   child: Container(
                     width: width * progress / 1.2,
                     height: height / 3,
                     margin: const EdgeInsets.only(top: 3),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                  )),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
+    },
+  );
+}
 }

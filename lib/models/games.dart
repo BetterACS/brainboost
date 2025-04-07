@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 class GameContent {
   const GameContent();
@@ -71,30 +72,48 @@ class GameData {
               .toList(),
         );
       case 'yesno':
-        // print('content ${content}');
         return GameYesNoContent(
           correct_ans: content['correct_ans'] as bool,
           question: content['question'] as String,
-          // yesOption: content['yes_option'] as String,
-          // noOption: content['no_option'] as String,
         );
-      // Add more cases here for future game types
-      // case 'memory':
-      //   return GameMemoryContent(...);
       case 'bingo':
-
-        //     question;
-        // final String answer;
-        // final int point;
         print("Bingo ${content}");
-
-        return BingoContent(
+        
+        // Check if data is in the new format (separate arrays)
+        if (content.containsKey('questions') && content.containsKey('answers')) {
+          final questions = (content['questions'] as List<dynamic>).map((e) => e as String).toList();
+          final answers = (content['answers'] as List<dynamic>).map((e) => e as String).toList();
+          
+          // Generate random points if not provided
+          List<int> points = [];
+          if (content.containsKey('points')) {
+            points = (content['points'] as List<dynamic>).map((e) => e as int).toList();
+          } else {
+            // Generate random points between 10-15
+            final random = Random();
+            for (int i = 0; i < questions.length; i++) {
+              points.add(random.nextInt(6) + 10); // 10-15 range
+            }
+          }
+          
+          return BingoContent.fromArrays(
+            questions: questions,
+            answers: answers,
+            points: points,
+          );
+        } 
+        // If using old format with bingo_list
+        else if (content.containsKey('bingo_list')) {
+          return BingoContent(
             bingo_list: (content['bingo_list'] as List<dynamic>)
                 .map((e) => GameBingoContent(
                     answer: e['answer'],
                     point: e['point'],
                     question: e['question']))
                 .toList());
+        }
+        // Default empty bingo content if format is unrecognized
+        return BingoContent(bingo_list: []);
 
       default:
         return GameContent();
@@ -131,7 +150,6 @@ class GamesType {
 
   /// Factory constructor to create a GamesType instance from Firestore data
   factory GamesType.fromMap(Map<String, dynamic> data, dynamic ref) {
-    // print(ref);
     return GamesType(
       ref: ref,
       author: data['author'] ?? '',
@@ -156,9 +174,54 @@ class BingoContent extends GameContent {
 
   const BingoContent({required this.bingo_list}) : super();
 
+  factory BingoContent.fromArrays({
+    required List<String> questions,
+    required List<String> answers,
+    List<int>? points,
+  }) {
+    // Validate that questions and answers have the same length
+    if (questions.length != answers.length) {
+      throw ArgumentError('Questions and answers must have the same length');
+    }
+
+    // Generate random points if not provided
+    final actualPoints = points ?? List.generate(
+      questions.length, 
+      (_) => Random().nextInt(11) + 10  // Random points between 10-15
+    );
+
+    // Validate that points list has the same length as questions/answers
+    if (actualPoints.length != questions.length) {
+      throw ArgumentError('Points list must have the same length as questions and answers');
+    }
+
+    List<GameBingoContent> bingoList = [];
+    for (int i = 0; i < questions.length; i++) {
+      bingoList.add(GameBingoContent(
+        question: questions[i],
+        answer: answers[i],
+        point: actualPoints[i],
+      ));
+    }
+    return BingoContent(bingo_list: bingoList);
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'bingo_list': bingo_list.map((e) => e.toMap()).toList(),
+    };
+  }
+
+  /// Create separate arrays for questions, answers, and points
+  Map<String, dynamic> toSeparatedArrays() {
+    List<String> questions = bingo_list.map((e) => e.question).toList();
+    List<String> answers = bingo_list.map((e) => e.answer).toList();
+    List<int> points = bingo_list.map((e) => e.point).toList();
+
+    return {
+      'questions': questions,
+      'answers': answers,
+      'points': points,
     };
   }
 }

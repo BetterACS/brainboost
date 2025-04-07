@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:brainboost/main.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/screens/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -77,28 +78,35 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.accentBackground,
-      body: ScrollConfiguration(
-        behavior: _MouseScrollBehavior(),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50),
-              const ProfileContainer(),
-              const SizedBox(height: 20),
-              _buildPageView(),
-              const SizedBox(height: 10),
-              _buildPageIndicator(),
-              const SizedBox(height: 20),
-              _buildCreateSection(),
-              _buildCreateButtons(context),
-              _buildHistorySection(),
-            ],
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier, 
+      builder: (context, currentTheme, child) {
+        return Scaffold(
+          backgroundColor: currentTheme == ThemeMode.dark
+              ? AppColors.backgroundDarkmode 
+              : AppColors.mainColor,
+          body: ScrollConfiguration(
+            behavior: _MouseScrollBehavior(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 50),
+                  const ProfileContainer(),
+                  const SizedBox(height: 20),
+                  _buildPageView(),
+                  const SizedBox(height: 10),
+                  _buildPageIndicator(),
+                  const SizedBox(height: 20),
+                  _buildCreateSection(),
+                  _buildCreateButtons(context),
+                  _buildHistorySection(),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -226,164 +234,179 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Widget _buildCircularChartPage() {
-    return FutureBuilder<void>(
-      future: fetchGamePerformance(),
-      builder: (context, snapshot) {
-        if (isLoadCircle)
-          return Center(
-            child: SizedBox(
-              height: 300,
-              width: 300,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CustomPaint(
-                    size: const Size(285, 285),
-                    painter: CircularChartPainter(
-                        (correctQuestion / numberGames) * 100),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Success rate",
-                        style: TextStyle(
-                          color: AppColors.buttonText,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        ((correctQuestion / numberGames) * 100)
-                                .toStringAsFixed(2) +
-                            "%",
-                        style: TextStyle(
-                          color: AppColors.buttonText,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        "out of ${numberGames} questions",
-                        style: TextStyle(
-                          color: AppColors.buttonText,
-                          fontSize: 17.59,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        else
-          return Center(
-              child: SizedBox(
+Widget _buildCircularChartPage() {
+  return FutureBuilder<void>(
+    future: fetchGamePerformance(),
+    builder: (context, snapshot) {
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+      if (isLoadCircle) {
+        return Center(
+          child: SizedBox(
             height: 300,
             width: 300,
-          ));
-      },
-    );
-  }
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomPaint(
+                  size: const Size(285, 285),
+                  painter: CircularChartPainter(
+                    (correctQuestion / numberGames) * 100,
+                    isDarkMode, 
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Success rate",
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText, 
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "${((correctQuestion / numberGames) * 100).toStringAsFixed(2)}%",
+                      style: TextStyle(
+                        color:  isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "out of $numberGames questions",
+                      style: TextStyle(
+                        color:  isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText,
+                        fontSize: 17.59,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        return Center(
+          child: SizedBox(
+            height: 300,
+            width: 300,
+          ),
+        );
+      }
+    },
+  );
+}
 
   // }
 
   Widget _buildRecentGamePage() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          height: 300,
-          width: 300,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: AppColors.circleGradient,
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+  return Stack(
+    alignment: Alignment.center,
+    children: [
+      Container(
+        height: 300,
+        width: 300,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: isDarkMode
+              ? AppColors.circleGradientdark // Gradient สำหรับ Dark Mode
+              : AppColors.circleGradient,    // Gradient สำหรับ Light Mode
+        ),
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 35),
           ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 35),
+          Text(
+            "Recent Game",
+            style: TextStyle(
+              color: isDarkMode ? Colors.white : AppColors.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
-            const Text(
-              "Recent Game",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            "World War 2",
+            style: TextStyle(
+              color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
+              fontSize: 14,
             ),
-            const SizedBox(height: 5),
-            const Text(
-              "World War 2",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 14,
-              ),
+          ),
+          const SizedBox(height: 5),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(150),
+            child: Image.asset(
+              'assets/images/photomain.png',
+              height: 140,
+              width: 160,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.error, size: 80, color: Colors.red);
+              },
             ),
-            const SizedBox(height: 5),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(150),
-              child: Image.asset(
-                'assets/images/photomain.png',
-                height: 140,
-                width: 160,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error, size: 80, color: Colors.red);
-                },
-              ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "70 / 100",
+            style: TextStyle(
+              color: isDarkMode ? Colors.white : AppColors.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 6),
-            const Text(
-              "70 / 100",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(top: 0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => const BingoScreen()),
-                  // );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonBackground,
-                  foregroundColor: AppColors.neutralBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 5,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(top: 0),
+            child: ElevatedButton(
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => const BingoScreen()),
+                // );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.buttonBackground,
+                foregroundColor: AppColors.neutralBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Text(
-                  "Replay",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                elevation: 5,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+              ),
+              child: const Text(
+                "Replay",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
             ),
-          ],
-        ),
-      ],
-    );
-  }
+          ),
+        ],
+      ),
+    ],
+  );
+}
 
   Widget _buildPageIndicator() {
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(2, (index) {
@@ -393,7 +416,13 @@ class _HomeState extends State<Home> {
           height: 8,
           width: _currentPage == index ? 16 : 8,
           decoration: BoxDecoration(
-            color: _currentPage == index ? AppColors.gradient2 : AppColors.gray,
+            color:  _currentPage == index
+              ? (isDarkMode
+                  ? AppColors.accentDarkmode 
+                  : AppColors.gradient2) 
+              : (isDarkMode
+                  ? AppColors.gray5 
+                  : AppColors.gray), 
             borderRadius: BorderRadius.circular(4),
           ),
         );
@@ -402,14 +431,18 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildCreateSection() {
+          final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: const Text(
+        child: Text(
           "Start",
           style: TextStyle(
-            color: AppColors.gradient1,
+            color:  isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.gradient1,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -418,93 +451,78 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildCreateButtons(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Container(
-        height: 200,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: AppColors.buttonGradient,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+Widget _buildCreateButtons(BuildContext context) {
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    child: Container(
+      height: 160,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: isDarkMode
+            ? AppColors.buttonGradientDark
+            : AppColors.buttonGradient,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
-                child: SizedBox(
-                  child: CustomPaint(
-                    size: const Size(double.infinity, 100),
-                    painter: CloudPainter(),
-                  ),
-                ),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: CloudPainter(),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   Expanded(
+                    flex: 3,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Let’s Gamify Your Learning!",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              "Make studying fun! Just upload your file\nand start playing.",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
+                        const Text(
+                          "Let’s Gamify Your Learning!",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 6),
+                        const Text(
+                          "Make studying fun!\nUpload your file to play.",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const Spacer(),
                         ElevatedButton(
                           onPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) =>
-                            //           const CreateGameScreen()),
-                            // );
+                            // TODO: Add navigation or logic
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.yellow[700],
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
+                                horizontal: 16, vertical: 8),
                           ),
                           child: const Text(
                             "Create Game",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF002654),
                             ),
@@ -513,10 +531,12 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 155,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
                     child: Image.asset(
                       'assets/images/rockety.webp',
+                      height: 140,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -526,11 +546,14 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildHistorySection() {
     final String? email = FirebaseAuth.instance.currentUser?.email;
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -540,10 +563,12 @@ class _HomeState extends State<Home> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "History",
                 style: TextStyle(
-                  color: AppColors.gradient1,
+                  color: isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText, 
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),

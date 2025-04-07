@@ -215,15 +215,17 @@ class _BottomSliderState extends State<BottomSlider>
                                   ),
                                 ],
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  _isExpanded
-                                      ? Icons.keyboard_arrow_down
-                                      : Icons.keyboard_arrow_up,
-                                  size: 30,
+
+                              if (widget.data['gameType'] != "bingo")
+                                IconButton(
+                                  icon: Icon(
+                                    _isExpanded
+                                        ? Icons.keyboard_arrow_down
+                                        : Icons.keyboard_arrow_up,
+                                    size: 30,
+                                  ),
+                                  onPressed: _toggleExpand,
                                 ),
-                                onPressed: _toggleExpand,
-                              ),
                             ],
                           ),
                         ],

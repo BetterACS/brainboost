@@ -1,0 +1,8 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dotted circle -->
+  <circle cx="100" cy="100" r="80" fill="none" stroke="#2563eb" stroke-width="6" stroke-dasharray="15,10" />
+  
+  <!-- Thinner plus symbol -->
+  <line x1="100" y1="75" x2="100" y2="125" stroke="#2563eb" stroke-width="6" stroke-linecap="round" />
+  <line x1="75" y1="100" x2="125" y2="100" stroke="#2563eb" stroke-width="6" stroke-linecap="round" />
+</svg>
