@@ -119,6 +119,7 @@
   "answerQuestions": "ตอบคำถาม",
   
   "noPlayedHistory": "No played history",
+<<<<<<< HEAD
   "noUserFound": "User not found",
   "createssuccess":"Success!",
   "successfully": "Your game has been created successfully",
@@ -137,4 +138,23 @@
 "uploadPDFfilecontinue":"Upload PDF file to continue",
 "selectPdfDocument": "Select a PDF document to create your game",
 "usernotloggedin": "User not logged in"
+=======
+  
+  "expianedmaincreategame": "Let’s Gamify Your Learning!",
+  "expianedcreategame": "Make studying fun! Just upload your file\nand start playing.",
+  "tabcomingsoon": "Coming Soon...",
+  "titleyesno": "Yes or No",
+  "expianedyesno": "Slide to left for No, right for Yes.",
+  "yes": "Yes",
+  "no": "No",
+
+  
+  "resultmain": "Congrats!",
+  "resultexplain": " You are the best!",
+  "correct": "Correct",
+  "wrong": "Wrong",
+  "time": "Time",
+  "playagain": "Play Again",
+  "imporvetext": "You scored 20% more than the previous time."
+>>>>>>> 75c9746f3126e3afa1ec680f265c539cc791326a
 }

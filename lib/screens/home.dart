@@ -483,11 +483,11 @@ Widget _buildCircularChartPage() {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Column(
+                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Let’s Gamify Your Learning!",
+                             AppLocalizations.of(context)!.expianedmaincreategame,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -496,7 +496,7 @@ Widget _buildCircularChartPage() {
                             ),
                             SizedBox(height: 10),
                             Text(
-                              "Make studying fun! Just upload your file\nand start playing.",
+                              AppLocalizations.of(context)!.expianedcreategame,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
