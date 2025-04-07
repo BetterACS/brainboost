@@ -30,6 +30,17 @@ class _BingoScreenState extends State<BingoScreen> {
   Map<int, bool> isAnswerCorrect = {};
   Map<int, bool> isAnswerChecked = {};
   bool isBingoWin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize maps for all possible cells in the bingo game
+    for (int i = 0; i < widget.content.bingo_list.length; i++) {
+      isAnswerCorrect[i] = false;
+      isAnswerChecked[i] = false;
+    }
+  }
+
   int score = 0;
   bool _showBottomSlider = false;
   int _currentQuestionIndex = -1;
@@ -323,7 +334,7 @@ class _BingoScreenState extends State<BingoScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 64),
                             GridView.builder(
                               shrinkWrap: true,
                               gridDelegate:
@@ -331,8 +342,7 @@ class _BingoScreenState extends State<BingoScreen> {
                                 crossAxisCount: 3,
                                 crossAxisSpacing: 8,
                                 mainAxisSpacing: 8,
-                                childAspectRatio: 1,
-                                mainAxisExtent: 60,
+                                childAspectRatio: 1, // This ensures square shape
                               ),
                               itemCount: bingoList.length,
                               itemBuilder: (context, index) {
@@ -344,60 +354,132 @@ class _BingoScreenState extends State<BingoScreen> {
                                         },
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      final size = MediaQuery.of(context).size;
-                                      final itemSize = size.width * 0.25;
-                                      final fontSize = itemSize * 0.25;
-                                      final iconSize = itemSize * 0.4;
+                                      final itemSize = constraints.maxWidth;
 
-                                      return Stack(
+                                      return AnimatedContainer(
+                                        duration: Duration(milliseconds: 400),
+                                        curve: Curves.easeOutBack,
                                         alignment: Alignment.center,
-                                        children: [
-                                          Container(
-                                            alignment: Alignment.center,
-                                            width: 120,
-                                            height: 480,
-                                            decoration: BoxDecoration(
-                                              color: isAnswerCorrect[index] ==
-                                                      true
-                                                  ? correctColor
-                                                  : isAnswerChecked[index] == true
-                                                      ? wrongColor
-                                                      : cardColor,
-                                              borderRadius: BorderRadius.circular(
-                                                  itemSize * 0.1),
+                                        width: itemSize,
+                                        height: itemSize,
+                                        decoration: BoxDecoration(
+                                          color: isAnswerCorrect[index] == true
+                                              ? correctColor?.withOpacity(0.9)
+                                              : isAnswerChecked[index] == true
+                                                  ? wrongColor?.withOpacity(0.9)
+                                                  : cardColor?.withOpacity(0.85),
+                                          borderRadius: BorderRadius.circular(12),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: (isAnswerCorrect[index] == true
+                                                      ? Colors.blue
+                                                      : isAnswerChecked[index] == true
+                                                          ? Colors.red
+                                                          : Colors.black)
+                                                  .withOpacity(0.2),
+                                              spreadRadius: 2,
+                                              blurRadius: 6,
+                                              offset: Offset(0, 3),
                                             ),
-                                            child: isAnswerChecked[index] != true
-                                                ? Text(
-                                                    "${widget.content.bingo_list[index].point}",
-                                                    style: TextStyle(
-                                                      fontSize: fontSize,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  )
-                                                : const SizedBox(),
+                                          ],
+                                          border: Border.all(
+                                            color: isAnswerCorrect[index] == true
+                                                ? Colors.blue[300]!
+                                                : isAnswerChecked[index] == true
+                                                    ? Colors.red[300]!
+                                                    : Colors.blue[700]!,
+                                            width: 2.0,
                                           ),
-                                          if (isAnswerChecked[index] == true)
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: Icon(
-                                                isAnswerCorrect[index] == true
-                                                    ? Icons.check_circle
-                                                    : Icons.clear,
-                                                color: Colors.white,
-                                                size: iconSize,
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: isAnswerCorrect[index] == true
+                                                ? [Colors.blue[800]!, Colors.blue[600]!]
+                                                : isAnswerChecked[index] == true
+                                                    ? [Colors.red[700]!, Colors.red[500]!]
+                                                    : isDarkMode
+                                                        ? [Color(0xFF1A3268), Color(0xFF0C1E40)]
+                                                        : [Color(0xFF1E40AF), Color(0xFF1E3A8A)],
+                                          ),
+                                        ),
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            if (isAnswerChecked[index] != true)
+                                              TweenAnimationBuilder(
+                                                duration: Duration(milliseconds: 300),
+                                                tween: Tween<double>(begin: 0.8, end: 1.0),
+                                                builder: (context, double value, child) {
+                                                  return Transform.scale(
+                                                    scale: value,
+                                                    child: Text(
+                                                      "${index + 1}",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: itemSize * 0.35,
+                                                        shadows: [
+                                                          Shadow(
+                                                            offset: Offset(0, 2),
+                                                            blurRadius: 3.0,
+                                                            color: Colors.black.withOpacity(0.3),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
                                               ),
-                                            ),
-                                        ],
+                                            if (isAnswerChecked[index] == true)
+                                              TweenAnimationBuilder(
+                                                duration: Duration(milliseconds: 600),
+                                                tween: Tween<double>(begin: 0.0, end: 1.0),
+                                                curve: Curves.elasticOut,
+                                                builder: (context, double value, child) {
+                                                  return Opacity(
+                                                    opacity: value,
+                                                    child: Transform.scale(
+                                                      scale: value,
+                                                      child: Icon(
+                                                        isAnswerCorrect[index] == true
+                                                            ? Icons.check_circle_rounded
+                                                            : Icons.cancel_rounded,
+                                                        color: Colors.white,
+                                                        size: itemSize * 0.5,
+                                                        shadows: [
+                                                          Shadow(
+                                                            offset: Offset(0, 2),
+                                                            blurRadius: 3.0,
+                                                            color: Colors.black.withOpacity(0.3),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                          ],
+                                        ),
                                       );
                                     },
                                   ),
                                 );
                               },
                             ),
-                            SizedBox(height: 24),
+                            SizedBox(height: 32),
                             Container(
                               width: 340,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: isDarkMode 
+                                    ? Colors.blueGrey[800]!.withOpacity(0.6)
+                                    : Colors.blue[50]!.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isDarkMode ? Colors.blueGrey[600]! : Colors.blue[200]!,
+                                  width: 1.5,
+                                ),
+                              ),
                               child: Center(
                                 child: Text(
                                   "เพื่อผ่านเกมนี้ คุณต้องบิงโกหรือสะสมคะแนนให้ครบ 75 คะแนนขึ้นไป",
@@ -405,11 +487,13 @@ class _BingoScreenState extends State<BingoScreen> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 18,
+                                    fontWeight: FontWeight.w500,
                                     color: textColor,
                                   ),
                                 ),
                               ),
                             ),
+                            SizedBox(height: 72),  // Extra space for the bottom button
                           ],
                         ),
                       ],
@@ -441,22 +525,96 @@ class _BingoScreenState extends State<BingoScreen> {
             left: 24,
             right: 24,
             bottom: 24,
-            child: ElevatedButton(
-              onPressed: goToNextQuestion,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: getNextButtonColor(),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 0,
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              transform: Matrix4.translationValues(
+                0, 
+                _showBottomSlider ? 0 : 20, 
+                0
               ),
-              child: Text(
-                'Next',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              child: ElevatedButton(
+                onPressed: goToNextQuestion,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: getNextButtonColor(),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: isBingoWin || _areAllQuestionsAnswered() ? 4 : 1,
+                  shadowColor: isBingoWin ? Colors.blue.withOpacity(0.5) : 
+                              _areAllQuestionsAnswered() ? Colors.red.withOpacity(0.5) : Colors.transparent,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Game status indicator
+          Positioned(
+            top: 85,
+            right: 24,
+            child: AnimatedOpacity(
+              opacity: 1.0,
+              duration: Duration(milliseconds: 300),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isBingoWin ? Colors.green[700] : 
+                        score >= 75 ? Colors.blue[700] : 
+                        isDarkMode ? Colors.blueGrey[800] : Colors.blue[50],
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isBingoWin ? Colors.green[400]! : 
+                           score >= 75 ? Colors.blue[400]! : 
+                           isDarkMode ? Colors.blueGrey[600]! : Colors.blue[200]!,
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      isBingoWin ? Icons.emoji_events : Icons.star,
+                      color: isBingoWin || score >= 75 ? Colors.white : 
+                             isDarkMode ? Colors.white70 : Colors.blue[900],
+                      size: 16,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      "$score pts",
+                      style: TextStyle(
+                        color: isBingoWin || score >= 75 ? Colors.white : 
+                               isDarkMode ? Colors.white70 : Colors.blue[900],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
