@@ -14,6 +14,7 @@ class ProfileContainer extends StatefulWidget {
 
 class _ProfileContainerState extends State<ProfileContainer> {
   User? currentUser;
+
   bool isLoading = true;
   bool imageFailed = false;
 
@@ -75,11 +76,12 @@ class _ProfileContainerState extends State<ProfileContainer> {
                       shape: BoxShape.circle,
                       color: Colors.white,
                     ),
-                    child: profileIcon != null && !imageFailed
-                        ? UserAvatar(width: 32, imageUrl: profileIcon)
-                        : ClipOval(
-                            child: Image.asset('assets/images/profile.jpg', fit: BoxFit.cover),
-                          ),
+                    child: UserAvatar(width: 32, imageUrl: profileIcon),
+                    //  profileIcon != null && !imageFailed
+                    //     ? UserAvatar(width: 32, imageUrl: profileIcon)
+                    //     : ClipOval(
+                    //         child: Image.asset('assets/images/profile.jpg', fit: BoxFit.cover),
+                    //       ),
                   ),
                   const SizedBox(width: 8),
                   Text(

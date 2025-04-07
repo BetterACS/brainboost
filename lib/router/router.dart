@@ -13,7 +13,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/login',
+  initialLocation: '/welcome',
 
   /// Define routes here.
   routes: [
@@ -26,8 +26,12 @@ final router = GoRouter(
     GoRoute(
         path: '/home-wrapper',
         builder: (context, state) => const LoadingHomeWrapper()),
-    GoRoute(path: '/login', builder: (context, state) => Login()),
-    GoRoute(path: '/signup', builder: (context, state) => Signup()),
+    // GoRoute(path: '/login', builder: (context, state) => Login()),
+    // GoRoute(path: '/signup', builder: (context, state) => Signup()),
+    GoRoute(
+      path: '/welcome',
+      builder: (context, state) => const WelcomePage(),
+    ),
 
     GoRoute(
         path: Routes.settingsPage,
@@ -49,7 +53,7 @@ final router = GoRouter(
               ),
             ));
           }
-          
+
           // Shuffle and select 12 random games
           if (games.length > 12) {
             final random = Random();
@@ -61,7 +65,8 @@ final router = GoRouter(
             }
           }
 
-          return GameWrapper(games: games, reference: extra['reference'] as String);
+          return GameWrapper(
+              games: games, reference: extra['reference'] as String);
         }),
 
     GoRoute(
