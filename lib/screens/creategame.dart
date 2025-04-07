@@ -32,7 +32,7 @@ class CreateGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFECF5FF), // สีพื้นหลังหลักของแอป
+      backgroundColor: const Color(0xFFECF5FF), 
       appBar: AppBar(
         backgroundColor: AppColors.appBarBackground,
         elevation: 0,

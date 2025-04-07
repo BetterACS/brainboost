@@ -81,7 +81,6 @@ class _HomeState extends State<Home> {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier, 
       builder: (context, currentTheme, child) {
-         final isDarkMode = currentTheme == ThemeMode.dark;
         return Scaffold(
           backgroundColor: currentTheme == ThemeMode.dark
               ? AppColors.backgroundDarkmode 

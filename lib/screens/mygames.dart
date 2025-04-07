@@ -210,7 +210,7 @@ class _MyGamesState extends State<MyGames> {
                                                                 .grey.shade300)
                                                         : (isDarkMode
                                                             ? AppColors
-                                                            .accentDarkmode2
+                                                                .accentDarkmode2
                                                             : Color(
                                                                 0xFF102247)),
                                                   ),
@@ -220,20 +220,35 @@ class _MyGamesState extends State<MyGames> {
                                           ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(150),
-                                            child: Image.asset(
-                                              isAddButton
-                                                  ? "assets/images/Add.png"
-                                                  : "assets/images/${games[index].icon}",
-                                              width: selectedSize,
-                                              height: selectedSize,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return const Icon(Icons.error,
-                                                    size: 80,
-                                                    color: Colors.red);
-                                              },
-                                            ),
-                                          ),
+                                            child: isAddButton
+                                                ? SvgPicture.asset(
+                                                    'assets/images/add-icon.svg',
+                                                    height: selectedSize,
+                                                    color: _slideUpPanelValue <=
+                                                            slideValueThreshold
+                                                        ? (isDarkMode
+                                                            ? AppColors
+                                                                .textPrimary
+                                                            : AppColors
+                                                                .cardBackground)
+                                                        : Colors.white,
+                                                    colorBlendMode:
+                                                        BlendMode.srcIn,
+                                                  )
+                                                : Image.asset(
+                                                    "assets/images/${games[index].icon}",
+                                                    width: selectedSize,
+                                                    height: selectedSize,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return const Icon(
+                                                        Icons.error,
+                                                        size: 80,
+                                                        color: Colors.red,
+                                                      );
+                                                    },
+                                                  ),
+                                          )
                                         ],
                                       ),
                                     ),
