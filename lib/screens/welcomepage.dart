@@ -15,7 +15,7 @@ class CloudPainter extends CustomPainter {
     canvas.drawCircle(Offset(size.width * 0.1, size.height * 1.2), 114, paint);
     canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.95), 45, paint);
     canvas.drawCircle(
-        Offset(size.width * 0.75, size.height * 0.40), 50, yellowPaint);
+        Offset(size.width * 0.75, size.height * 0.40), 70, yellowPaint);
     canvas.drawCircle(Offset(size.width * 0.57, size.height * 1.15), 77, paint);
     canvas.drawCircle(Offset(size.width * 0.79, size.height * 1.5), 83, paint);
     canvas.drawCircle(Offset(size.width * 0.95, size.height * 0.97), 95, paint);
