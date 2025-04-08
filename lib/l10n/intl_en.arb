@@ -166,5 +166,9 @@
   "noRecentGames": "No Recent Games",
   "playFirstGame": "Play your first game!",
   "historyWillAppearHere": "Your Learning History Will Appear Here",
-  "completeGameToSeeHistory": "Complete a game to see your history!"
+  "completeGameToSeeHistory": "Complete a game to see your history!",
+  "removeGame": "Remove Game",
+  "removeGameConfirmTitle": "Remove Game",
+  "removeGameConfirmMessage": "Are you sure you want to remove this game? This will delete it from your history.",
+  "gameRemovedSuccess": "Game removed successfully"
 }

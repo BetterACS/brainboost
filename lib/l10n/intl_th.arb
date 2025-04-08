@@ -167,6 +167,10 @@
   "noRecentGames": "ยังไม่มีเกมล่าสุด",
   "playFirstGame": "เล่นเกมแรกของคุณเลย!",
   "historyWillAppearHere": "ประวัติการเรียนรู้ของคุณจะแสดงที่นี่",
-  "completeGameToSeeHistory": "เล่นเกมให้จบเพื่อดูประวัติของคุณ!"
+  "completeGameToSeeHistory": "เล่นเกมให้จบเพื่อดูประวัติของคุณ!",
+  "removeGame": "Remove Game",
+  "removeGameConfirmTitle": "Remove Game",
+  "removeGameConfirmMessage": "Are you sure you want to remove this game? This will delete it from your history.",
+  "gameRemovedSuccess": "Game removed successfully"
 }
 
