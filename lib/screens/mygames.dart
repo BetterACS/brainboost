@@ -775,7 +775,7 @@ class _MyGamesState extends State<MyGames> {
                           )
                         else
                           IconButton(
-                            icon: Icon(Icons.refresh, color: Colors.white),
+                            icon: Icon(Icons.refresh, color: isDarkMode ? Colors.white : Colors.black),
                             onPressed: () {
                               if (_isEditingTitle) _saveTitleChanges();
                               setState(() {

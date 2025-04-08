@@ -512,20 +512,15 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
 Widget _buildCreateButtons(BuildContext context) {
-  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
     child: Container(
-      height: 160,
+      height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        gradient: isDarkMode
-            ? AppColors.buttonGradientDark
-            : AppColors.buttonGradient,
+        gradient: AppColors.buttonGradient,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -534,97 +529,100 @@ Widget _buildCreateButtons(BuildContext context) {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: CustomPaint(
-                painter: CloudPainter(),
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
               ),
+              child: SizedBox(
+                child: CustomPaint(
+                  size: const Size(double.infinity, 100),
+                  painter: CloudPainter(),
+                ),
+              ), 
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                             AppLocalizations.of(context)!.expianedmaincreategame,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              AppLocalizations.of(context)!.expianedcreategame,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        const Text(
-                          "Make studying fun!\nUpload your file to play.",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const Spacer(),
-                        ElevatedButton(
-                          onPressed: () {
-                            // TODO: Add navigation or logic
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.yellow[700],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.createGame,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Let’s Gamify Your Learning!",
                             style: TextStyle(
-                              fontSize: 14,
+                              color: Colors.white,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF002654),
                             ),
                           ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Make studying fun! Just upload your file\nand start playing.",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) =>
+                          //           const CreateGameScreen()),
+                          // );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.yellow[700],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                         ),
-                      ],
-                    ),
+                        child: const Text(
+                          "Create Game",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF002654),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
+                ),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.contain,
                     child: Image.asset(
                       'assets/images/rockety.webp',
-                      height: 140,
-                      fit: BoxFit.contain,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );
 }
-
 
   Widget _buildHistorySection() {
     final String? email = FirebaseAuth.instance.currentUser?.email;
