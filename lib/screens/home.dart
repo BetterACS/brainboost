@@ -17,6 +17,7 @@ import 'package:brainboost/services/user.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
 import 'package:brainboost/screens/game_bingo.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CloudPainter extends CustomPainter {
   @override
@@ -38,23 +39,6 @@ class CloudPainter extends CustomPainter {
     return false;
   }
 }
-
-var histories = [
-  HistoryItem(
-    title: "World war 2",
-    date: "11 Dec 2024",
-    imagePath: 'assets/images/photomain.png',
-    // isDownload: false,
-    onPressed: () => print("Play Software Engine.."),
-  ),
-  HistoryItem(
-    title: "World war 2",
-    date: "11 Dec 2024",
-    imagePath: 'assets/images/photomain.png',
-    // isDownload: false,
-    onPressed: () => print("Play Software Engine.."),
-  )
-];
 
 class _MouseScrollBehavior extends ScrollBehavior {
   @override
@@ -121,74 +105,34 @@ class _HomeState extends State<Home> {
     return userDoc;
   }
 
-//   Widget _buildProfileSection() {
-//     final String? email = UserServices().getCurrentUserEmail();
-//     if (email == null) return const Text("User not logged in");
-
-//     return FutureBuilder<DocumentSnapshot>(
-//       future: fetchUsername(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting &&
-//             isProfileLoaded == false) {
-//           return const CircularProgressIndicator();
-//         }
-
-//         if (!snapshot.hasData || !snapshot.data!.exists) {
-//           return const Text("User not found");
-//         }
-
-//         final userData = snapshot.data!.data() as Map<String, dynamic>;
-//         final username = userData['username'] ?? 'Guest';
-
-//         return Container(
-//           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//           decoration: BoxDecoration(
-//             color: AppColors.neutralBackground,
-//             borderRadius: BorderRadius.circular(50),
-//           ),
-//           child: Row(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               const CircleAvatar(
-//                 radius: 25,
-//                 backgroundColor: Colors.white,
-//                 child: CircleAvatar(
-//                   radius: 22,
-//                   backgroundImage: AssetImage('assets/images/profile.jpg'),
-//                 ),
-//               ),
-//               const SizedBox(width: 10),
-//               Text(
-//                 username,
-//                 style: const TextStyle(
-//                   color: AppColors.textPrimary,
-//                   fontSize: 18,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-
   Widget _buildPageView() {
-    return SizedBox(
-      height: 330,
-      width: 300,
-      child: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentPage = index;
-          });
-        },
-        children: [
-          _buildCircularChartPage(),
-          _buildRecentGamePage(),
-        ],
-      ),
+    return FutureBuilder<void>(
+      future: fetchGamePerformance(),
+      builder: (context, snapshot) {
+        if (isLoadCircle && numberGames == 0) {
+          return SizedBox(
+            height: 330,
+            width: 300,
+            child: _buildCircularChartPage(),
+          );
+        }
+        return SizedBox(
+          height: 330,
+          width: 300,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            children: [
+              _buildCircularChartPage(),
+              _buildRecentGamePage(),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -234,13 +178,64 @@ class _HomeState extends State<Home> {
     });
   }
 
-Widget _buildCircularChartPage() {
-  return FutureBuilder<void>(
-    future: fetchGamePerformance(),
-    builder: (context, snapshot) {
-      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildCircularChartPage() {
+    return FutureBuilder<void>(
+      future: fetchGamePerformance(),
+      builder: (context, snapshot) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-      if (isLoadCircle) {
+        if (!isLoadCircle) {
+          return Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+            ),
+          );
+        }
+
+        if (numberGames == 0) {
+          return Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    size: const Size(285, 285),
+                    painter: CircularChartPainter(0, isDarkMode),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.completeGame,
+                        style: TextStyle(
+                          color: isDarkMode
+                              ? AppColors.textPrimary
+                              : AppColors.buttonText,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        AppLocalizations.of(context)!.seeProgress,
+                        style: TextStyle(
+                          color: isDarkMode
+                              ? AppColors.textPrimary
+                              : AppColors.buttonText,
+                          fontSize: 17.59,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
         return Center(
           child: SizedBox(
             height: 300,
@@ -252,18 +247,18 @@ Widget _buildCircularChartPage() {
                   size: const Size(285, 285),
                   painter: CircularChartPainter(
                     (correctQuestion / numberGames) * 100,
-                    isDarkMode, 
+                    isDarkMode,
                   ),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Success rate",
+                      AppLocalizations.of(context)!.successRate,
                       style: TextStyle(
                         color: isDarkMode
-                            ? AppColors.textPrimary 
-                            : AppColors.buttonText, 
+                            ? AppColors.textPrimary
+                            : AppColors.buttonText,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -271,8 +266,8 @@ Widget _buildCircularChartPage() {
                     Text(
                       "${((correctQuestion / numberGames) * 100).toStringAsFixed(2)}%",
                       style: TextStyle(
-                        color:  isDarkMode
-                            ? AppColors.textPrimary 
+                        color: isDarkMode
+                            ? AppColors.textPrimary
                             : AppColors.buttonText,
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -280,10 +275,10 @@ Widget _buildCircularChartPage() {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "out of $numberGames questions",
+                      AppLocalizations.of(context)!.outOfQuestions(numberGames),
                       style: TextStyle(
-                        color:  isDarkMode
-                            ? AppColors.textPrimary 
+                        color: isDarkMode
+                            ? AppColors.textPrimary
                             : AppColors.buttonText,
                         fontSize: 17.59,
                       ),
@@ -294,139 +289,205 @@ Widget _buildCircularChartPage() {
             ),
           ),
         );
-      } else {
-        return Center(
-          child: SizedBox(
-            height: 300,
-            width: 300,
-          ),
-        );
-      }
-    },
-  );
-}
-
-  // }
+      },
+    );
+  }
 
   Widget _buildRecentGamePage() {
-  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-  return Stack(
-    alignment: Alignment.center,
-    children: [
-      Container(
-        height: 300,
-        width: 300,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: isDarkMode
-              ? AppColors.circleGradientdark // Gradient สำหรับ Dark Mode
-              : AppColors.circleGradient,    // Gradient สำหรับ Light Mode
-        ),
-      ),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    if (numberGames == 0) {
+      return Stack(
+        alignment: Alignment.center,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(bottom: 35),
-          ),
-          Text(
-            "Recent Game",
-            style: TextStyle(
-              color: isDarkMode ? Colors.white : AppColors.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          Container(
+            height: 300,
+            width: 300,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: isDarkMode
+                  ? AppColors.circleGradientdark
+                  : AppColors.circleGradient,
             ),
           ),
-          const SizedBox(height: 5),
-          Text(
-            "World War 2",
-            style: TextStyle(
-              color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 5),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(150),
-            child: Image.asset(
-              'assets/images/photomain.png',
-              height: 140,
-              width: 160,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.error, size: 80, color: Colors.red);
-              },
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            "70 / 100",
-            style: TextStyle(
-              color: isDarkMode ? Colors.white : AppColors.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(top: 0),
-            child: ElevatedButton(
-              onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) => const BingoScreen()),
-                // );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.buttonBackground,
-                foregroundColor: AppColors.neutralBackground,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 5,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-              ),
-              child: const Text(
-                "Replay",
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.noRecentGames,
                 style: TextStyle(
+                  color: isDarkMode ? Colors.white : AppColors.textPrimary,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
                 ),
               ),
-            ),
+              const SizedBox(height: 15),
+              Icon(
+                Icons.sports_esports,
+                size: 80,
+                color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
+              ),
+              const SizedBox(height: 15),
+              Text(
+                AppLocalizations.of(context)!.playFirstGame,
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // context.push(Routes.createGame);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.buttonBackground,
+                  foregroundColor: AppColors.neutralBackground,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 5,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.createGame,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
-      ),
-    ],
-  );
-}
+      );
+    }
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          height: 300,
+          width: 300,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: isDarkMode
+                ? AppColors.circleGradientdark
+                : AppColors.circleGradient,
+          ),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 35),
+            ),
+            Text(
+              AppLocalizations.of(context)!.recentGame,
+              style: TextStyle(
+                color: isDarkMode ? Colors.white : AppColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              AppLocalizations.of(context)!.worldWar2,
+              style: TextStyle(
+                color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 5),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(150),
+              child: Image.asset(
+                'assets/images/photomain.png',
+                height: 140,
+                width: 160,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.error, size: 80, color: Colors.red);
+                },
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              AppLocalizations.of(context)!.scoreFormat('70', '100'),
+              style: TextStyle(
+                color: isDarkMode ? Colors.white : AppColors.textPrimary,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(top: 0),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => const BingoScreen()),
+                  // );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.buttonBackground,
+                  foregroundColor: AppColors.neutralBackground,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 5,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.replay,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
   Widget _buildPageIndicator() {
-      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    return FutureBuilder<void>(
+      future: fetchGamePerformance(),
+      builder: (context, snapshot) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(2, (index) {
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          margin: const EdgeInsets.symmetric(horizontal: 0),
-          height: 8,
-          width: _currentPage == index ? 16 : 8,
-          decoration: BoxDecoration(
-            color:  _currentPage == index
-              ? (isDarkMode
-                  ? AppColors.accentDarkmode 
-                  : AppColors.gradient2) 
-              : (isDarkMode
-                  ? AppColors.gray5 
-                  : AppColors.gray), 
-            borderRadius: BorderRadius.circular(4),
-          ),
+        if (isLoadCircle && numberGames == 0) {
+          return const SizedBox.shrink();
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(2, (index) {
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 0),
+              height: 8,
+              width: _currentPage == index ? 16 : 8,
+              decoration: BoxDecoration(
+                color: _currentPage == index
+                  ? (isDarkMode
+                      ? AppColors.accentDarkmode 
+                      : AppColors.gradient2) 
+                  : (isDarkMode
+                      ? AppColors.gray5 
+                      : AppColors.gray),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            );
+          }),
         );
-      }),
+      },
     );
   }
 
@@ -438,7 +499,7 @@ Widget _buildCircularChartPage() {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
-          "Start",
+          AppLocalizations.of(context)!.start,
           style: TextStyle(
             color:  isDarkMode
                             ? AppColors.textPrimary 
@@ -490,13 +551,26 @@ Widget _buildCreateButtons(BuildContext context) {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Let’s Gamify Your Learning!",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                             AppLocalizations.of(context)!.expianedmaincreategame,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              AppLocalizations.of(context)!.expianedcreategame,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
                         const Text(
@@ -519,8 +593,8 @@ Widget _buildCreateButtons(BuildContext context) {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
                           ),
-                          child: const Text(
-                            "Create Game",
+                          child: Text(
+                            AppLocalizations.of(context)!.createGame,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -564,7 +638,7 @@ Widget _buildCreateButtons(BuildContext context) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "History",
+                AppLocalizations.of(context)!.history,
                 style: TextStyle(
                   color: isDarkMode
                             ? AppColors.textPrimary 
@@ -573,74 +647,129 @@ Widget _buildCreateButtons(BuildContext context) {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  context.push(Routes.historyPage, extra: email);
-                },
-                child: const Row(
-                  children: [
-                    Text(
-                      "View all",
-                      style: TextStyle(
-                        color: AppColors.gray2,
-                        fontSize: 14,
+              if (isLoadCircle && numberGames > 0)
+                GestureDetector(
+                  onTap: () {
+                    context.push(Routes.historyPage, extra: email);
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.viewAll,
+                        style: TextStyle(
+                          color: AppColors.gray2,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 5),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: AppColors.gray2,
-                      size: 14,
-                    ),
-                  ],
+                      SizedBox(width: 5),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: AppColors.gray2,
+                        size: 14,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 10),
-          StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('history')
-                .doc(email)
-                .snapshots(),
+          FutureBuilder<void>(
+            future: fetchGamePerformance(),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+              if (!isLoadCircle) {
+                return const Center(
+                  child: SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                  ),
+                );
               }
 
-              if (!snapshot.hasData || !snapshot.data!.exists) {
-                return const Center(child: Text("No history found"));
+              if (numberGames == 0) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? AppColors.backgroundDarkmode : AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 15),
+                      Text(
+                        AppLocalizations.of(context)!.historyWillAppearHere,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : AppColors.buttonText,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        AppLocalizations.of(context)!.completeGameToSeeHistory,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : AppColors.buttonText,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('history')
+                      .doc(email)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || !snapshot.data!.exists) {
+                      return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+                    }
+
+                    var docData =
+                        snapshot.data!.data() as Map<String, dynamic>? ?? {};
+                    List<Map<String, dynamic>> allGames =
+                        (docData['data'] as List<dynamic>?)
+                                ?.whereType<Map<String, dynamic>>()
+                                .toList() ??
+                            [];
+
+                    if (allGames.isEmpty) {
+                      return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+                    }
+
+                    final gamesToShow = allGames.take(2).toList();
+
+                    return Column(
+                      children: gamesToShow
+                          .map((game) => HistoryItem(
+                                title: game['game_name'] ?? 'Unknown',
+                                date: (game['played_at'] as Timestamp?)
+                                        ?.toDate()
+                                        .toString() ??
+                                    'No date',
+                                imagePath: game['image_game'] ?? '',
+                                onPressed: () =>
+                                    print(game['game_name'] ?? 'Unknown'),
+                              ))
+                          .toList(),
+                    );
+                  },
+                );
               }
-
-              var docData =
-                  snapshot.data!.data() as Map<String, dynamic>? ?? {};
-              List<Map<String, dynamic>> allGames =
-                  (docData['data'] as List<dynamic>?)
-                          ?.whereType<Map<String, dynamic>>()
-                          .toList() ??
-                      [];
-
-              if (allGames.isEmpty) {
-                return const Center(child: Text("No history found"));
-              }
-
-              // Show only the last 2 games
-              final gamesToShow = allGames.take(2).toList();
-
-              return Column(
-                children: gamesToShow
-                    .map((game) => HistoryItem(
-                          title: game['game_name'] ?? 'Unknown',
-                          date: (game['played_at'] as Timestamp?)
-                                  ?.toDate()
-                                  .toString() ??
-                              'No date',
-                          imagePath: game['image_game'] ?? '',
-                          onPressed: () =>
-                              print(game['game_name'] ?? 'Unknown'),
-                        ))
-                    .toList(),
-              );
             },
           ),
         ],

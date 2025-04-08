@@ -1,5 +1,5 @@
 // lib/component/cards/profile.dart
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,7 +46,7 @@ class _ProfileContainerState extends State<ProfileContainer> {
             }
 
             if (!snapshot.hasData || !snapshot.data!.exists) {
-              return const Text("User not found");
+              return Text(AppLocalizations.of(context)!.noUserFound);
             }
 
             final userData = snapshot.data!.data() as Map<String, dynamic>;

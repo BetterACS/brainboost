@@ -1,10 +1,12 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/main.dart';
+import 'package:brainboost/services/auth_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -16,7 +18,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
                 title: Text(
-          'My Profile',
+          AppLocalizations.of(context)!.myProfile,
           style: TextStyle(
             color: isDarkMode
               ? Colors.white 
@@ -151,26 +153,26 @@ class ProfilePage extends StatelessWidget {
         children: [
           _buildOption(
             icon: Icons.edit,
-            title: "Edit Profile",
+            title: AppLocalizations.of(context)!.editProfile,
             onTap: () => context.push(Routes.settingsPage),
             isDarkMode: isDarkMode,
           ),
           const SizedBox(height: 20),
           _buildOption(
             icon: Icons.settings,
-            title: "Setting",
+            title: AppLocalizations.of(context)!.setting,
             onTap: () => context.push(Routes.settingsPage),
             isDarkMode: isDarkMode,
           ),
           const SizedBox(height: 20),
           _buildOption(
             icon: Icons.palette,
-            title: "Theme",
+            title: AppLocalizations.of(context)!.theme,
             trailing: ValueListenableBuilder<ThemeMode>(
               valueListenable: themeNotifier,
               builder: (context, currentTheme, child) {
                 return Text(
-                  currentTheme == ThemeMode.light ? "Light Open" : "Dark Open",
+                  currentTheme == ThemeMode.light ? AppLocalizations.of(context)!.lightOpen : AppLocalizations.of(context)!.darkOpen,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isDarkMode
@@ -202,7 +204,7 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 20),
           _buildOption(
             icon: Icons.support,
-            title: "Support",
+            title: AppLocalizations.of(context)!.support,
             onTap: () => context.push(Routes.settingsPage),
             isDarkMode: isDarkMode,
           ),
@@ -294,8 +296,8 @@ class ProfilePage extends StatelessWidget {
                       width: 180,
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      "Are you sure you want to log out?",
+                    Text(
+                      AppLocalizations.of(context)!.areYouSureLogout,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -320,7 +322,7 @@ class ProfilePage extends StatelessWidget {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text("Cancel"),
+                            child: Text(AppLocalizations.of(context)!.cancel),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -332,17 +334,23 @@ class ProfilePage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              // Close the dialog
                               Navigator.of(context).pop();
+                              // Navigate to login screen replacing the current page and clearing history
+                              // context.go('/login');
+                              
+                              await AuthService().signout(context: context);
+                              // Show success message
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Logged Out Successfully!"),
+                                SnackBar(
+                                  content: Text(AppLocalizations.of(context)!.loggedOutSuccess),
                                 ),
                               );
                             },
-                            child: const Text(
-                              "Log Out",
-                              style: TextStyle(color: Colors.white),
+                            child: Text(
+                              AppLocalizations.of(context)!.logOut,
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
@@ -355,8 +363,8 @@ class ProfilePage extends StatelessWidget {
           },
         );
       },
-      child: const Text(
-        "Log Out",
+      child: Text(
+        AppLocalizations.of(context)!.logOut,
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,

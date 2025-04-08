@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ErrorDialog extends StatelessWidget {
   const ErrorDialog({super.key});
@@ -47,18 +48,18 @@ class ErrorDialog extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 30),
-                const Text(
-                  "Oops!",
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.errorTitle,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text(
-                  "Something went wrong\nPlease try again or upload a new file.",
+                Text(
+                  AppLocalizations.of(context)!.errorMessage,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
                 ),
                 const SizedBox(height: 28),
                 SizedBox(
@@ -75,8 +76,9 @@ class ErrorDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: const Text("Try Again",
-                        style: TextStyle(
+                    child: Text(
+                        AppLocalizations.of(context)!.tryAgain,
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
                 ),
@@ -95,8 +97,9 @@ class ErrorDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: const Text("Edit File",
-                        style: TextStyle(
+                    child: Text(
+                        AppLocalizations.of(context)!.editFile,
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
                 ),
@@ -111,7 +114,7 @@ class ErrorDialog extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              tooltip: 'Close',
+              tooltip: AppLocalizations.of(context)!.close,
             ),
           ),
         ],

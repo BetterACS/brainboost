@@ -20,7 +20,11 @@ class UserServices {
       'latest_login': Timestamp.now(),
       'age': 12,
       'games': [],
-      'recent_play': null
+      'recent_play': null,
+      'Setting': {
+        'Theme': 'light',
+        'Language': 'en',
+      },
     };
 
     // Use the id (converted to a string) as the document ID.

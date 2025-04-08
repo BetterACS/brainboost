@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/colors.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class History extends StatefulWidget {
   @override
@@ -18,6 +18,7 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
 
     // Add listener to prevent changing to the Coming Soon tab
     _tabController.addListener(() {
@@ -39,8 +40,8 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'History',
+        title: Text(
+          AppLocalizations.of(context)!.history,
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -57,9 +58,9 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
                 isDarkMode ? Colors.grey : AppColors.unselectedTab,
             indicatorColor: isDarkMode ? Colors.white : AppColors.buttonText,
             indicatorWeight: 3.0,
-            tabs: const [
-              Tab(text: 'Game'),
-              Tab(text: 'Coming Soon...'),
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.games),
+              Tab(text: AppLocalizations.of(context)!.tabcomingsoon),
             ],
             onTap: (index) {
               // If user taps on Coming Soon, keep them on Game tab
@@ -136,7 +137,9 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
         if (!snapshot.hasData ||
             snapshot.data == null ||
             !snapshot.data!.exists) {
-          return const Center(child: Text("No history found"));
+          return Center(
+            child: Text(AppLocalizations.of(context)!.noHistoryFound),
+          );
         }
 
         var docData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
@@ -148,7 +151,8 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
                 [];
 
         if (allGames.isEmpty) {
-          return const Center(child: Text("No history found"));
+          return Center(
+              child: Text(AppLocalizations.of(context)!.noHistoryFound));
         }
 
         return ListView.builder(
@@ -163,7 +167,8 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
                 : 'No date';
             return HistoryItem(
               title: game['game_name'] ?? 'Unknown',
-              date: formattedDate,
+              date: (game['played_at'] as Timestamp?)?.toDate().toString() ??
+                  'No date',
               imagePath: game['image_game'] ?? '',
               onPressed: () => print(game['game_name'] ?? 'Unknown'),
             );
