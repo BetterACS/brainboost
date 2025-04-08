@@ -19,7 +19,7 @@
   
   "errorTitle": "Oops!",
   "errorMessage": "Something went wrong\nPlease try again or upload a new file.",
-  "tryAgain": "Try Again",
+  "tryAgain": "Next",
   "editFile": "Edit File",
   "close": "Close",
   
@@ -167,6 +167,10 @@
   "playFirstGame": "Play your first game!",
   "historyWillAppearHere": "Your Learning History Will Appear Here",
   "completeGameToSeeHistory": "Complete a game to see your history!",
+
+  "language": "Language",
+  "aboutapp": "About"
+,
   "removeGame": "Remove Game",
   "removeGameConfirmTitle": "Remove Game",
   "removeGameConfirmMessage": "Are you sure you want to remove this game? This will delete it from your history.",

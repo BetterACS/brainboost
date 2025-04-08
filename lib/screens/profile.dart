@@ -7,6 +7,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/screens/edit_porfile.dart';
+import 'package:brainboost/screens/support.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:brainboost/services/user.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -17,8 +21,43 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String username = 'Loading...';
+  String email = 'Loading...';
+  bool isProfileLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUsername();
+  }
+
+  Future<void> fetchUsername() async {
+    String? email = UserServices().getCurrentUserEmail();
+    final DocumentSnapshot userDoc =
+        await UserServices().users.doc(email).get();
+
+    if (userDoc.exists) {
+      setState(() {
+        username = userDoc['username'] ?? 'No username';
+        this.email = userDoc['email'] ?? 'No email';
+        isProfileLoaded = true;
+      });
+    } else {
+      setState(() {
+        username = 'No data';
+        email = 'No data';
+        isProfileLoaded = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +116,65 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  // Profile Header
+  Widget _buildProfileHeader(bool isDarkMode) {
+    return Container(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              const CircleAvatar(
+                radius: 50,
+                backgroundImage: AssetImage('assets/images/profile.jpg'),
+              ),
+              CircleAvatar(
+                radius: 16,
+                backgroundColor:  AppColors.buttonText, 
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.camera_alt,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          isProfileLoaded
+              ? Text(
+                  username,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                )
+              : const CircularProgressIndicator(),
+          const SizedBox(height: 4),
+          isProfileLoaded
+              ? Text(
+                  email,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                )
+              : const CircularProgressIndicator(),
+        ],
+      ),
+    );
+  }
+
   // Options List
   Widget _buildOptionsList(BuildContext context, bool isDarkMode) {
     return Container(
@@ -102,9 +200,15 @@ class ProfilePage extends StatelessWidget {
         children: [
           _buildOption(
             icon: Icons.edit,
-            title: AppLocalizations.of(context)!.editProfile,
-            onTap: () => context.push(Routes.settingsPage),
+     
             isDarkMode: isDarkMode,
+            title: AppLocalizations.of(context)!.editProfile,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditProfileScreen()),
+              );
+            },
           ),
           const SizedBox(height: 20),
           _buildOption(
@@ -153,7 +257,12 @@ class ProfilePage extends StatelessWidget {
           _buildOption(
             icon: Icons.support,
             title: AppLocalizations.of(context)!.support,
-            onTap: () => context.push(Routes.settingsPage),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SupportPage()),
+              );
+            },
             isDarkMode: isDarkMode,
           ),
         ],
@@ -161,7 +270,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Individual Option
   Widget _buildOption({
     required IconData icon,
     required String title,
