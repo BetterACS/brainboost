@@ -160,6 +160,13 @@
   "exitmodal2": "ต้องการออกจากหน้านี้จริงหรือไม่?",
   "exit": "ออกจากเกม",
 
-  "importGame": "เพิ่มเกมจากรหัส"
+  "importGame": "เพิ่มเกมจากรหัส",
+  "importGame": "นำเข้าเกม",
+  "completeGame": "เล่นเกมให้จบ",
+  "seeProgress": "เพื่อดูความก้าวหน้าของคุณ!",
+  "noRecentGames": "ยังไม่มีเกมล่าสุด",
+  "playFirstGame": "เล่นเกมแรกของคุณเลย!",
+  "historyWillAppearHere": "ประวัติการเรียนรู้ของคุณจะแสดงที่นี่",
+  "completeGameToSeeHistory": "เล่นเกมให้จบเพื่อดูประวัติของคุณ!"
 }
 

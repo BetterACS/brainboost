@@ -1,5 +1,6 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/main.dart';
+import 'package:brainboost/services/auth_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -333,8 +334,14 @@ class ProfilePage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              // Close the dialog
                               Navigator.of(context).pop();
+                              // Navigate to login screen replacing the current page and clearing history
+                              // context.go('/login');
+                              
+                              await AuthService().signout(context: context);
+                              // Show success message
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(AppLocalizations.of(context)!.loggedOutSuccess),
