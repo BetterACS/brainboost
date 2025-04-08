@@ -1,3 +1,5 @@
+android/*
+
 # ignore .firebaserc for all examples
 **/.firebaserc
 **/GoogleService-Info.plist
