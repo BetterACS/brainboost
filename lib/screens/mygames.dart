@@ -924,8 +924,8 @@ class _MyGamesState extends State<MyGames> {
                                                   style: TextStyle(
                                                     color: isDarkMode
                                                         ? AppColors.textPrimary
-                                                        : AppColors
-                                                            .cardBackground,
+                                                        : _slideUpPanelValue > slideValueThreshold ? Colors.white : AppColors.cardBackground,
+                                                        // AppColors.cardBackground,
                                                     fontSize: 25,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -1144,7 +1144,7 @@ class _MyGamesState extends State<MyGames> {
         }
       },
       child: Transform.scale(
-        scale: isSelected ? 1.0 : 0.85,
+        scale: isSelected ? 1.2 : 0.85,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           transform: Matrix4.identity()
@@ -1152,8 +1152,8 @@ class _MyGamesState extends State<MyGames> {
           alignment: Alignment.center,
           child: _slideUpPanelValue > slideValueThreshold
               ? Container(
-                  width: 150,
-                  height: 150,
+                  width: 160,
+                  height: 160,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isDarkMode
@@ -1169,7 +1169,7 @@ class _MyGamesState extends State<MyGames> {
                   child: Center(
                     child: Icon(
                       Icons.cloud_upload_outlined,
-                      size: 72,
+                      size: 90,
                       color: isDarkMode
                             ? AppColors.white
                             :Color.fromARGB(255, 189, 197, 255),

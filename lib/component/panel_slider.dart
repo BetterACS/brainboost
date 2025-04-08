@@ -8,6 +8,7 @@ import 'package:brainboost/services/user.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class PanelSlider extends StatefulWidget {
   final UserServices userServices = UserServices();
   final List<GamesType> games;
@@ -71,9 +72,9 @@ class _PanelSliderState extends State<PanelSlider> {
         widget.games.isNotEmpty && widget.currentPage < widget.games.length;
 
     return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier, 
-      builder: (context, currentTheme, child) {
-        final isDarkMode = currentTheme == ThemeMode.dark;
+        valueListenable: themeNotifier,
+        builder: (context, currentTheme, child) {
+          final isDarkMode = currentTheme == ThemeMode.dark;
 
           BorderRadiusGeometry radius = const BorderRadius.only(
             topLeft: Radius.circular(40.0),
@@ -108,8 +109,8 @@ class _PanelSliderState extends State<PanelSlider> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: isDarkMode
-                  ? AppColors.accentDarkmode 
-                  : AppColors.cardBackground,
+                      ? AppColors.accentDarkmode
+                      : AppColors.cardBackground,
                   borderRadius: radius,
                 ),
                 child: _buildUploadingPanel(context),
@@ -117,8 +118,8 @@ class _PanelSliderState extends State<PanelSlider> {
               collapsed: Container(
                 decoration: BoxDecoration(
                   color: isDarkMode
-                  ? AppColors.accentDarkmode 
-                  : AppColors.cardBackground,
+                      ? AppColors.accentDarkmode
+                      : AppColors.cardBackground,
                   borderRadius: radius,
                 ),
                 child: Column(
@@ -158,7 +159,7 @@ class _PanelSliderState extends State<PanelSlider> {
                   height: 4,
                   width: 160,
                   decoration: BoxDecoration(
-                      color:  Colors.white54,
+                      color: Colors.white54,
                       borderRadius: BorderRadius.all(
                         Radius.circular(10.0),
                       )),
@@ -272,7 +273,8 @@ class _PanelSliderState extends State<PanelSlider> {
                                     .played_history.isEmpty
                                 ? [
                                     Text(
-                                      AppLocalizations.of(context)!.noplayhistoryyet,
+                                      AppLocalizations.of(context)!
+                                          .noplayhistoryyet,
                                       style: TextStyle(
                                         color: Color(0xFF05235F),
                                         fontSize: 18,
@@ -380,8 +382,8 @@ class _PanelSliderState extends State<PanelSlider> {
                 Container(
                   decoration: BoxDecoration(
                     color: isDarkMode
-                  ? AppColors.accentDarkmode 
-                  : AppColors.cardBackground,
+                        ? AppColors.accentDarkmode
+                        : AppColors.cardBackground,
                     borderRadius: radius,
                   ),
                   child: Column(
@@ -389,7 +391,7 @@ class _PanelSliderState extends State<PanelSlider> {
                       const SizedBox(height: 10),
                       Text(
                         widget.games[widget.currentPage].played_history.isEmpty
-                            ?  AppLocalizations.of(context)!.noPlayHistory
+                            ? AppLocalizations.of(context)!.noPlayHistory
                             : AppLocalizations.of(context)!.playedhistory,
                         style: TextStyle(
                           color: Colors.white,
@@ -469,44 +471,50 @@ class _PanelSliderState extends State<PanelSlider> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(height: 360),
-
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () => _showImportDialog(context),
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? AppColors.accentDarkmode
+                      : Colors.blue.shade700,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.file_download_outlined,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            ),
+            SizedBox(width: 6),
+            Text(
+              AppLocalizations.of(context)!.importGame,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         // Add PDF upload instruction box when no file is selected
         if (!widget.isUploading &&
             widget.uploadProgress <= 0 &&
             !widget.uploadSuccess)
           Container(
-            margin: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            margin: EdgeInsets.symmetric(vertical: 24, horizontal: 4),
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.accentDarkmode2 
-                  : Color(0xFF152A56),
+              color: isDarkMode ? AppColors.accentDarkmode2 : Color(0xFF152A56),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: () => _showImportDialog(context),
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? AppColors.accentDarkmode
-                              : Colors.blue.shade700,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.file_download_outlined,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 Text(
                   AppLocalizations.of(context)!.uploadPDFfilecontinue,
                   textAlign: TextAlign.center,
@@ -566,7 +574,6 @@ class _PanelSliderState extends State<PanelSlider> {
                           Text(
                             widget.uploadSuccess
                                 ? AppLocalizations.of(context)!.uploadComplete
-
                                 : AppLocalizations.of(context)!.uploadingFile,
                             style: TextStyle(
                               color: Colors.white,
@@ -639,8 +646,7 @@ class _PanelSliderState extends State<PanelSlider> {
                   ),
                 SizedBox(width: 10),
                 Text(
-                  AppLocalizations.of(context)!.createGame
-,
+                  AppLocalizations.of(context)!.createGame,
                   style: TextStyle(
                     color:
                         isButtonEnabled ? Colors.white : Colors.grey.shade600,
@@ -667,8 +673,7 @@ class _PanelSliderState extends State<PanelSlider> {
           builder: (context, setState) {
             return AlertDialog(
               title: Text(
-               AppLocalizations.of(context)!.importGame
-,
+                AppLocalizations.of(context)!.importGame,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -682,7 +687,7 @@ class _PanelSliderState extends State<PanelSlider> {
                       controller: _importPathController,
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.gamePath,
-                        hintText:AppLocalizations.of(context)!.gamePathHint,
+                        hintText: AppLocalizations.of(context)!.gamePathHint,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -712,7 +717,8 @@ class _PanelSliderState extends State<PanelSlider> {
                       : () async {
                           if (_importPathController.text.trim().isEmpty) {
                             setState(() {
-                              _importError = AppLocalizations.of(context)!.gamePathEmpty;
+                              _importError =
+                                  AppLocalizations.of(context)!.gamePathEmpty;
                             });
                             return;
                           }
@@ -737,11 +743,13 @@ class _PanelSliderState extends State<PanelSlider> {
 
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
-                                content: Text(AppLocalizations.of(context)!.gameImportedSuccess),
+                                content: Text(AppLocalizations.of(context)!
+                                    .gameImportedSuccess),
                                 backgroundColor: Colors.green,
                               ));
                             } else {
-                              throw Exception(AppLocalizations.of(context)!.usernotloggedin);
+                              throw Exception(AppLocalizations.of(context)!
+                                  .usernotloggedin);
                             }
                           } catch (e) {
                             setState(() {
