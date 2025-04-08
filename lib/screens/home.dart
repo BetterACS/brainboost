@@ -759,9 +759,9 @@ Widget _buildCreateButtons(BuildContext context) {
                           .map((game) => HistoryItem(
                                 title: game['game_name'] ?? 'Unknown',
                                 date: DateFormat('dd MMM yyyy').format((game['played_at'] as Timestamp).toDate()),
-                                imagePath: game['image_game'] ?? '',
-                                onPressed: () =>
-                                    print(game['game_name'] ?? 'Unknown'),
+                                imagePath: "assets/${game['icon']}", 
+                                // gameId: game['game_id'],
+                                documentReference: game['game_id'],
                               ))
                           .toList(),
                     );
