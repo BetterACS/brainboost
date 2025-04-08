@@ -11,6 +11,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+// Theme controller
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
+
+// Locale controller
+final ValueNotifier<Locale> localeNotifier = ValueNotifier(const Locale('en'));
+
 void main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -18,15 +24,20 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
+    // Load saved theme
     final isDarkMode = await loadThemeFromFirestore();
     themeNotifier.value = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+
+    // Load saved language
+    final prefs = await SharedPreferences.getInstance();
+    final langCode = prefs.getString('languageCode') ?? 'en';
+    localeNotifier.value = Locale(langCode);
 
     runApp(const MyApp());
   }, (Object error, StackTrace stackTrace) {
     print('runZonedGuarded: Caught error in my root zone. $error');
   });
 }
-final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -36,44 +47,54 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, currentTheme, child) {
-        return MaterialApp.router(
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('th'), // Thai
-          ],
-          theme: ThemeData(
-            brightness: Brightness.light,
-            primaryColor: AppColors.primaryBackground,
-            scaffoldBackgroundColor: AppColors.mainColor,
-            textTheme: GoogleFonts.ibmPlexSansThaiTextTheme(
-                Theme.of(context).textTheme),
-          ),
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            primaryColor: AppColors.mainColor,
-            scaffoldBackgroundColor: AppColors.mainColor, 
-            textTheme: GoogleFonts.ibmPlexSansThaiTextTheme(
-                Theme.of(context).textTheme),
-          ),
-          themeMode: currentTheme,
-          routerConfig: router,
-          debugShowCheckedModeBanner: false,
+        return ValueListenableBuilder<Locale>(
+          valueListenable: localeNotifier,
+          builder: (context, currentLocale, _) {
+            return MaterialApp.router(
+              locale: currentLocale,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('th'),
+                Locale('en'),
+              ],
+              theme: ThemeData(
+                brightness: Brightness.light,
+                primaryColor: AppColors.primaryBackground,
+                scaffoldBackgroundColor: AppColors.mainColor,
+                textTheme: GoogleFonts.ibmPlexSansThaiTextTheme(
+                  Theme.of(context).textTheme,
+                ),
+              ),
+              darkTheme: ThemeData(
+                brightness: Brightness.dark,
+                primaryColor: AppColors.mainColor,
+                scaffoldBackgroundColor: AppColors.mainColor,
+                textTheme: GoogleFonts.ibmPlexSansThaiTextTheme(
+                  Theme.of(context).textTheme,
+                ),
+              ),
+              themeMode: currentTheme,
+              routerConfig: router,
+              debugShowCheckedModeBanner: false,
+            );
+          },
         );
       },
     );
   }
 }
 
+// Button toggle theme
 class ThemeToggleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.brightness_6),
+      icon: const Icon(Icons.brightness_6),
       onPressed: () async {
         final isDarkMode = themeNotifier.value == ThemeMode.light;
         themeNotifier.value = isDarkMode ? ThemeMode.dark : ThemeMode.light;
@@ -85,6 +106,7 @@ class ThemeToggleButton extends StatelessWidget {
   }
 }
 
+// Load theme from Firestore
 Future<bool> loadThemeFromFirestore() async {
   final user = FirebaseAuth.instance.currentUser;
   if (user != null) {
@@ -96,5 +118,12 @@ Future<bool> loadThemeFromFirestore() async {
     print('Theme loaded from Firestore: $theme');
     return theme == 'dark';
   }
-  return false; // Default to light theme if user is not logged in
+  return false;
+}
+
+// Function to switch language
+Future<void> switchLanguage(String languageCode) async {
+  localeNotifier.value = Locale(languageCode);
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('languageCode', languageCode);
 }

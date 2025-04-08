@@ -1,3 +1,5 @@
+import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -12,29 +14,19 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.settings),
-        leading: const BackButton(),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(AppLocalizations.of(context)!.settingsPageTitle, style: const TextStyle(fontSize: 20)),
-            SizedBox(height: 20),
-          ],
-        ),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
-          title: const Padding(
-            padding: EdgeInsets.only(top: 20),
+          title: Padding(
+            padding: const EdgeInsets.only(top: 20),
             child: Text(
-              'Setting',
+              AppLocalizations.of(context)!.settings,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF092866),
+                color: isDarkMode ? AppColors.mainColor : AppColors.buttonText,
               ),
             ),
           ),
@@ -43,12 +35,14 @@ class SettingsPage extends StatelessWidget {
             padding: EdgeInsets.only(top: 20),
             child: BackButton(color: Colors.black),
           ),
-          backgroundColor: const Color(0xFFECF5FF),
+          backgroundColor:
+              isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(
-              color: const Color(0xFF092866),
+              color:
+                  isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
               height: 1,
             ),
           ),
@@ -57,26 +51,43 @@ class SettingsPage extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            title: const Text('Language',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              AppLocalizations.of(context)!.language,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDarkMode
+                    ? AppColors.accentDarkmode
+                    : AppColors.buttonText,
+              ),
+            ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const LanguageSelectionPage()),
+                  builder: (context) => const LanguageSelectionPage(),
+                ),
               );
             },
           ),
           const Divider(),
           ListTile(
-            title: const Text('About App',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              AppLocalizations.of(context)!.aboutapp,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDarkMode
+                    ? AppColors.accentDarkmode
+                    : AppColors.buttonText,
+              ),
+            ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AboutAppPage()),
+                MaterialPageRoute(
+                  builder: (context) => const AboutAppPage(),
+                ),
               );
             },
           ),
@@ -95,21 +106,23 @@ class LanguageSelectionPage extends StatefulWidget {
 }
 
 class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
-  String _selectedLanguage = 'English'; // ค่าเริ่มต้นที่ถูกเลือก
+  String _selectedLanguage = 'English';
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
-          title: const Padding(
-            padding: EdgeInsets.only(top: 20),
+          title: Padding(
+            padding: const EdgeInsets.only(top: 20),
             child: Text(
-              'Language',
+              AppLocalizations.of(context)!.language,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF092866),
+                color: AppColors.white,
               ),
             ),
           ),
@@ -118,12 +131,15 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
             padding: EdgeInsets.only(top: 20),
             child: BackButton(color: Colors.black),
           ),
-          backgroundColor: const Color(0xFFECF5FF),
+          backgroundColor:
+              isDarkMode ? AppColors.backgroundDarkmode : AppColors.buttonText,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(
-              color: const Color(0xFF092866),
+              color: isDarkMode
+                  ? AppColors.backgroundDarkmode
+                  : AppColors.buttonText,
               height: 1,
             ),
           ),
@@ -132,31 +148,46 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
       body: Column(
         children: [
           RadioListTile<String>(
-            title: const Text('English',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              'English',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDarkMode
+                    ? AppColors.accentDarkmode
+                    : AppColors.buttonText,
+              ),
+            ),
             value: 'English',
             groupValue: _selectedLanguage,
-            onChanged: (value) {
+            onChanged: (value) async {
               setState(() {
                 _selectedLanguage = value!;
               });
+              await switchLanguage('en');
             },
-            activeColor: const Color(0xFF05235F),
+            activeColor: isDarkMode
+                    ? AppColors.accentDarkmode
+                    : AppColors.buttonText,
           ),
-          const Divider(),
           RadioListTile<String>(
-            title: const Text('Thai',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              'Thai',
+              style: TextStyle(fontWeight: FontWeight.bold,   color: isDarkMode
+                    ? AppColors.accentDarkmode
+                    : AppColors.buttonText,),
+            ),
             value: 'Thai',
             groupValue: _selectedLanguage,
-            onChanged: (value) {
+            onChanged: (value) async {
               setState(() {
                 _selectedLanguage = value!;
               });
+              await switchLanguage('th');
             },
-            activeColor: const Color(0xFF05235F),
+            activeColor: isDarkMode
+                    ? AppColors.accentDarkmode
+                    : AppColors.buttonText,
           ),
-          const Divider(),
         ],
       ),
     );

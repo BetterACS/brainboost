@@ -167,6 +167,9 @@
   "noRecentGames": "ยังไม่มีเกมล่าสุด",
   "playFirstGame": "เล่นเกมแรกของคุณเลย!",
   "historyWillAppearHere": "ประวัติการเรียนรู้ของคุณจะแสดงที่นี่",
-  "completeGameToSeeHistory": "เล่นเกมให้จบเพื่อดูประวัติของคุณ!"
+  "completeGameToSeeHistory": "เล่นเกมให้จบเพื่อดูประวัติของคุณ!",
+
+  "language": "ภาษา",
+  "aboutapp": "ข้อมูลเกี่ยวกับแอป"
 }
 

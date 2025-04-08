@@ -1,3 +1,4 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,9 +13,15 @@ class EditProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: EditProfileScreen(),
+      theme: ThemeData(
+        scaffoldBackgroundColor:
+            isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor,
+      ),
+      home: const EditProfileScreen(),
     );
   }
 }
@@ -79,18 +86,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor:
+          isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
-          backgroundColor: const Color(0xFFECF5FF),
+          backgroundColor:
+              isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
           leading: Padding(
             padding: const EdgeInsets.only(top: 20),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black),
               onPressed: () => Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => ProfilePage()),
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
               ),
             ),
           ),
@@ -99,7 +111,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Text(
               "Edit Profile",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -152,7 +164,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: isDarkMode
+                            ? AppColors.accentDarkmode2
+                            : AppColors.buttonText,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
