@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:intl/intl.dart';
 
 class History extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    
+
     // Add listener to prevent changing to the Coming Soon tab
     _tabController.addListener(() {
       if (_tabController.index == 1) {
@@ -44,14 +45,16 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: isDarkMode ? AppColors.accentDarkmode : AppColors.mainColor,
+        backgroundColor:
+            isDarkMode ? AppColors.accentDarkmode : AppColors.mainColor,
         foregroundColor: isDarkMode ? Colors.white : AppColors.buttonText,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48.0),
           child: TabBar(
             controller: _tabController,
             labelColor: isDarkMode ? Colors.white : AppColors.buttonText,
-            unselectedLabelColor: isDarkMode ? Colors.grey : AppColors.unselectedTab,
+            unselectedLabelColor:
+                isDarkMode ? Colors.grey : AppColors.unselectedTab,
             indicatorColor: isDarkMode ? Colors.white : AppColors.buttonText,
             indicatorWeight: 3.0,
             tabs: const [
@@ -67,12 +70,14 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
           ),
         ),
       ),
-      backgroundColor: isDarkMode ? Colors.black : AppColors.mainColor, 
+      backgroundColor: isDarkMode ? Colors.black : AppColors.mainColor,
       body: TabBarView(
         controller: _tabController,
-        physics: NeverScrollableScrollPhysics(), // Prevents swiping between tabs
+        physics:
+            NeverScrollableScrollPhysics(), // Prevents swiping between tabs
         children: [
-          _buildHistoryTab(FirebaseAuth.instance.currentUser?.email, "game", isDarkMode),
+          _buildHistoryTab(
+              FirebaseAuth.instance.currentUser?.email, "game", isDarkMode),
           _buildComingSoonTab(), // Custom widget that will never be seen due to controller logic
         ],
       ),
@@ -109,11 +114,11 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
         ),
       );
     }
-  
+
     if (email.isEmpty) {
       return const Center(child: Text("No user email provided"));
     }
-  
+
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('history')
@@ -136,9 +141,11 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
 
         var docData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
 
-        List<Map<String, dynamic>> allGames = (docData['data'] as List<dynamic>?)
-            ?.whereType<Map<String, dynamic>>()
-            .toList() ?? [];
+        List<Map<String, dynamic>> allGames =
+            (docData['data'] as List<dynamic>?)
+                    ?.whereType<Map<String, dynamic>>()
+                    .toList() ??
+                [];
 
         if (allGames.isEmpty) {
           return const Center(child: Text("No history found"));
@@ -149,9 +156,14 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
           itemCount: allGames.length,
           itemBuilder: (context, index) {
             var game = allGames[index];
+            var timestamp = game['played_at'] as Timestamp?;
+            var dateTime = timestamp?.toDate();
+            var formattedDate = dateTime != null
+                ? DateFormat('dd MMM yyyy').format(dateTime)
+                : 'No date';
             return HistoryItem(
               title: game['game_name'] ?? 'Unknown',
-              date: (game['played_at'] as Timestamp?)?.toDate().toString() ?? 'No date',
+              date: formattedDate,
               imagePath: game['image_game'] ?? '',
               onPressed: () => print(game['game_name'] ?? 'Unknown'),
             );
