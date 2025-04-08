@@ -33,6 +33,8 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -69,7 +71,8 @@ class WelcomePage extends StatelessWidget {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
                 ),
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 child: Column(
                   children: [
                     Transform.translate(
@@ -129,14 +132,29 @@ class WelcomePage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                          try {
-                            await AuthService().signInWithGoogle(context: context);
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error signing in with Google: $e')),
-                            );
-                          }
-                        },
+                        try {
+                          await AuthService()
+                              .signInWithGoogle(context: context);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Error signing in with Google: $e'),
+                              action: SnackBarAction(
+                                label: 'submit',
+                                onPressed: () async {
+                                  await AuthService().signup(
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                    context: context,
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        }
+                      },
+
                       // },
                       child: const Text(
                         "Sign in with google",
