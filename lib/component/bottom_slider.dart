@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Add this import
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:brainboost/main.dart'; // Import for localeNotifier
 
 class BottomSlider extends StatefulWidget {
   // final Widget child;
@@ -93,8 +94,17 @@ class _BottomSliderState extends State<BottomSlider>
     });
 
     try {
-      final prompt =
-          "Why this '${widget.data['correctAnswer']}' is a correct answer of this question '${widget.data['question']}' please do a short explanation.";
+      // Check current locale and use appropriate language for the prompt
+      final currentLocale = localeNotifier.value.languageCode;
+      String prompt;
+      
+      if (currentLocale == 'th') {
+        // Thai prompt
+        prompt = "ทำไม '${widget.data['correctAnswer']}' จึงเป็นคำตอบที่ถูกต้องของคำถาม '${widget.data['question']}' กรุณาอธิบายสั้นๆ ไม่ต้องใช้ Latex";
+      } else {
+        // English prompt (default)
+        prompt = "Why this '${widget.data['correctAnswer']}' is a correct answer of this question '${widget.data['question']}' please do a SHORT explanation. No Latex.";
+      }
 
       final httpClient = http.Client();
       final response = await httpClient
