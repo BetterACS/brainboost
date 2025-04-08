@@ -187,12 +187,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget buildTextField(String label, TextEditingController controller,
       {bool obscureText = false}) {
+            final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style:  TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color:   isDarkMode ? AppColors.white : AppColors.buttonText),
         ),
         const SizedBox(height: 5),
         TextField(
@@ -205,7 +207,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.grey.shade300),
             ),
-            suffixIcon: const Icon(Icons.edit, color: Colors.grey),
+            suffixIcon:  Icon(Icons.edit, color:   isDarkMode ? AppColors.backgroundDarkmode : AppColors.buttonText),
           ),
         ),
       ],
