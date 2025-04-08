@@ -1,9 +1,11 @@
 // import 'package:brainboost/screens/register.dart';
+import 'package:brainboost/screens/signup.dart';
 import 'package:brainboost/services/auth_services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:brainboost/screens/welcomepage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Login extends StatelessWidget {
@@ -23,6 +25,24 @@ class Login extends StatelessWidget {
         elevation: 0,
         toolbarHeight: 100,
         automaticallyImplyLeading: false, // Add this line to hide the back button
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(left: 10),
+            decoration: const BoxDecoration(
+              color: Color(0xffF7F7F9),
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -52,6 +72,10 @@ class Login extends StatelessWidget {
                 height: 50,
               ),
               _signin(context),
+              const SizedBox(height: 24),
+              _orDivider(),
+              const SizedBox(height: 24),
+              _googleSignIn(context),
             ],
           ),
         ),
@@ -142,6 +166,148 @@ class Login extends StatelessWidget {
       child: Text(AppLocalizations.of(context)!.signIn),
     );
   }
+
+  Widget _orDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 1,
+            color: Colors.grey[300],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'OR',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 1,
+            color: Colors.grey[300],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _googleSignIn(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black87,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(color: Colors.grey[300]!),
+        ),
+        minimumSize: const Size(double.infinity, 60),
+        elevation: 0,
+      ),
+      onPressed: () async {
+        try {
+          await AuthService().signInWithGoogle(context: context);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error signing in with Google: $e')),
+          );
+        }
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/google_logo.png',
+            height: 24,
+            width: 24,
+          ),
+          const SizedBox(width: 12),
+          const Text(
+            "Continue with Google",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget _orDivider() {
+  //   return Row(
+  //     children: [
+  //       Expanded(
+  //         child: Container(
+  //           height: 1,
+  //           color: Colors.grey[300],
+  //         ),
+  //       ),
+  //       Padding(
+  //         padding: const EdgeInsets.symmetric(horizontal: 16),
+  //         child: Text(
+  //           'OR',
+  //           style: TextStyle(
+  //             color: Colors.grey[600],
+  //             fontWeight: FontWeight.w500,
+  //           ),
+  //         ),
+  //       ),
+  //       Expanded(
+  //         child: Container(
+  //           height: 1,
+  //           color: Colors.grey[300],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // Widget _googleSignIn(BuildContext context) {
+  //   return ElevatedButton(
+  //     style: ElevatedButton.styleFrom(
+  //       foregroundColor: Colors.black87,
+  //       backgroundColor: Colors.white,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(14),
+  //         side: BorderSide(color: Colors.grey[300]!),
+  //       ),
+  //       minimumSize: const Size(double.infinity, 60),
+  //       elevation: 0,
+  //     ),
+  //     onPressed: () async {
+  //       try {
+  //         await AuthService().signInWithGoogle(context: context);
+  //       } catch (e) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text('Error signing in with Google: $e')),
+  //         );
+  //       }
+  //     },
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Image.asset(
+  //           'assets/images/google_logo.png',
+  //           height: 24,
+  //           width: 24,
+  //         ),
+  //         const SizedBox(width: 12),
+  //         const Text(
+  //           "Continue with Google",
+  //           style: TextStyle(
+  //             fontSize: 16,
+  //             fontWeight: FontWeight.w500,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _signup(BuildContext context) {
     return Padding(

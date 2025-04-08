@@ -19,7 +19,7 @@
   
   "errorTitle": "อุ๊ปส์!",
   "errorMessage": "เกิดข้อผิดพลาดบางอย่าง\nโปรดลองอีกครั้งหรืออัปโหลดไฟล์ใหม่",
-  "tryAgain": "ลองอีกครั้ง",
+  "tryAgain": "ถัดไป",
   "editFile": "แก้ไขไฟล์",
   "close": "ปิด",
   
@@ -129,7 +129,7 @@
   "failedToLoadExplanation": "ไม่สามารถโหลดคำอธิบายได้",
   "sideuptocreateanewgame": "เลื่อนขึ้นเพื่อสร้างเกมใหม่",
   "reversion": "เวอร์ชันใหม่",
-  "addLecture": "เพิ่มการบรรยาย",
+  
   "noplayhistoryyet": "ยังไม่มีประวัติการเล่น",
   "playgames": "เล่นเกม",
   "noPlayHistory": "ไม่มีประวัติการเล่น",
@@ -167,6 +167,13 @@
   "noRecentGames": "ยังไม่มีเกมล่าสุด",
   "playFirstGame": "เล่นเกมแรกของคุณเลย!",
   "historyWillAppearHere": "ประวัติการเรียนรู้ของคุณจะแสดงที่นี่",
-  "completeGameToSeeHistory": "เล่นเกมให้จบเพื่อดูประวัติของคุณ!"
+  "completeGameToSeeHistory": "เล่นเกมให้จบเพื่อดูประวัติของคุณ!",
+
+  "language": "ภาษา",
+  "aboutapp": "ข้อมูลเกี่ยวกับแอป",
+  "removeGame": "Remove Game",
+  "removeGameConfirmTitle": "Remove Game",
+  "removeGameConfirmMessage": "Are you sure you want to remove this game? This will delete it from your history.",
+  "gameRemovedSuccess": "Game removed successfully"
 }
 

@@ -36,7 +36,6 @@ class Signup extends StatelessWidget {
   //       .then((value) => print("User Added"))
   //       .catchError((error) => print("Failed to add user: $error"));
 
-      
   //     // await userServices.addUser(email: userCredential.user?.email as String);
   //     print(userCredential);
 
@@ -47,45 +46,65 @@ class Signup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: true,
-        bottomNavigationBar: _signin(context),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          toolbarHeight: 50,
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              children: [
-                Center(
-                  child: Text(
-                    'Register Account',
-                    style: GoogleFonts.raleway(
-                        textStyle: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 32)),
-                  ),
-                ),
-                const SizedBox(
-                  height: 80,
-                ),
-                _emailAddress(),
-                const SizedBox(
-                  height: 20,
-                ),
-                _password(),
-                const SizedBox(
-                  height: 50,
-                ),
-                _signup(context),
-              ],
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 50,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(left: 10),
+            decoration: const BoxDecoration(
+              color: Color(0xffF7F7F9),
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.black,
+              ),
             ),
           ),
-        ));
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            children: [
+              Center(
+                child: Text(
+                  'Register Account',
+                  style: GoogleFonts.raleway(
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 32,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 80,
+              ),
+              _emailAddress(),
+              const SizedBox(
+                height: 20,
+              ),
+              _password(),
+              const SizedBox(
+                height: 50,
+              ),
+              _signup(context),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _emailAddress() {

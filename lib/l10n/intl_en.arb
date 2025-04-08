@@ -19,7 +19,7 @@
   
   "errorTitle": "Oops!",
   "errorMessage": "Something went wrong\nPlease try again or upload a new file.",
-  "tryAgain": "Try Again",
+  "tryAgain": "Next",
   "editFile": "Edit File",
   "close": "Close",
   
@@ -129,7 +129,6 @@
   "failedToLoadExplanation": "Failed to load explanation",
   "sideuptocreateanewgame": "Slide up to create a new game",
   "reversion": "Re version",
-  "addLecture": "Add Lecture",
   "noplayhistoryyet": "No play history yet",
   "playgames":"Play Game",
   "noPlayHistory": "No play history",
@@ -166,5 +165,13 @@
   "noRecentGames": "No Recent Games",
   "playFirstGame": "Play your first game!",
   "historyWillAppearHere": "Your Learning History Will Appear Here",
-  "completeGameToSeeHistory": "Complete a game to see your history!"
+  "completeGameToSeeHistory": "Complete a game to see your history!",
+
+  "language": "Language",
+  "aboutapp": "About"
+,
+  "removeGame": "Remove Game",
+  "removeGameConfirmTitle": "Remove Game",
+  "removeGameConfirmMessage": "Are you sure you want to remove this game? This will delete it from your history.",
+  "gameRemovedSuccess": "Game removed successfully"
 }
