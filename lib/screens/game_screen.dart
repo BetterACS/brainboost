@@ -15,6 +15,8 @@ import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/games.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:brainboost/screens/game_bingo.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class GameWrapper extends StatefulWidget {
   final List<GameData> games;
@@ -165,7 +167,7 @@ class _GameWrapperState extends State<GameWrapper>
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Are you sure?',
+                  AppLocalizations.of(context)!.exitmodalmain,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -175,7 +177,7 @@ class _GameWrapperState extends State<GameWrapper>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Your current score will not be saved if you exit now.',
+                   AppLocalizations.of(context)!.exitmodal1,
                   style: TextStyle(
                     fontSize: 16,
                     color: AppColors.containerBackground, // Dark blue color
@@ -184,7 +186,7 @@ class _GameWrapperState extends State<GameWrapper>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Are you sure you want to leave?',
+                 AppLocalizations.of(context)!.exitmodal2,
                   style: TextStyle(
                     fontSize: 16,
                     color: AppColors.containerBackground, // Dark blue color
@@ -208,7 +210,7 @@ class _GameWrapperState extends State<GameWrapper>
                           ),
                         ),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
                           style: TextStyle(
                             color: AppColors.containerBackground, // Dark blue color
                             fontWeight: FontWeight.w500,
@@ -231,7 +233,7 @@ class _GameWrapperState extends State<GameWrapper>
                           ),
                         ),
                         child: Text(
-                          'Exit Game',
+                          AppLocalizations.of(context)!.exit,
                           style: TextStyle(
                             color: AppColors.white,
                             fontWeight: FontWeight.w500,

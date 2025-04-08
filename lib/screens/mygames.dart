@@ -19,6 +19,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:brainboost/utils/game_creator.dart';
 import 'dart:io' as io;
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
@@ -1479,8 +1481,8 @@ class _MyGamesState extends State<MyGames> {
                 colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
               const SizedBox(width: 8),
-              const Text(
-                'Play Game',
+               Text(
+                AppLocalizations.of(context)!.playGame,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
