@@ -1,9 +1,9 @@
-import 'dart:html';
-import 'dart:ui_web';
+// import 'dart:html';
+// import 'dart:ui_web';
+// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class UserAvatar extends StatelessWidget {

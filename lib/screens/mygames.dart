@@ -1075,11 +1075,11 @@ class _MyGamesState extends State<MyGames> {
                     alignment: Alignment.center,
                     children: [
                       Image.asset(
-                        games[index].icon,
+                        'assets/${games[index].icon}',
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            'animations/map2.GIF',
+                            'assets/animations/map2.GIF',
                             fit: BoxFit.contain,
                           );
                         },
