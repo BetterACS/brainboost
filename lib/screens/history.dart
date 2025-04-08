@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class History extends StatefulWidget {
   @override
@@ -18,6 +19,7 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
 
     // Add listener to prevent changing to the Coming Soon tab
     _tabController.addListener(() {
@@ -159,10 +161,14 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
           itemCount: allGames.length,
           itemBuilder: (context, index) {
             var game = allGames[index];
+            var timestamp = game['played_at'] as Timestamp?;
+            var dateTime = timestamp?.toDate();
+            var formattedDate = dateTime != null
+                ? DateFormat('dd MMM yyyy').format(dateTime)
+                : 'No date';
             return HistoryItem(
               title: game['game_name'] ?? 'Unknown',
-              date: (game['played_at'] as Timestamp?)?.toDate().toString() ??
-                  'No date',
+              date: formattedDate,
               imagePath: game['image_game'] ?? '',
               onPressed: () => print(game['game_name'] ?? 'Unknown'),
             );
