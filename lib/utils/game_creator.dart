@@ -9,12 +9,25 @@ import 'package:brainboost/component/dialogs/error_dialog.dart';
 import 'package:brainboost/component/dialogs/success_dialog.dart';
 // import 'package:brainboost/component/dialogs/creating_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:brainboost/main.dart'; // Import main.dart to access localeNotifier
 
 enum CreationStage { extracting, personalizing, crafting, completed }
 ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
 ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
 ValueNotifier<CreationStage> currentStage =
     ValueNotifier<CreationStage>(CreationStage.extracting);
+
+// Helper function to get language name from locale code
+String getLanguageName(String localeCode) {
+  switch (localeCode) {
+    case 'th':
+      return 'Thai';
+    case 'en':
+      return 'English';
+    default:
+      return 'English';
+  }
+}
 
 Future<void> createGameFunction(
   BuildContext context, {
@@ -76,12 +89,16 @@ Future<void> createGameFunction(
 
     currentStage.value = CreationStage.crafting;
     dialogMessage.value = "Crafting your game";
+    
+    // Get current language from localeNotifier
+    String currentLanguage = getLanguageName(localeNotifier.value.languageCode);
+    
     Map<String, String> params = {
       // "game_types": "( 'quiz', 'yesno', 'bingo' )",
       "request_type": 'full',
       "context": jsonDict['data'],
       "personalize": personalize,
-      "language": "Thai and English upon to context.",
+      "language": currentLanguage,
     };
 
     var createGameResponse = await httpClient.post(
@@ -228,12 +245,16 @@ Future<void> addLectureToGame(
 
     currentStage.value = CreationStage.crafting;
     dialogMessage.value = "Crafting additional content";
+    
+    // Get current language from localeNotifier
+    String currentLanguage = getLanguageName(localeNotifier.value.languageCode);
+    
     Map<String, String> params = {
       // "game_types": "( 'quiz', 'yesno', 'bingo' )",
       "request_type": 'partial', // Using partial for adding to existing game
       "context": jsonDict['data'],
       "personalize": personalize,
-      "language": "Thai and English upon to context.",
+      "language": currentLanguage,
     };
 
     var createGameResponse = await httpClient.post(
