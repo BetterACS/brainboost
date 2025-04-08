@@ -8,6 +8,7 @@ import 'package:brainboost/component/bottom_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:brainboost/main.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BingoScreen extends StatefulWidget {
   final BingoContent content;
@@ -184,7 +185,7 @@ class _BingoScreenState extends State<BingoScreen> {
                   Text(
                     widget.content.bingo_list[index].question,
                     textAlign: TextAlign.center,
-                    style:  TextStyle(
+                    style: TextStyle(
                       color: textColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -193,9 +194,16 @@ class _BingoScreenState extends State<BingoScreen> {
                   const SizedBox(height: 32),
                   TextField(
                     controller: _answerController,
-                    decoration: const InputDecoration(
-                      hintText: "Answer",
-                      hintStyle: TextStyle(color: Color(0xFFC2C2C2)),
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.answer,
+                      hintStyle: TextStyle(
+                        color: isDarkMode
+                            ? AppColors.white
+                            : AppColors.accentDarkmode2,
+                      ),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFF092866)),
                       ),
@@ -257,8 +265,8 @@ class _BingoScreenState extends State<BingoScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Text(
-                                  "Submit",
+                              : Text(
+                                  AppLocalizations.of(context)!.submit,
                                   style: TextStyle(color: Colors.white),
                                 ),
                         ),
@@ -316,7 +324,7 @@ class _BingoScreenState extends State<BingoScreen> {
                               width: 340,
                               height: 48,
                               child: Text(
-                                "เล่นบิงโก",
+                                AppLocalizations.of(context)!.playBingo,
                                 style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w900,
@@ -327,7 +335,8 @@ class _BingoScreenState extends State<BingoScreen> {
                             Container(
                               width: 340,
                               child: Text(
-                                "คุณมี $score คะแนน",
+                                AppLocalizations.of(context)!
+                                    .yourPoints(score.toString()),
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w500,
@@ -416,7 +425,8 @@ class _BingoScreenState extends State<BingoScreen> {
                               width: 340,
                               child: Center(
                                 child: Text(
-                                  "เพื่อผ่านเกมนี้ คุณต้องบิงโกหรือสะสมคะแนนให้ครบ 75 คะแนนขึ้นไป",
+                                  AppLocalizations.of(context)!
+                                      .bingoRequirement,
                                   maxLines: 2,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -441,16 +451,16 @@ class _BingoScreenState extends State<BingoScreen> {
               isTransitioning: widget.isTransitioning,
               data: {
                 "gameType": "bingo",
-                "question": "Game Completed!",
+                "question": AppLocalizations.of(context)!.gameCompleted,
                 "correctAnswer": "",
                 "selectedAnswer": "",
                 "isCorrect": isBingoWin || score >= 75,
                 "points": score,
                 "message": isBingoWin
-                    ? "Congratulations! You got BINGO!"
+                    ? AppLocalizations.of(context)!.congratulationsBingo
                     : score >= 75
-                        ? "Congratulations! You scored over 75 points!"
-                        : "Sorry, you didn't achieve BINGO or reach 75 points!",
+                        ? AppLocalizations.of(context)!.congratulationsScore
+                        : AppLocalizations.of(context)!.sorryNoWin,
               },
             ),
           Positioned(
@@ -468,7 +478,7 @@ class _BingoScreenState extends State<BingoScreen> {
                 elevation: 0,
               ),
               child: Text(
-                'Next',
+                AppLocalizations.of(context)!.next,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

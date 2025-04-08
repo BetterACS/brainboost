@@ -20,6 +20,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:brainboost/utils/game_creator.dart';
 import 'dart:io' as io;
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
@@ -924,8 +926,8 @@ class _MyGamesState extends State<MyGames> {
                                                   style: TextStyle(
                                                     color: isDarkMode
                                                         ? AppColors.textPrimary
-                                                        : AppColors
-                                                            .cardBackground,
+                                                        : _slideUpPanelValue > slideValueThreshold ? Colors.white : AppColors.cardBackground,
+                                                        // AppColors.cardBackground,
                                                     fontSize: 25,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -1144,7 +1146,7 @@ class _MyGamesState extends State<MyGames> {
         }
       },
       child: Transform.scale(
-        scale: isSelected ? 1.0 : 0.85,
+        scale: isSelected ? 1.2 : 0.85,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           transform: Matrix4.identity()
@@ -1152,8 +1154,8 @@ class _MyGamesState extends State<MyGames> {
           alignment: Alignment.center,
           child: _slideUpPanelValue > slideValueThreshold
               ? Container(
-                  width: 150,
-                  height: 150,
+                  width: 160,
+                  height: 160,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isDarkMode
@@ -1169,7 +1171,7 @@ class _MyGamesState extends State<MyGames> {
                   child: Center(
                     child: Icon(
                       Icons.cloud_upload_outlined,
-                      size: 72,
+                      size: 90,
                       color: isDarkMode
                             ? AppColors.white
                             :Color.fromARGB(255, 189, 197, 255),
@@ -1481,8 +1483,8 @@ class _MyGamesState extends State<MyGames> {
                 colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
               const SizedBox(width: 8),
-              const Text(
-                'Play Game',
+               Text(
+                AppLocalizations.of(context)!.playGame,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,

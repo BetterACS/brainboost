@@ -5,6 +5,7 @@ import 'package:brainboost/models/games.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/bottom_slider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class YesNoGameScreen extends StatefulWidget {
   final List<GameYesNoContent> content;
@@ -49,7 +50,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
 
   void _submitAnswerWithButton(bool answer) {
     if (_disableSwipe) return;
-     _isLocked = true;
+    _isLocked = true;
 
     setState(() {
       _showAnswer = true;
@@ -68,7 +69,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
         _currentQuestionIndex++;
         _showAnswer = false;
         _disableSwipe = false;
-         _isLocked = false;
+        _isLocked = false;
         widget.onNext(_isCorrect ? 1 : 0);
       });
     } else {
@@ -87,7 +88,8 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
+    final backgroundColor =
+        isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
     final textColor = isDarkMode ? Colors.white : const Color(0xFF1A1F71);
     final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
     final borderColor = isDarkMode ? Colors.grey[600]! : Colors.grey;
@@ -107,7 +109,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                     width: 340,
                     height: 48,
                     child: Text(
-                      "Yes or No",
+                      AppLocalizations.of(context)!.titleyesno,
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
@@ -118,7 +120,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                   Container(
                     width: 340,
                     child: Text(
-                      "Slide to left for No, right for Yes.",
+                      AppLocalizations.of(context)!.expianedyesno,
                       style: TextStyle(
                         fontSize: 16,
                         color: textColor,
@@ -180,7 +182,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                       TextButton(
                         onPressed: () => _submitAnswerWithButton(false),
                         child: Text(
-                          "No",
+                            AppLocalizations.of(context)!.no,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -191,7 +193,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                       TextButton(
                         onPressed: () => _submitAnswerWithButton(true),
                         child: Text(
-                          "Yes",
+                          AppLocalizations.of(context)!.yes,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -239,8 +241,8 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          "Next",
+                        child:  Text(
+                          AppLocalizations.of(context)!.next,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

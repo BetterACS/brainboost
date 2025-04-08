@@ -1,3 +1,6 @@
+// lib/component/cards/profile.dart
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:brainboost/main.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -80,10 +83,20 @@ class _ProfileContainerState extends State<ProfileContainer> {
       builder: (context, currentTheme, child) {
         final isDarkMode = currentTheme == ThemeMode.dark;
 
+        // return FutureBuilder<DocumentSnapshot>(
+        //   future: fetchUsername(),
+        //   builder: (context, snapshot) {
+        //     if (snapshot.connectionState == ConnectionState.waiting &&
+        //         isProfileLoaded == false) {
+        //       return const CircularProgressIndicator();
+        //     }
+
+        //     if (!snapshot.hasData || !snapshot.data!.exists) {
+        //       return Text(AppLocalizations.of(context)!.noUserFound);
+        //     }
         if (currentUser == null) {
           return const Text("User not found");
         }
-
         final username = currentUser!.displayName ?? 'Guest';
 
         return Container(

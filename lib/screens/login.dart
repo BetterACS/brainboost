@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/screens/welcomepage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -50,7 +51,7 @@ class Login extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  'Hello Again',
+                  AppLocalizations.of(context)!.helloAgain,
                   style: GoogleFonts.raleway(
                       textStyle: const TextStyle(
                           color: Colors.black,
@@ -61,11 +62,11 @@ class Login extends StatelessWidget {
               const SizedBox(
                 height: 80,
               ),
-              _emailAddress(),
+              _emailAddress(context),
               const SizedBox(
                 height: 20,
               ),
-              _password(),
+              _password(context),
               const SizedBox(
                 height: 50,
               ),
@@ -81,13 +82,13 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget _emailAddress() {
+  Widget _emailAddress(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email Address',
+          AppLocalizations.of(context)!.emailAddress,
           style: GoogleFonts.raleway(
               textStyle: const TextStyle(
                   color: Colors.black,
@@ -101,7 +102,7 @@ class Login extends StatelessWidget {
           controller: _emailController,
           decoration: InputDecoration(
               filled: true,
-              hintText: 'mahdiforwork@gmail.com',
+              hintText: AppLocalizations.of(context)!.emailHint,
               hintStyle: const TextStyle(
                   color: Color(0xff6A6A6A),
                   fontWeight: FontWeight.normal,
@@ -115,13 +116,13 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget _password() {
+  Widget _password(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Password',
+          AppLocalizations.of(context)!.password,
           style: GoogleFonts.raleway(
               textStyle: const TextStyle(
                   color: Colors.black,
@@ -161,7 +162,7 @@ class Login extends StatelessWidget {
             password: _passwordController.text,
             context: context);
       },
-      child: const Text("Sign In"),
+      child: Text(AppLocalizations.of(context)!.signIn),
     );
   }
 
@@ -236,21 +237,92 @@ class Login extends StatelessWidget {
     );
   }
 
+  // Widget _orDivider() {
+  //   return Row(
+  //     children: [
+  //       Expanded(
+  //         child: Container(
+  //           height: 1,
+  //           color: Colors.grey[300],
+  //         ),
+  //       ),
+  //       Padding(
+  //         padding: const EdgeInsets.symmetric(horizontal: 16),
+  //         child: Text(
+  //           'OR',
+  //           style: TextStyle(
+  //             color: Colors.grey[600],
+  //             fontWeight: FontWeight.w500,
+  //           ),
+  //         ),
+  //       ),
+  //       Expanded(
+  //         child: Container(
+  //           height: 1,
+  //           color: Colors.grey[300],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // Widget _googleSignIn(BuildContext context) {
+  //   return ElevatedButton(
+  //     style: ElevatedButton.styleFrom(
+  //       foregroundColor: Colors.black87,
+  //       backgroundColor: Colors.white,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(14),
+  //         side: BorderSide(color: Colors.grey[300]!),
+  //       ),
+  //       minimumSize: const Size(double.infinity, 60),
+  //       elevation: 0,
+  //     ),
+  //     onPressed: () async {
+  //       try {
+  //         await AuthService().signInWithGoogle(context: context);
+  //       } catch (e) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text('Error signing in with Google: $e')),
+  //         );
+  //       }
+  //     },
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Image.asset(
+  //           'assets/images/google_logo.png',
+  //           height: 24,
+  //           width: 24,
+  //         ),
+  //         const SizedBox(width: 12),
+  //         const Text(
+  //           "Continue with Google",
+  //           style: TextStyle(
+  //             fontSize: 16,
+  //             fontWeight: FontWeight.w500,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _signup(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(children: [
-            const TextSpan(
-              text: "New User? ",
-              style: TextStyle(
+            TextSpan(
+              text: AppLocalizations.of(context)!.newUser,
+              style: const TextStyle(
                   color: Color(0xff6A6A6A),
                   fontWeight: FontWeight.normal,
                   fontSize: 16),
             ),
             TextSpan(
-                text: "Create Account",
+                text: AppLocalizations.of(context)!.createAccount,
                 style: const TextStyle(
                     color: Color(0xff1A1D1E),
                     fontWeight: FontWeight.normal,

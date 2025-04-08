@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:lottie/lottie.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// A widget that displays a quiz option with dynamic styling.
 ///
@@ -211,7 +212,7 @@ class QuizActionButton extends StatelessWidget {
                 elevation: 0,
               ),
               child: Text(
-                'Check',
+                AppLocalizations.of(context)!.tryAgain,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -233,7 +234,7 @@ class QuizActionButton extends StatelessWidget {
                 elevation: 0,
               ),
               child: Text(
-                'Next',
+                AppLocalizations.of(context)!.continueText,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

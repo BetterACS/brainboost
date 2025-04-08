@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SuccessDialog extends StatelessWidget {
   const SuccessDialog({super.key});
 
@@ -47,16 +47,16 @@ class SuccessDialog extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 30),
-                const Text(
-                  "Success!",
+                Text(
+                  (AppLocalizations.of(context)!.createssuccess),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text(
-                  "Your game has been created successfully",
+                Text(
+                  (AppLocalizations.of(context)!.successfully),
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14, color: Colors.black87),
                 ),
@@ -75,8 +75,8 @@ class SuccessDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      "Start Playing",
+                    child: Text(
+                      (AppLocalizations.of(context)!.startplaying),
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
@@ -97,8 +97,8 @@ class SuccessDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      "View My Games",
+                    child: Text(
+                      (AppLocalizations.of(context)!.viewgame),
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
@@ -115,7 +115,7 @@ class SuccessDialog extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              tooltip: 'Close',
+              tooltip: AppLocalizations.of(context)!.tooltipclose,
             ),
           ),
         ],

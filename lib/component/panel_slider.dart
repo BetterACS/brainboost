@@ -11,6 +11,7 @@ import 'package:brainboost/services/user.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/component/avatar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PanelSlider extends StatefulWidget {
   final UserServices userServices = UserServices();
@@ -129,8 +130,8 @@ class _PanelSliderState extends State<PanelSlider> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: isDarkMode
-                  ? AppColors.accentDarkmode 
-                  : AppColors.cardBackground,
+                      ? AppColors.accentDarkmode
+                      : AppColors.cardBackground,
                   borderRadius: radius,
                 ),
                 child: _buildUploadingPanel(context),
@@ -138,8 +139,8 @@ class _PanelSliderState extends State<PanelSlider> {
               collapsed: Container(
                 decoration: BoxDecoration(
                   color: isDarkMode
-                  ? AppColors.accentDarkmode 
-                  : AppColors.cardBackground,
+                      ? AppColors.accentDarkmode
+                      : AppColors.cardBackground,
                   borderRadius: radius,
                 ),
                 child: Column(
@@ -155,7 +156,7 @@ class _PanelSliderState extends State<PanelSlider> {
                     ),
                     SizedBox(height: 40),
                     Text(
-                      "Slide up to create a new game",
+                      AppLocalizations.of(context)!.sideuptocreateanewgame,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -179,7 +180,7 @@ class _PanelSliderState extends State<PanelSlider> {
                   height: 4,
                   width: 160,
                   decoration: BoxDecoration(
-                      color:  Colors.white54,
+                      color: Colors.white54,
                       borderRadius: BorderRadius.all(
                         Radius.circular(10.0),
                       )),
@@ -234,8 +235,8 @@ class _PanelSliderState extends State<PanelSlider> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
                           ),
-                          child: const Text(
-                            "Re version",
+                          child: Text(
+                            AppLocalizations.of(context)!.reversion,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -265,8 +266,8 @@ class _PanelSliderState extends State<PanelSlider> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
                           ),
-                          child: const Text(
-                            "Add Lecture",
+                          child: Text(
+                            AppLocalizations.of(context)!.addLecture,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -292,8 +293,9 @@ class _PanelSliderState extends State<PanelSlider> {
                             children: widget.games[widget.currentPage]
                                     .played_history.isEmpty
                                 ? [
-                                    const Text(
-                                      "No play history yet",
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .noplayhistoryyet,
                                       style: TextStyle(
                                         color: Color(0xFF05235F),
                                         fontSize: 18,
@@ -382,8 +384,8 @@ class _PanelSliderState extends State<PanelSlider> {
                                   Colors.white, BlendMode.srcIn),
                             ),
                             const SizedBox(width: 8),
-                            const Text(
-                              'Play Game',
+                            Text(
+                              AppLocalizations.of(context)!.playgames,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -411,8 +413,8 @@ class _PanelSliderState extends State<PanelSlider> {
                 Container(
                   decoration: BoxDecoration(
                     color: isDarkMode
-                  ? AppColors.accentDarkmode 
-                  : AppColors.cardBackground,
+                        ? AppColors.accentDarkmode
+                        : AppColors.cardBackground,
                     borderRadius: radius,
                   ),
                   child: Column(
@@ -420,8 +422,8 @@ class _PanelSliderState extends State<PanelSlider> {
                       const SizedBox(height: 10),
                       Text(
                         widget.games[widget.currentPage].played_history.isEmpty
-                            ? "No played history"
-                            : "Played history",
+                            ? AppLocalizations.of(context)!.noPlayHistory
+                            : AppLocalizations.of(context)!.playedhistory,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -510,46 +512,52 @@ class _PanelSliderState extends State<PanelSlider> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(height: 360),
-
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () => _showImportDialog(context),
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? AppColors.accentDarkmode
+                      : Colors.blue.shade700,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.file_download_outlined,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            ),
+            SizedBox(width: 6),
+            Text(
+              AppLocalizations.of(context)!.importGame,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         // Add PDF upload instruction box when no file is selected
         if (!widget.isUploading &&
             widget.uploadProgress <= 0 &&
             !widget.uploadSuccess)
           Container(
-            margin: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            margin: EdgeInsets.symmetric(vertical: 24, horizontal: 4),
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.accentDarkmode2 
-                  : Color(0xFF152A56),
+              color: isDarkMode ? AppColors.accentDarkmode2 : Color(0xFF152A56),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: () => _showImportDialog(context),
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? AppColors.accentDarkmode
-                              : Colors.blue.shade700,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.file_download_outlined,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 Text(
-                  "Upload PDF file to continue",
+                  AppLocalizations.of(context)!.uploadPDFfilecontinue,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
@@ -559,7 +567,7 @@ class _PanelSliderState extends State<PanelSlider> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "Select a PDF document to create your game",
+                  AppLocalizations.of(context)!.selectPdfDocument,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white70,
@@ -606,8 +614,8 @@ class _PanelSliderState extends State<PanelSlider> {
                         children: [
                           Text(
                             widget.uploadSuccess
-                                ? "Upload Complete!"
-                                : "Uploading File...",
+                                ? AppLocalizations.of(context)!.uploadComplete
+                                : AppLocalizations.of(context)!.uploadingFile,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -679,7 +687,7 @@ class _PanelSliderState extends State<PanelSlider> {
                   ),
                 SizedBox(width: 10),
                 Text(
-                  'Create Game',
+                  AppLocalizations.of(context)!.createGame,
                   style: TextStyle(
                     color:
                         isButtonEnabled ? Colors.white : Colors.grey.shade600,
@@ -706,7 +714,7 @@ class _PanelSliderState extends State<PanelSlider> {
           builder: (context, setState) {
             return AlertDialog(
               title: Text(
-                "Import Game",
+                AppLocalizations.of(context)!.importGame,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -719,8 +727,8 @@ class _PanelSliderState extends State<PanelSlider> {
                     TextField(
                       controller: _importPathController,
                       decoration: InputDecoration(
-                        labelText: "Game Path",
-                        hintText: "Paste the game path here",
+                        labelText: AppLocalizations.of(context)!.gamePath,
+                        hintText: AppLocalizations.of(context)!.gamePathHint,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -730,7 +738,7 @@ class _PanelSliderState extends State<PanelSlider> {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      "Enter the path of the game you want to import to your collection",
+                      AppLocalizations.of(context)!.enterGamePathMessage,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
@@ -742,7 +750,7 @@ class _PanelSliderState extends State<PanelSlider> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text("Cancel"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: _isImporting
@@ -750,7 +758,8 @@ class _PanelSliderState extends State<PanelSlider> {
                       : () async {
                           if (_importPathController.text.trim().isEmpty) {
                             setState(() {
-                              _importError = "Game path cannot be empty";
+                              _importError =
+                                  AppLocalizations.of(context)!.gamePathEmpty;
                             });
                             return;
                           }
@@ -775,11 +784,13 @@ class _PanelSliderState extends State<PanelSlider> {
 
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
-                                content: Text("Game imported successfully"),
+                                content: Text(AppLocalizations.of(context)!
+                                    .gameImportedSuccess),
                                 backgroundColor: Colors.green,
                               ));
                             } else {
-                              throw Exception("User not logged in");
+                              throw Exception(AppLocalizations.of(context)!
+                                  .usernotloggedin);
                             }
                           } catch (e) {
                             setState(() {
@@ -803,7 +814,7 @@ class _PanelSliderState extends State<PanelSlider> {
                             color: Colors.white,
                           ))
                       : Text(
-                          "Import",
+                          AppLocalizations.of(context)!.import,
                           style: TextStyle(color: Colors.white),
                         ),
                 ),
