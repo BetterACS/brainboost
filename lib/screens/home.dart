@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:brainboost/main.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/screens/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,10 +12,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/cards/profile_header.dart';
-import 'package:brainboost/screens/creategame.dart';
+// import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
+import 'package:brainboost/screens/game_bingo.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class CloudPainter extends CustomPainter {
   @override
@@ -36,23 +40,6 @@ class CloudPainter extends CustomPainter {
     return false;
   }
 }
-
-var histories = [
-  HistoryItem(
-    title: "World war 2",
-    date: "11 Dec 2024",
-    imagePath: 'assets/images/photomain.png',
-    // isDownload: false,
-    onPressed: () => print("Play Software Engine.."),
-  ),
-  HistoryItem(
-    title: "World war 2",
-    date: "11 Dec 2024",
-    imagePath: 'assets/images/photomain.png',
-    // isDownload: false,
-    onPressed: () => print("Play Software Engine.."),
-  )
-];
 
 class _MouseScrollBehavior extends ScrollBehavior {
   @override
@@ -76,28 +63,35 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.accentBackground,
-      body: ScrollConfiguration(
-        behavior: _MouseScrollBehavior(),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50),
-              const ProfileContainer(),
-              const SizedBox(height: 20),
-              _buildPageView(),
-              const SizedBox(height: 10),
-              _buildPageIndicator(),
-              const SizedBox(height: 20),
-              _buildCreateSection(),
-              _buildCreateButtons(context),
-              _buildHistorySection(),
-            ],
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier, 
+      builder: (context, currentTheme, child) {
+        return Scaffold(
+          backgroundColor: currentTheme == ThemeMode.dark
+              ? AppColors.backgroundDarkmode 
+              : AppColors.mainColor,
+          body: ScrollConfiguration(
+            behavior: _MouseScrollBehavior(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 50),
+                  const ProfileContainer(),
+                  const SizedBox(height: 20),
+                  _buildPageView(),
+                  const SizedBox(height: 10),
+                  _buildPageIndicator(),
+                  const SizedBox(height: 20),
+                  _buildCreateSection(),
+                  _buildCreateButtons(context),
+                  _buildHistorySection(),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -112,74 +106,34 @@ class _HomeState extends State<Home> {
     return userDoc;
   }
 
-//   Widget _buildProfileSection() {
-//     final String? email = UserServices().getCurrentUserEmail();
-//     if (email == null) return const Text("User not logged in");
-
-//     return FutureBuilder<DocumentSnapshot>(
-//       future: fetchUsername(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting &&
-//             isProfileLoaded == false) {
-//           return const CircularProgressIndicator();
-//         }
-
-//         if (!snapshot.hasData || !snapshot.data!.exists) {
-//           return const Text("User not found");
-//         }
-
-//         final userData = snapshot.data!.data() as Map<String, dynamic>;
-//         final username = userData['username'] ?? 'Guest';
-
-//         return Container(
-//           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//           decoration: BoxDecoration(
-//             color: AppColors.neutralBackground,
-//             borderRadius: BorderRadius.circular(50),
-//           ),
-//           child: Row(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               const CircleAvatar(
-//                 radius: 25,
-//                 backgroundColor: Colors.white,
-//                 child: CircleAvatar(
-//                   radius: 22,
-//                   backgroundImage: AssetImage('assets/images/profile.jpg'),
-//                 ),
-//               ),
-//               const SizedBox(width: 10),
-//               Text(
-//                 username,
-//                 style: const TextStyle(
-//                   color: AppColors.textPrimary,
-//                   fontSize: 18,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-
   Widget _buildPageView() {
-    return SizedBox(
-      height: 330,
-      width: 300,
-      child: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentPage = index;
-          });
-        },
-        children: [
-          _buildCircularChartPage(),
-          _buildRecentGamePage(),
-        ],
-      ),
+    return FutureBuilder<void>(
+      future: fetchGamePerformance(),
+      builder: (context, snapshot) {
+        if (isLoadCircle && numberGames == 0) {
+          return SizedBox(
+            height: 330,
+            width: 300,
+            child: _buildCircularChartPage(),
+          );
+        }
+        return SizedBox(
+          height: 330,
+          width: 300,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            children: [
+              _buildCircularChartPage(),
+              _buildRecentGamePage(),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -229,7 +183,18 @@ class _HomeState extends State<Home> {
     return FutureBuilder<void>(
       future: fetchGamePerformance(),
       builder: (context, snapshot) {
-        if (isLoadCircle)
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+        if (!isLoadCircle) {
+          return Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+            ),
+          );
+        }
+
+        if (numberGames == 0) {
           return Center(
             child: SizedBox(
               height: 300,
@@ -239,36 +204,28 @@ class _HomeState extends State<Home> {
                 children: [
                   CustomPaint(
                     size: const Size(285, 285),
-                    painter: CircularChartPainter(
-                        (correctQuestion / numberGames) * 100),
+                    painter: CircularChartPainter(0, isDarkMode),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Success rate",
+                        AppLocalizations.of(context)!.completeGame,
                         style: TextStyle(
-                          color: AppColors.buttonText,
+                          color: isDarkMode
+                              ? AppColors.textPrimary
+                              : AppColors.buttonText,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(
-                        ((correctQuestion / numberGames) * 100)
-                                .toStringAsFixed(2) +
-                            "%",
+                        AppLocalizations.of(context)!.seeProgress,
                         style: TextStyle(
-                          color: AppColors.buttonText,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        "out of ${numberGames} questions",
-                        style: TextStyle(
-                          color: AppColors.buttonText,
+                          color: isDarkMode
+                              ? AppColors.textPrimary
+                              : AppColors.buttonText,
                           fontSize: 17.59,
                         ),
                       ),
@@ -278,28 +235,146 @@ class _HomeState extends State<Home> {
               ),
             ),
           );
-        else
-          return Center(
-              child: SizedBox(
+        }
+
+        return Center(
+          child: SizedBox(
             height: 300,
             width: 300,
-          ));
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomPaint(
+                  size: const Size(285, 285),
+                  painter: CircularChartPainter(
+                    (correctQuestion / numberGames) * 100,
+                    isDarkMode,
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.successRate,
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? AppColors.textPrimary
+                            : AppColors.buttonText,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "${((correctQuestion / numberGames) * 100).toStringAsFixed(2)}%",
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? AppColors.textPrimary
+                            : AppColors.buttonText,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      AppLocalizations.of(context)!.outOfQuestions(numberGames),
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? AppColors.textPrimary
+                            : AppColors.buttonText,
+                        fontSize: 17.59,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
 
-  // }
-
   Widget _buildRecentGamePage() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    if (numberGames == 0) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            height: 300,
+            width: 300,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: isDarkMode
+                  ? AppColors.circleGradientdark
+                  : AppColors.circleGradient,
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.noRecentGames,
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : AppColors.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 15),
+              Icon(
+                Icons.sports_esports,
+                size: 80,
+                color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
+              ),
+              const SizedBox(height: 15),
+              Text(
+                AppLocalizations.of(context)!.playFirstGame,
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // context.push(Routes.createGame);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.buttonBackground,
+                  foregroundColor: AppColors.neutralBackground,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 5,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.createGame,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+
     return Stack(
       alignment: Alignment.center,
       children: [
         Container(
           height: 300,
           width: 300,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: AppColors.circleGradient,
+            gradient: isDarkMode
+                ? AppColors.circleGradientdark
+                : AppColors.circleGradient,
           ),
         ),
         Column(
@@ -308,19 +383,19 @@ class _HomeState extends State<Home> {
             const Padding(
               padding: EdgeInsets.only(bottom: 35),
             ),
-            const Text(
-              "Recent Game",
+            Text(
+              AppLocalizations.of(context)!.recentGame,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: isDarkMode ? Colors.white : AppColors.textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 5),
-            const Text(
-              "World War 2",
+            Text(
+              AppLocalizations.of(context)!.worldWar2,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
                 fontSize: 14,
               ),
             ),
@@ -338,10 +413,10 @@ class _HomeState extends State<Home> {
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
-              "70 / 100",
+            Text(
+              AppLocalizations.of(context)!.scoreFormat('70', '100'),
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: isDarkMode ? Colors.white : AppColors.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -351,7 +426,11 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.only(top: 0),
               child: ElevatedButton(
                 onPressed: () {
-                  print("Replay pressed");
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => const BingoScreen()),
+                  // );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonBackground,
@@ -363,9 +442,9 @@ class _HomeState extends State<Home> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
                 ),
-                child: const Text(
-                  "Replay",
-                  style: TextStyle(
+                child: Text(
+                  AppLocalizations.of(context)!.replay,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -379,32 +458,53 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildPageIndicator() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(2, (index) {
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          margin: const EdgeInsets.symmetric(horizontal: 0),
-          height: 8,
-          width: _currentPage == index ? 16 : 8,
-          decoration: BoxDecoration(
-            color: _currentPage == index ? AppColors.gradient2 : AppColors.gray,
-            borderRadius: BorderRadius.circular(4),
-          ),
+    return FutureBuilder<void>(
+      future: fetchGamePerformance(),
+      builder: (context, snapshot) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+        if (isLoadCircle && numberGames == 0) {
+          return const SizedBox.shrink();
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(2, (index) {
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 0),
+              height: 8,
+              width: _currentPage == index ? 16 : 8,
+              decoration: BoxDecoration(
+                color: _currentPage == index
+                  ? (isDarkMode
+                      ? AppColors.accentDarkmode 
+                      : AppColors.gradient2) 
+                  : (isDarkMode
+                      ? AppColors.gray5 
+                      : AppColors.gray),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            );
+          }),
         );
-      }),
+      },
     );
   }
 
   Widget _buildCreateSection() {
+          final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: const Text(
-          "Start",
+        child: Text(
+          AppLocalizations.of(context)!.start,
           style: TextStyle(
-            color: AppColors.gradient1,
+            color:  isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.gradient1,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -413,55 +513,50 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildCreateButtons(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Container(
-        height: 200,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: AppColors.buttonGradient,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+Widget _buildCreateButtons(BuildContext context) {
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    child: Container(
+      height: 160,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: isDarkMode
+            ? AppColors.buttonGradientDark
+            : AppColors.buttonGradient,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
-                child: SizedBox(
-                  child: CustomPaint(
-                    size: const Size(double.infinity, 100),
-                    painter: CloudPainter(),
-                  ),
-                ),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: CloudPainter(),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   Expanded(
+                    flex: 3,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Column(
+                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Let’s Gamify Your Learning!",
+                             AppLocalizations.of(context)!.expianedmaincreategame,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -470,7 +565,7 @@ class _HomeState extends State<Home> {
                             ),
                             SizedBox(height: 10),
                             Text(
-                              "Make studying fun! Just upload your file\nand start playing.",
+                              AppLocalizations.of(context)!.expianedcreategame,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -478,28 +573,31 @@ class _HomeState extends State<Home> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 6),
+                        const Text(
+                          "Make studying fun!\nUpload your file to play.",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const Spacer(),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CreateGameScreen()),
-                            );
+                            // TODO: Add navigation or logic
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.yellow[700],
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
+                                horizontal: 16, vertical: 8),
                           ),
-                          child: const Text(
-                            "Create Game",
+                          child: Text(
+                            AppLocalizations.of(context)!.createGame,
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF002654),
                             ),
@@ -508,10 +606,12 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 155,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
                     child: Image.asset(
                       'assets/images/rockety.webp',
+                      height: 140,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -521,11 +621,14 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildHistorySection() {
     final String? email = FirebaseAuth.instance.currentUser?.email;
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -535,82 +638,136 @@ class _HomeState extends State<Home> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                "History",
+              Text(
+                AppLocalizations.of(context)!.history,
                 style: TextStyle(
-                  color: AppColors.gradient1,
+                  color: isDarkMode
+                            ? AppColors.textPrimary 
+                            : AppColors.buttonText, 
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  context.push(Routes.historyPage, extra: email);
-                },
-                child: const Row(
-                  children: [
-                    Text(
-                      "View all",
-                      style: TextStyle(
-                        color: AppColors.gray2,
-                        fontSize: 14,
+              if (isLoadCircle && numberGames > 0)
+                GestureDetector(
+                  onTap: () {
+                    context.push(Routes.historyPage, extra: email);
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.viewAll,
+                        style: TextStyle(
+                          color: AppColors.gray2,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 5),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: AppColors.gray2,
-                      size: 14,
-                    ),
-                  ],
+                      SizedBox(width: 5),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: AppColors.gray2,
+                        size: 14,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 10),
-          StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('history')
-                .doc(email)
-                .snapshots(),
+          FutureBuilder<void>(
+            future: fetchGamePerformance(),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+              if (!isLoadCircle) {
+                return const Center(
+                  child: SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                  ),
+                );
               }
 
-              if (!snapshot.hasData || !snapshot.data!.exists) {
-                return const Center(child: Text("No history found"));
+              if (numberGames == 0) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? AppColors.backgroundDarkmode : AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 15),
+                      Text(
+                        AppLocalizations.of(context)!.historyWillAppearHere,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : AppColors.buttonText,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        AppLocalizations.of(context)!.completeGameToSeeHistory,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : AppColors.buttonText,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('history')
+                      .doc(email)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || !snapshot.data!.exists) {
+                      return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+                    }
+
+                    var docData =
+                        snapshot.data!.data() as Map<String, dynamic>? ?? {};
+                    List<Map<String, dynamic>> allGames =
+                        (docData['data'] as List<dynamic>?)
+                                ?.whereType<Map<String, dynamic>>()
+                                .toList() ??
+                            [];
+
+                    if (allGames.isEmpty) {
+                      return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+                    }
+
+                    final gamesToShow = allGames.take(2).toList();
+
+                    return Column(
+                      children: gamesToShow
+                          .map((game) => HistoryItem(
+                                title: game['game_name'] ?? 'Unknown',
+                                date: DateFormat('dd MMM yyyy').format((game['played_at'] as Timestamp).toDate()),
+                                imagePath: game['image_game'] ?? '',
+                                onPressed: () =>
+                                    print(game['game_name'] ?? 'Unknown'),
+                              ))
+                          .toList(),
+                    );
+                  },
+                );
               }
-
-              var docData =
-                  snapshot.data!.data() as Map<String, dynamic>? ?? {};
-              List<Map<String, dynamic>> allGames =
-                  (docData['data'] as List<dynamic>?)
-                          ?.whereType<Map<String, dynamic>>()
-                          .toList() ??
-                      [];
-
-              if (allGames.isEmpty) {
-                return const Center(child: Text("No history found"));
-              }
-
-              // Show only the last 2 games
-              final gamesToShow = allGames.take(2).toList();
-
-              return Column(
-                children: gamesToShow
-                    .map((game) => HistoryItem(
-                          title: game['game_name'] ?? 'Unknown',
-                          date: (game['played_at'] as Timestamp?)
-                                  ?.toDate()
-                                  .toString() ??
-                              'No date',
-                          imagePath: game['image_game'] ?? '',
-                          onPressed: () =>
-                              print(game['game_name'] ?? 'Unknown'),
-                        ))
-                    .toList(),
-              );
             },
           ),
         ],

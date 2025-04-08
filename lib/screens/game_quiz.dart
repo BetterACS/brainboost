@@ -1,3 +1,4 @@
+import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
@@ -72,23 +73,28 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
+    final textColor = isDarkMode ? Colors.white : const Color.fromARGB(255, 13, 15, 53);
+    final questionColor = isDarkMode ? Colors.grey[300] : const Color(0xFF1A1F71);
 
     return SafeArea(
       child: Stack(
         children: [
-          Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          Container(
+            color: backgroundColor,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
-                    // Content of the quiz screen.
-                    children: [
-                      SizedBox(height: 10),
-                      Column(
+                      // Content of the quiz screen.
+                      children: [
+                        SizedBox(height: 10),
+                        Column(
                           // Space between the question and the options.
                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -97,10 +103,10 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                               height: 48,
                               child: Text(
                                 "ตอบคำถาม",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w900,
-                                  color: Color.fromARGB(255, 13, 15, 53),
+                                  color: textColor,
                                 ),
                               ),
                             ),
@@ -109,10 +115,10 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                               // constraints: BoxConstraints(minHeight:96),
                               child: Text(
                                 widget.content.question,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF1A1F71),
+                                  color: questionColor,
                                 ),
                               ),
                             ),
@@ -140,15 +146,15 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                                 },
                               ),
                             ),
-                          ]),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              // SizedBox(height: screenHeight * 0.05), // Space for overlay
-            ],
+              ],
+            ),
           ),
-
           BottomSlider(
             isVisible: hasCheckedAnswer,
             isTransitioning: widget.isTransitioning,
@@ -162,8 +168,6 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                   selectedAnswerIndex == widget.content.correctAnswerIndex,
             },
           ),
-
-          // Place QuizActionButton on top
           Positioned(
             left: 0,
             right: 0,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Add this import
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BottomSlider extends StatefulWidget {
   // final Widget child;
@@ -103,12 +104,12 @@ class _BottomSliderState extends State<BottomSlider>
       final decodedResponse = json.decode(utf8.decode(response.bodyBytes));
 
       setState(() {
-        _explanation = decodedResponse['data'] ?? 'No explanation available';
+        _explanation = decodedResponse['data'] ?? AppLocalizations.of(context)!.noExplanationAvailable;
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _explanation = 'Failed to load explanation';
+        _explanation = AppLocalizations.of(context)!.failedToLoadExplanation;
         _isLoading = false;
       });
     }
@@ -205,7 +206,7 @@ class _BottomSliderState extends State<BottomSlider>
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    _isCorrect ? "Correct!" : "Wrong!",
+                                    _isCorrect ? AppLocalizations.of(context)!.correct : AppLocalizations.of(context)!.wrong,
                                     style: TextStyle(
                                       color:
                                           _isCorrect ? Colors.blue : Colors.red,
@@ -215,15 +216,17 @@ class _BottomSliderState extends State<BottomSlider>
                                   ),
                                 ],
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  _isExpanded
-                                      ? Icons.keyboard_arrow_down
-                                      : Icons.keyboard_arrow_up,
-                                  size: 30,
+
+                              if (widget.data['gameType'] != "bingo")
+                                IconButton(
+                                  icon: Icon(
+                                    _isExpanded
+                                        ? Icons.keyboard_arrow_down
+                                        : Icons.keyboard_arrow_up,
+                                    size: 30,
+                                  ),
+                                  onPressed: _toggleExpand,
                                 ),
-                                onPressed: _toggleExpand,
-                              ),
                             ],
                           ),
                         ],
@@ -262,7 +265,7 @@ class _BottomSliderState extends State<BottomSlider>
                                         padding: const EdgeInsets.all(16),
                                         child: Text(
                                           _explanation ??
-                                              'No explanation available',
+                                               AppLocalizations.of(context)!.noExplanationAvailable,
                                           style: TextStyle(
                                             // Bolded the text
                                             fontWeight: FontWeight.w500,

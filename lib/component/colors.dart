@@ -25,6 +25,8 @@ class AppColors {
   static const Color gray3 = Color(0xFFC2C2C2);
   static const Color backgroundDarkmode = Color(0xFF262626);
   static const Color accentDarkmode = Color(0xFF1F1F21);
+  static const Color accentDarkmode2 = Color.fromARGB(255, 0, 0, 0);
+
   static const Color mainColor = Color.fromRGBO(236, 245, 255, 1.0);
   static const Color gray4 = Color.fromRGBO(225, 228, 232, 1.0);
   static const Color gray5 = Color(0xFF888888);
@@ -37,6 +39,14 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
+    static const LinearGradient circleGradientdark = LinearGradient(
+    colors: [
+      Color.fromARGB(255, 80, 80, 80),
+      Color.fromARGB(255, 216, 220, 226),
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
   static const LinearGradient buttonGradient = LinearGradient(
     colors: [
       gradient1,
@@ -44,6 +54,14 @@ class AppColors {
     ],
     begin: Alignment.bottomCenter,
     end: Alignment.topCenter,
+  );
+      static const LinearGradient buttonGradientDark = LinearGradient(
+    colors: [
+      Color.fromARGB(255, 24, 23, 23),
+      Color.fromARGB(255, 93, 93, 94),
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
   );
   // Additional colors from the CreateGameScreen
   static const Color screenBackground = Color(0xFFECF5FF);

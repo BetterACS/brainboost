@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -12,6 +13,18 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.settings),
+        leading: const BackButton(),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(AppLocalizations.of(context)!.settingsPageTitle, style: const TextStyle(fontSize: 20)),
+            SizedBox(height: 20),
+          ],
+        ),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
