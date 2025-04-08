@@ -1075,8 +1075,8 @@ class _MyGamesState extends State<MyGames> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Image.asset(
-                        'assets/${games[index].icon}',
+                        Image.asset(
+                        games[index].icon.replaceFirst('assets/', ''),
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(

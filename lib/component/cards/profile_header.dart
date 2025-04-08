@@ -58,6 +58,7 @@ class _ProfileContainerState extends State<ProfileContainer> {
     try {
       final ref = storage.ref().child(path);
       final url = await ref.getDownloadURL();
+      print(url);
       setState(() {
         userAvatar = UserAvatar(
           imageUrl: url,

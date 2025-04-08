@@ -72,7 +72,7 @@ class AuthService {
   Future<void> signout({required BuildContext context}) async {
     await FirebaseAuth.instance.signOut();
     await Future.delayed(const Duration(seconds: 1));
-    await context.push("/login");
+    await context.push("/welcome");
   }
 
   // Future<UserCredential?> signInWithGoogle({required BuildContext context}) async {
