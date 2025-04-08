@@ -9,7 +9,7 @@ import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/cards/profile_header.dart';
 import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
-import 'package:brainboost/component/history_item.dart'; 
+import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
 
 class CloudPainter extends CustomPainter {
@@ -19,7 +19,7 @@ class CloudPainter extends CustomPainter {
       ..color = Colors.white
       ..style = PaintingStyle.fill;
 
-    // วงกลมก้อนเมฆ 
+    // วงกลมก้อนเมฆ
     canvas.drawCircle(Offset(size.width * 0.1, size.height * 1.2), 114, paint);
     canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.95), 45, paint);
     canvas.drawCircle(Offset(size.width * 0.57, size.height * 1.15), 77, paint);
@@ -87,7 +87,7 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 10),
               _buildPageIndicator(),
               const SizedBox(height: 20),
-		          _buildCreateSection(),
+              _buildCreateSection(),
               _buildCreateButtons(context),
               _buildHistorySection(),
             ],
@@ -96,8 +96,6 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
-  
 
   Future<DocumentSnapshot> fetchUsername() async {
     final String? email = UserServices().getCurrentUserEmail();
@@ -109,7 +107,6 @@ class _HomeState extends State<Home> {
     });
     return userDoc;
   }
-
 
 //   Widget _buildProfileSection() {
 //     final String? email = UserServices().getCurrentUserEmail();
@@ -163,24 +160,39 @@ class _HomeState extends State<Home> {
 //     );
 //   }
 
-  Widget _buildPageView() {
-    return SizedBox(
-      height: 330,
-      width: 300,
-      child: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentPage = index;
-          });
-        },
-        children: [
-          _buildCircularChartPage(),
-          _buildRecentGamePage(),
-        ],
-      ),
-    );
-  }
+Widget _buildPageView() {
+  return FutureBuilder<void>(
+    future: fetchGamePerformance(),
+    builder: (context, snapshot) {
+      // new user
+      if (isLoadCircle && numberGames == 0) {
+        return SizedBox(
+          height: 330,
+          width: 300,
+          child: _buildCircularChartPage(),
+        );
+      }
+      
+      // show PageView 
+      return SizedBox(
+        height: 330,
+        width: 300,
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentPage = index;
+            });
+          },
+          children: [
+            _buildCircularChartPage(),
+            _buildRecentGamePage(),
+          ],
+        ),
+      );
+    },
+  );
+}
 
   bool isLoadCircle = false;
   int numberGames = 0;
@@ -222,11 +234,84 @@ class _HomeState extends State<Home> {
     });
   }
 
+  // Widget _buildCircularChartPage() {
+  //   return FutureBuilder<void>(
+  //     future: fetchGamePerformance(),
+  //     builder: (context, snapshot) {
+  //       if (isLoadCircle)
+  //         return Center(
+  //           child: SizedBox(
+  //             height: 300,
+  //             width: 300,
+  //             child: Stack(
+  //               alignment: Alignment.center,
+  //               children: [
+  //                 CustomPaint(
+  //                   size: const Size(285, 285),
+  //                   painter: CircularChartPainter(
+  //                       (correctQuestion / numberGames) * 100),
+  //                 ),
+  //                 Column(
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: [
+  //                     Text(
+  //                       "Success rate",
+  //                       style: TextStyle(
+  //                         color: AppColors.buttonText,
+  //                         fontSize: 22,
+  //                         fontWeight: FontWeight.bold,
+  //                       ),
+  //                     ),
+  //                     SizedBox(height: 6),
+  //                     Text(
+  //                       ((correctQuestion / numberGames) * 100)
+  //                               .toStringAsFixed(2) +
+  //                           "%",
+  //                       style: TextStyle(
+  //                         color: AppColors.buttonText,
+  //                         fontSize: 32,
+  //                         fontWeight: FontWeight.bold,
+  //                       ),
+  //                     ),
+  //                     SizedBox(height: 6),
+  //                     Text(
+  //                       "out of ${numberGames} questions",
+  //                       style: TextStyle(
+  //                         color: AppColors.buttonText,
+  //                         fontSize: 17.59,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       else
+  //         return Center(
+  //             child: SizedBox(
+  //           height: 300,
+  //           width: 300,
+  //         ));
+  //     },
+  //   );
+  // }
+
   Widget _buildCircularChartPage() {
     return FutureBuilder<void>(
       future: fetchGamePerformance(),
       builder: (context, snapshot) {
-        if (isLoadCircle)
+        if (!isLoadCircle) {
+          return Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+            ),
+          );
+        }
+
+        // new user
+        if (numberGames == 0) {
           return Center(
             child: SizedBox(
               height: 300,
@@ -236,14 +321,13 @@ class _HomeState extends State<Home> {
                 children: [
                   CustomPaint(
                     size: const Size(285, 285),
-                    painter: CircularChartPainter(
-                        (correctQuestion / numberGames) * 100),
+                    painter: CircularChartPainter(0), // วาดวงกลมเปล่า
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: const [
                       Text(
-                        "Success rate",
+                        "Complete a game",
                         style: TextStyle(
                           color: AppColors.buttonText,
                           fontSize: 22,
@@ -252,18 +336,7 @@ class _HomeState extends State<Home> {
                       ),
                       SizedBox(height: 6),
                       Text(
-                        ((correctQuestion / numberGames) * 100)
-                                .toStringAsFixed(2) +
-                            "%",
-                        style: TextStyle(
-                          color: AppColors.buttonText,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        "out of ${numberGames} questions",
+                        "to see your progress!",
                         style: TextStyle(
                           color: AppColors.buttonText,
                           fontSize: 17.59,
@@ -275,12 +348,58 @@ class _HomeState extends State<Home> {
               ),
             ),
           );
-        else
-          return Center(
-              child: SizedBox(
+        }
+
+        // old user
+        return Center(
+          child: SizedBox(
             height: 300,
             width: 300,
-          ));
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomPaint(
+                  size: const Size(285, 285),
+                  painter: CircularChartPainter(
+                    (correctQuestion / numberGames) * 100,
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Success rate",
+                      style: TextStyle(
+                        color: AppColors.buttonText,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      ((correctQuestion / numberGames) * 100)
+                              .toStringAsFixed(2) +
+                          "%",
+                      style: const TextStyle(
+                        color: AppColors.buttonText,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "out of $numberGames questions",
+                      style: const TextStyle(
+                        color: AppColors.buttonText,
+                        fontSize: 17.59,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
@@ -288,6 +407,8 @@ class _HomeState extends State<Home> {
   // }
 
   Widget _buildRecentGamePage() {
+  if (numberGames == 0) {
+    // New users 
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -302,70 +423,50 @@ class _HomeState extends State<Home> {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 35),
-            ),
             const Text(
-              "Recent Game",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Text(
-              "World War 2",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 5),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(150),
-              child: Image.asset(
-                'assets/images/photomain.png',
-                height: 140,
-                width: 160,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error, size: 80, color: Colors.red);
-                },
-              ),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              "70 / 100",
+              "No Recent Games",
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(top: 0),
-              child: ElevatedButton(
-                onPressed: () {
-                  print("Replay pressed");
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonBackground,
-                  foregroundColor: AppColors.neutralBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 5,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+            const SizedBox(height: 15),
+            const Icon(
+              Icons.sports_esports,
+              size: 80,
+              color: AppColors.textPrimary,
+            ),
+            const SizedBox(height: 15),
+            const Text(
+              "Play your first game!",
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateGameScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.buttonBackground,
+                foregroundColor: AppColors.neutralBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Text(
-                  "Replay",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                elevation: 5,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+              ),
+              child: const Text(
+                "Create Game",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
             ),
@@ -374,175 +475,270 @@ class _HomeState extends State<Home> {
       ],
     );
   }
+  
+  // Old users 
+  return Stack(
+    alignment: Alignment.center,
+    children: [
+      Container(
+        height: 300,
+        width: 300,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: AppColors.circleGradient,
+        ),
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 35),
+          ),
+          const Text(
+            "Recent Game",
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 5),
+          const Text(
+            "World War 2",
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 5),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(150),
+            child: Image.asset(
+              'assets/images/photomain.png',
+              height: 140,
+              width: 160,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.error, size: 80, color: Colors.red);
+              },
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            "70 / 100",
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(top: 0),
+            child: ElevatedButton(
+              onPressed: () {
+                print("Replay pressed");
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.buttonBackground,
+                foregroundColor: AppColors.neutralBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 5,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+              ),
+              child: const Text(
+                "Replay",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+}
 
   Widget _buildPageIndicator() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(2, (index) {
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          margin: const EdgeInsets.symmetric(horizontal: 0),
-          height: 8,
-          width: _currentPage == index ? 16 : 8,
-          decoration: BoxDecoration(
-            color: _currentPage == index ? AppColors.gradient2 : AppColors.gray,
-            borderRadius: BorderRadius.circular(4),
+  return FutureBuilder<void>(
+    future: fetchGamePerformance(),
+    builder: (context, snapshot) {
+      // Hide indicators for new user
+      if (isLoadCircle && numberGames == 0) {
+        return const SizedBox.shrink();
+      }
+      
+      // show indicators
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(2, (index) {
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            height: 8,
+            width: _currentPage == index ? 16 : 8,
+            decoration: BoxDecoration(
+              color: _currentPage == index ? AppColors.gradient2 : AppColors.gray,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          );
+        }),
+      );
+    },
+  );
+}
+
+  Widget _buildCreateSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: const Text(
+          "Start",
+          style: TextStyle(
+            color: AppColors.gradient1,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 
-Widget _buildCreateSection() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-    child: Align(
-      alignment: Alignment.centerLeft,  
-      child: const Text(
-        "Start",
-        style: TextStyle(
-          color: AppColors.gradient1,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+  Widget _buildCreateButtons(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Container(
+        height: 200,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: AppColors.buttonGradient,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+                child: SizedBox(
+                  child: CustomPaint(
+                    size: const Size(double.infinity, 100),
+                    painter: CloudPainter(),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Let’s Gamify Your Learning!",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Make studying fun! Just upload your file\nand start playing.",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 50),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CreateGameScreen()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.yellow[700],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                          ),
+                          child: const Text(
+                            "Create Game",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF002654),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 155,
+                    child: Image.asset(
+                      'assets/images/rockety.webp',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-    ),
-  );
-}
-
-
-Widget _buildCreateButtons(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-    child: Container(
-      height: 200,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        gradient: AppColors.buttonGradient,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
-              child: SizedBox(
-                child: CustomPaint(
-                  size: const Size(double.infinity, 100),
-                  painter: CloudPainter(),
-                ),
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Let’s Gamify Your Learning!",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            "Make studying fun! Just upload your file\nand start playing.",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 50),
-
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CreateGameScreen()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow[700],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                        ),
-                        child: const Text(
-                          "Create Game",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF002654),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(
-                  height: 155,
-                  child: Image.asset(
-                    'assets/images/rockety.webp',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildHistorySection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "History",
-                style: TextStyle(
-                  color: AppColors.gradient1,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              "History",
+              style: TextStyle(
+                color: AppColors.gradient1,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
+            ),
+            // แสดง View all 
+            if (numberGames > 0)
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -568,12 +764,93 @@ Widget _buildCreateButtons(BuildContext context) {
                   ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          for (var history in histories) history,
+          ],
+        ),
+        const SizedBox(height: 10),
+        FutureBuilder<void>(
+          future: fetchGamePerformance(),
+          builder: (context, snapshot) {
+            if (!isLoadCircle) {
+              return const Center(
+                child: SizedBox(
+                  height: 50,
+                  width: double.infinity,
+                ),
+              );
+            }
 
-          // HistoryItem(
+            if (numberGames == 0) {
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 5,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: const [
+                    SizedBox(height: 15),
+                    Text(
+                      "Your Learning History Will Appear Here",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.buttonText,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Complete a game to see your history!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.buttonText,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return Column(
+                children: histories.isNotEmpty
+                    ? histories
+                    : [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.neutralBackground,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            "No recent games found",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColors.gray2,
+                              fontSize: 14,
+                            ),
+                          ),
+                        )
+                      ],
+              );
+            }
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+
+  // HistoryItem(
           //   title: "World war 2",
           //   date: "11 Dec 2024",
           //   imagePath: 'assets/images/photomain.png',
@@ -587,10 +864,6 @@ Widget _buildCreateButtons(BuildContext context) {
           //   isDownload: false,
           //   onPressed: () => print("Play Software Engine.."),
           // ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildButton({
     required IconData icon,
