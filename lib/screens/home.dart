@@ -591,7 +591,7 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 18, vertical: 12),
+                                horizontal: 14, vertical: 12),
                           ),
                           child: const Text(
                             "Create Game",

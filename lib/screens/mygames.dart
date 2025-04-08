@@ -34,7 +34,8 @@ class _MyGamesState extends State<MyGames> {
   final PageController _pageController = PageController(viewportFraction: 0.7);
   final UserServices userServices = UserServices();
   final GameServices gameServices = GameServices();
-  final GameHistoryService historyService = GameHistoryService(); // Initialize history service
+  final GameHistoryService historyService =
+      GameHistoryService(); // Initialize history service
   final PanelController _panelController = PanelController();
 
   bool _isLoadedGames = false;
@@ -76,7 +77,6 @@ class _MyGamesState extends State<MyGames> {
     _gameNameTextController.dispose();
     super.dispose();
   }
-
 
   Future<void> _loadGamesMethod() async {
     if (_isLoadedGames) return;
@@ -775,7 +775,9 @@ class _MyGamesState extends State<MyGames> {
                           )
                         else
                           IconButton(
-                            icon: Icon(Icons.refresh, color: isDarkMode ? Colors.white : Colors.black),
+                            icon: Icon(Icons.refresh,
+                                color:
+                                    isDarkMode ? Colors.white : Colors.black),
                             onPressed: () {
                               if (_isEditingTitle) _saveTitleChanges();
                               setState(() {
@@ -927,8 +929,12 @@ class _MyGamesState extends State<MyGames> {
                                                   style: TextStyle(
                                                     color: isDarkMode
                                                         ? AppColors.textPrimary
-                                                        : _slideUpPanelValue > slideValueThreshold ? Colors.white : AppColors.cardBackground,
-                                                        // AppColors.cardBackground,
+                                                        : _slideUpPanelValue >
+                                                                slideValueThreshold
+                                                            ? Colors.white
+                                                            : AppColors
+                                                                .cardBackground,
+                                                    // AppColors.cardBackground,
                                                     fontSize: 25,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -1075,7 +1081,7 @@ class _MyGamesState extends State<MyGames> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                        Image.asset(
+                      Image.asset(
                         games[index].icon.replaceFirst('assets/', ''),
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
@@ -1160,12 +1166,12 @@ class _MyGamesState extends State<MyGames> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isDarkMode
-                            ? AppColors.accentDarkmode2
-                            : Color(0xFF102247),
+                        ? AppColors.accentDarkmode2
+                        : Color(0xFF102247),
                     border: Border.all(
                       color: isDarkMode
-                            ? AppColors.white
-                            :Color.fromARGB(255, 189, 197, 255),
+                          ? AppColors.white
+                          : Color.fromARGB(255, 189, 197, 255),
                       width: 3,
                     ),
                   ),
@@ -1174,8 +1180,8 @@ class _MyGamesState extends State<MyGames> {
                       Icons.cloud_upload_outlined,
                       size: 90,
                       color: isDarkMode
-                            ? AppColors.white
-                            :Color.fromARGB(255, 189, 197, 255),
+                          ? AppColors.white
+                          : Color.fromARGB(255, 189, 197, 255),
                     ),
                   ),
                 )
@@ -1251,9 +1257,10 @@ class _MyGamesState extends State<MyGames> {
                         String gameRefToDelete = games[_currentPage].ref;
                         String userEmail =
                             FirebaseAuth.instance.currentUser!.email!;
-                            
+
                         // Create a DocumentReference from the path string
-                        DocumentReference gameDocRef = FirebaseFirestore.instance.doc(gameRefToDelete);
+                        DocumentReference gameDocRef =
+                            FirebaseFirestore.instance.doc(gameRefToDelete);
 
                         int deletedPageIndex = _currentPage;
                         int newPageIndex =
@@ -1269,7 +1276,7 @@ class _MyGamesState extends State<MyGames> {
                           path: gameRefToDelete,
                           email: userEmail,
                         );
-                        
+
                         // Also remove the game from history
                         await historyService.removeGameFromHistory(
                           email: userEmail,
@@ -1494,7 +1501,7 @@ class _MyGamesState extends State<MyGames> {
                 colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
               const SizedBox(width: 8),
-               Text(
+              Text(
                 AppLocalizations.of(context)!.playGame,
                 style: TextStyle(
                   color: Colors.white,
