@@ -42,7 +42,7 @@ class Routes {
 
   // Profile
   static const String profilePage = '/profile';
-  static const String editProfilePage = 'edit-profile';
+  static const String editProfilePage = '/edit-profile';
   static const String nestedEditProfilePageFromProfile = '/profile/edit-profile';
 
   // Settings

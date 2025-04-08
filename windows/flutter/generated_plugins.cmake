@@ -3,6 +3,13 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+  audioplayers_windows
+=======
+>>>>>>> d0067ff7b62028897415e0065a22a7703c23f2c3
+>>>>>>> Stashed changes
   cloud_firestore
   firebase_auth
   firebase_core

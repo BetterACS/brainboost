@@ -1,10 +1,16 @@
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/router/routes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+<<<<<<< Updated upstream
+=======
+import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+>>>>>>> Stashed changes
 
 class History extends StatefulWidget {
   @override
@@ -31,6 +37,25 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<Map<String, dynamic>> getGameInfo(Map<String, dynamic> game) async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('games')
+          .doc(game['game_id'])
+          .get();
+
+      if (doc.exists) {
+        return doc.data() as Map<String, dynamic>;
+      } else {
+        print("Game document not found for ID: ${game['game_id']}");
+        return {};
+      }
+    } catch (error) {
+      print("Error fetching game info: $error");
+      return {};
+    }
   }
 
   @override
@@ -159,12 +184,51 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
           itemCount: allGames.length,
           itemBuilder: (context, index) {
             var game = allGames[index];
+<<<<<<< Updated upstream
             return HistoryItem(
               title: game['game_name'] ?? 'Unknown',
               date: (game['played_at'] as Timestamp?)?.toDate().toString() ??
                   'No date',
               imagePath: game['image_game'] ?? '',
               onPressed: () => print(game['game_name'] ?? 'Unknown'),
+=======
+            var timestamp = game['played_at'] as Timestamp?;
+            var dateTime = timestamp?.toDate();
+            var formattedDate = dateTime != null
+                ? DateFormat('dd MMM yyyy').format(dateTime)
+                : 'No date';
+
+            return FutureBuilder<Map<String, dynamic>>(
+              future: getGameInfo(game),
+              builder: (context, gameInfoSnapshot) {
+                // Use game info if available, otherwise fall back to history data
+                String iconPath = "assets/${game['icon']}";
+                var reference = game;
+
+                if (gameInfoSnapshot.connectionState == ConnectionState.done &&
+                    gameInfoSnapshot.hasData &&
+                    gameInfoSnapshot.data!.isNotEmpty) {
+                  // Use data from games collection if available
+                  iconPath =
+                      "assets/${gameInfoSnapshot.data!['icon'] ?? game['icon']}";
+
+                  // Create a merged reference with both game history and game details
+                  reference = {
+                    ...game,
+                    'gameDetails': gameInfoSnapshot.data,
+                    'reference': 'games/${game['game_id']}'
+                  };
+                }
+
+                return HistoryItem(
+                  title: game['game_name'] ?? 'Unknown',
+                  date: formattedDate,
+                  imagePath: iconPath,
+                  gameId: game['game_id'],
+                  // No need for onPressed or document reference - component handles it
+                );
+              },
+>>>>>>> Stashed changes
             );
           },
         );

@@ -1,6 +1,7 @@
 # ignore window / macos build
 windows/flutter/*
 macos/flutter/*
+android/*
 
 # ignore .firebaserc for all examples
 **/.firebaserc

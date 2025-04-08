@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/games.dart';
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:brainboost/screens/game_bingo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -34,7 +34,7 @@ class GameWrapper extends StatefulWidget {
 
 class _GameWrapperState extends State<GameWrapper>
     with SingleTickerProviderStateMixin {
-  final player = AudioPlayer();
+  // final player = AudioPlayer();
   int gameIndex = 0;
   int score = 0;
   double prevGameIndex = 0;
@@ -103,8 +103,8 @@ class _GameWrapperState extends State<GameWrapper>
     //     'gameIndex: $gameIndex, games.length: ${widget.games.length}, ${(widget.games[gameIndex].content as GameYesNoContent).correct_ans} ${(widget.games[gameIndex].content as GameYesNoContent).question}');
 
     if (gameIndex >= widget.games.length - 1) {
-      await player.play(
-          AssetSource('sounds/game-level-complete-universfield-pixabay.mp3'));
+      // await player.play(
+      //     AssetSource('sounds/game-level-complete-universfield-pixabay.mp3'));
 
       // Stop the timer when all games are completed
       _timer?.cancel();

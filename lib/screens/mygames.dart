@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/models/games.dart';
@@ -14,13 +15,13 @@ import 'package:brainboost/component/panel_slider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/services/games.dart';
+import 'package:brainboost/services/history.dart'; // Import the history service
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:brainboost/utils/game_creator.dart';
 import 'dart:io' as io;
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
@@ -33,6 +34,7 @@ class _MyGamesState extends State<MyGames> {
   final PageController _pageController = PageController(viewportFraction: 0.7);
   final UserServices userServices = UserServices();
   final GameServices gameServices = GameServices();
+  final GameHistoryService historyService = GameHistoryService(); // Initialize history service
   final PanelController _panelController = PanelController();
 
   bool _isLoadedGames = false;
@@ -74,6 +76,7 @@ class _MyGamesState extends State<MyGames> {
     _gameNameTextController.dispose();
     super.dispose();
   }
+
 
   Future<void> _loadGamesMethod() async {
     if (_isLoadedGames) return;
@@ -772,7 +775,7 @@ class _MyGamesState extends State<MyGames> {
                           )
                         else
                           IconButton(
-                            icon: Icon(Icons.refresh, color: Colors.white),
+                            icon: Icon(Icons.refresh, color: isDarkMode ? Colors.white : Colors.black),
                             onPressed: () {
                               if (_isEditingTitle) _saveTitleChanges();
                               setState(() {
@@ -1072,12 +1075,12 @@ class _MyGamesState extends State<MyGames> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Image.asset(
-                        games[index].icon,
+                        Image.asset(
+                        games[index].icon.replaceFirst('assets/', ''),
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            'animations/map2.GIF',
+                            'assets/animations/map2.GIF',
                             fit: BoxFit.contain,
                           );
                         },
@@ -1248,6 +1251,9 @@ class _MyGamesState extends State<MyGames> {
                         String gameRefToDelete = games[_currentPage].ref;
                         String userEmail =
                             FirebaseAuth.instance.currentUser!.email!;
+                            
+                        // Create a DocumentReference from the path string
+                        DocumentReference gameDocRef = FirebaseFirestore.instance.doc(gameRefToDelete);
 
                         int deletedPageIndex = _currentPage;
                         int newPageIndex =
@@ -1258,9 +1264,16 @@ class _MyGamesState extends State<MyGames> {
                           toggleSlideUpPanel(0.0);
                         });
 
+                        // Delete the game from games collection
                         await gameServices.deleteGame(
                           path: gameRefToDelete,
                           email: userEmail,
+                        );
+                        
+                        // Also remove the game from history
+                        await historyService.removeGameFromHistory(
+                          email: userEmail,
+                          gamePath: gameDocRef,
                         );
 
                         if (mounted) {

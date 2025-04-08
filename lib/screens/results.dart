@@ -74,7 +74,7 @@ class ResultsPage extends StatelessWidget {
               const SizedBox(height: 30),
               _buildScoreRow(context, correct, wrong, time, isDarkMode),
               const SizedBox(height: 20),
-              _buildImprovementText(context, isDarkMode),
+              // _buildImprovementText(context, isDarkMode),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -199,18 +199,18 @@ class ResultsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildImprovementText(BuildContext context, bool isDarkMode) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 250),
-      child: Text(
-        AppLocalizations.of(context)!.imporvetext, 
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: isDarkMode ? Colors.white70 : Colors.black,
-        ),
-      ),
-    );
-  }
+  // Widget _buildImprovementText(BuildContext context, bool isDarkMode) {
+  //   return ConstrainedBox(
+  //     constraints: const BoxConstraints(maxWidth: 250),
+  //     child: Text(
+  //       AppLocalizations.of(context)!.imporvetext, 
+  //       textAlign: TextAlign.center,
+  //       style: TextStyle(
+  //         fontSize: 20,
+  //         fontWeight: FontWeight.bold,
+  //         color: isDarkMode ? Colors.white70 : Colors.black,
+  //       ),
+  //     ),
+  //   );
+  // }
 }

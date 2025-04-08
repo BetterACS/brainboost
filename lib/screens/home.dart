@@ -434,20 +434,15 @@ Widget _buildCircularChartPage() {
       ),
     );
   }
-
 Widget _buildCreateButtons(BuildContext context) {
-  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
     child: Container(
-      height: 160,
+      height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        gradient: isDarkMode
-            ? AppColors.buttonGradientDark
-            : AppColors.buttonGradient,
+        gradient: AppColors.buttonGradient,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -456,97 +451,100 @@ Widget _buildCreateButtons(BuildContext context) {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: CustomPaint(
-                painter: CloudPainter(),
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
               ),
+              child: SizedBox(
+                child: CustomPaint(
+                  size: const Size(double.infinity, 100),
+                  painter: CloudPainter(),
+                ),
+              ), 
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                             AppLocalizations.of(context)!.expianedmaincreategame,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              AppLocalizations.of(context)!.expianedcreategame,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        const Text(
-                          "Make studying fun!\nUpload your file to play.",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const Spacer(),
-                        ElevatedButton(
-                          onPressed: () {
-                            // TODO: Add navigation or logic
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.yellow[700],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.createGame,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Let’s Gamify Your Learning!",
                             style: TextStyle(
-                              fontSize: 14,
+                              color: Colors.white,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF002654),
                             ),
                           ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Make studying fun! Just upload your file\nand start playing.",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) =>
+                          //           const CreateGameScreen()),
+                          // );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.yellow[700],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                         ),
-                      ],
-                    ),
+                        child: const Text(
+                          "Create Game",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF002654),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
+                ),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.contain,
                     child: Image.asset(
                       'assets/images/rockety.webp',
-                      height: 140,
-                      fit: BoxFit.contain,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );
 }
-
 
   Widget _buildHistorySection() {
     final String? email = FirebaseAuth.instance.currentUser?.email;
@@ -605,8 +603,92 @@ Widget _buildCreateButtons(BuildContext context) {
                 return const Center(child: CircularProgressIndicator());
               }
 
+<<<<<<< Updated upstream
               if (!snapshot.hasData || !snapshot.data!.exists) {
                 return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+=======
+              if (numberGames == 0) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? AppColors.backgroundDarkmode : AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 15),
+                      Text(
+                        AppLocalizations.of(context)!.historyWillAppearHere,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : AppColors.buttonText,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        AppLocalizations.of(context)!.completeGameToSeeHistory,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : AppColors.buttonText,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('history')
+                      .doc(email)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || !snapshot.data!.exists) {
+                      return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+                    }
+
+                    var docData =
+                        snapshot.data!.data() as Map<String, dynamic>? ?? {};
+                    List<Map<String, dynamic>> allGames =
+                        (docData['data'] as List<dynamic>?)
+                                ?.whereType<Map<String, dynamic>>()
+                                .toList() ??
+                            [];
+
+                    if (allGames.isEmpty) {
+                      return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+                    }
+
+                    final gamesToShow = allGames.take(2).toList();
+
+                    return Column(
+                      children: gamesToShow
+                          .map((game) => HistoryItem(
+                                title: game['game_name'] ?? 'Unknown',
+                                date: DateFormat('dd MMM yyyy').format((game['played_at'] as Timestamp).toDate()),
+                                imagePath: "assets/${game['icon']}", 
+                                // gameId: game['game_id'],
+                                documentReference: game['game_id'],
+                              ))
+                          .toList(),
+                    );
+                  },
+                );
+>>>>>>> Stashed changes
               }
 
               var docData =
