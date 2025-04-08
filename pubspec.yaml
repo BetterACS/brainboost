@@ -53,6 +53,8 @@ dependencies:
   # cached_network_image_platform_interface: ^4.1.1
   shared_preferences: ^2.5.3
   image_picker: ^1.0.4
+  # intl: ^0.18.1
+
 
 
 dependency_overrides:

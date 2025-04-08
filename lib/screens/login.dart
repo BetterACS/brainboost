@@ -24,6 +24,7 @@ class Login extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 100,
+        automaticallyImplyLeading: false, // Add this line to hide the back button
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -329,10 +330,6 @@ class Login extends StatelessWidget {
                     fontSize: 16),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => Signup()),
-                    // );
                     context.push("/signup");
                   }),
           ])),

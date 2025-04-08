@@ -160,5 +160,11 @@
   "exitmodal2": "Are you sure you want to leave?",
   "exit": "Exit Game",
 
-  "importGame": "Import Game"
+  "importGame": "Import Game",
+  "completeGame": "Complete a game",
+  "seeProgress": "to see your progress!",
+  "noRecentGames": "No Recent Games",
+  "playFirstGame": "Play your first game!",
+  "historyWillAppearHere": "Your Learning History Will Appear Here",
+  "completeGameToSeeHistory": "Complete a game to see your history!"
 }
