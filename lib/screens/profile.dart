@@ -1,5 +1,6 @@
 import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/screens/welcomepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/services/auth_services.dart';
@@ -65,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-                title: Text(
+        title: Text(
           AppLocalizations.of(context)!.myProfile,
           style: TextStyle(
             color: isDarkMode ? Colors.white : AppColors.buttonText,
@@ -98,7 +99,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           Column(
             children: [
-              const ProfileHeaderWidget(),
+              ProfileHeaderWidget(
+                username: username,
+                email: email,
+              ),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
@@ -137,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               CircleAvatar(
                 radius: 16,
-                backgroundColor:  AppColors.buttonText, 
+                backgroundColor: AppColors.buttonText,
                 child: IconButton(
                   icon: const Icon(
                     Icons.camera_alt,
@@ -200,7 +204,6 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           _buildOption(
             icon: Icons.edit,
-     
             isDarkMode: isDarkMode,
             title: AppLocalizations.of(context)!.editProfile,
             onTap: () {
@@ -225,7 +228,9 @@ class _ProfilePageState extends State<ProfilePage> {
               valueListenable: themeNotifier,
               builder: (context, currentTheme, child) {
                 return Text(
-                  currentTheme == ThemeMode.light ? AppLocalizations.of(context)!.lightOpen : AppLocalizations.of(context)!.darkOpen,
+                  currentTheme == ThemeMode.light
+                      ? AppLocalizations.of(context)!.lightOpen
+                      : AppLocalizations.of(context)!.darkOpen,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isDarkMode ? Colors.white : Colors.black,
@@ -348,7 +353,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 10),
                     Text(
                       AppLocalizations.of(context)!.areYouSureLogout,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                       ),
@@ -357,46 +362,63 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 30),
                     Row(
                       children: [
+                        // ปุ่ม Cancel
                         Expanded(
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.red,
-                              side: const BorderSide(
-                                color: Colors.red,
-                                width: 2,
-                              ),
+                              side:
+                                  const BorderSide(color: Colors.red, width: 2),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
+                            onPressed: () => Navigator.of(context).pop(),
                             child: Text(AppLocalizations.of(context)!.cancel),
                           ),
                         ),
                         const SizedBox(width: 12),
+                        // ปุ่ม Logout
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.errorIcon,
+                              backgroundColor: Colors
+                                  .red, // ใช้ Colors.red แทน AppColors.errorIcon
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
                             onPressed: () async {
-                              // Close the dialog
-                              Navigator.of(context).pop();
-                              // Navigate to login screen replacing the current page and clearing history
-                              // context.go('/login');
-                              
-                              await AuthService().signout(context: context);
-                              // Show success message
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(AppLocalizations.of(context)!.loggedOutSuccess),
-                                ),
-                              );
+                              try {
+                                await AuthService().signout(context: context);
+
+                                if (context.mounted) {
+                                  Navigator.of(context)
+                                      .pop(); // ปิด AlertDialog ก่อน
+                                }
+
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        AppLocalizations.of(context)!
+                                            .loggedOutSuccess,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                if (context.mounted) {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                      builder: (context) => WelcomePage(),
+                                    ),
+                                    (route) => false, // เคลียร์ทุกหน้าใน Stack
+                                  );
+                                }
+                              } catch (e) {
+                                print("Error logging out: $e");
+                              }
                             },
                             child: Text(
                               AppLocalizations.of(context)!.logOut,
@@ -415,17 +437,21 @@ class _ProfilePageState extends State<ProfilePage> {
       },
       child: Text(
         AppLocalizations.of(context)!.logOut,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
 }
 
 class ProfileHeaderWidget extends StatefulWidget {
-  const ProfileHeaderWidget({Key? key}) : super(key: key);
+  final String username;
+  final String email;
+
+  const ProfileHeaderWidget({
+    Key? key,
+    required this.username,
+    required this.email,
+  }) : super(key: key);
 
   @override
   State<ProfileHeaderWidget> createState() => _ProfileHeaderWidgetState();
@@ -514,10 +540,10 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
           });
           return;
         }
-        
+
         fileBytes = result.files.first.bytes;
         fileName = result.files.first.name;
-        
+
         if (fileBytes == null) {
           setState(() {
             isUploading = false;
@@ -527,7 +553,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       } else {
         // Mobile platform: use ImagePicker
         final ImagePicker picker = ImagePicker();
-        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+        final XFile? image =
+            await picker.pickImage(source: ImageSource.gallery);
 
         if (image == null) {
           setState(() {
@@ -535,7 +562,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
           });
           return;
         }
-        
+
         fileBytes = await image.readAsBytes();
         fileName = image.name;
       }
@@ -544,7 +571,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       final storageRef = FirebaseStorage.instance
           .ref()
           .child('profile_images')
-          .child('${currentUser!.email}_${DateTime.now().millisecondsSinceEpoch}_$fileName');
+          .child(
+              '${currentUser!.email}_${DateTime.now().millisecondsSinceEpoch}_$fileName');
 
       // Upload to Firebase Storage
       if (kIsWeb) {
@@ -552,13 +580,14 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       } else {
         await storageRef.putData(fileBytes);
       }
-      
+
       final newPhotoUrl = await storageRef.getDownloadURL();
       final storagePath = storageRef.fullPath;
 
       // Update Firestore through our service
       await UserServices().updateProfile(
-        email: currentUser!.email!,
+        username: currentUser?.displayName ?? '',
+        email: currentUser?.email ?? '',
         profileImageUrl: storagePath,
       );
 
@@ -571,7 +600,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       // Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile picture updated successfully!')),
+          const SnackBar(
+              content: Text('Profile picture updated successfully!')),
         );
       }
     } catch (e) {
@@ -621,17 +651,21 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
                   width: 120,
                   imageUrl: profileImageUrl ?? 'assets/images/profile.png',
                 ),
-              
+
               // Edit icon button
               GestureDetector(
                 onTap: _changeProfileImage,
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.accentDarkmode : AppColors.primaryBackground,
+                    color: isDarkMode
+                        ? AppColors.accentDarkmode
+                        : AppColors.primaryBackground,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isDarkMode ? AppColors.backgroundDarkmode : Colors.white,
+                      color: isDarkMode
+                          ? AppColors.backgroundDarkmode
+                          : Colors.white,
                       width: 2,
                     ),
                   ),
@@ -646,7 +680,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
           ),
           const SizedBox(height: 20),
           Text(
-            FirebaseAuth.instance.currentUser?.displayName ?? 'Guest',
+            widget.username,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -655,7 +689,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
           ),
           const SizedBox(height: 4),
           Text(
-            FirebaseAuth.instance.currentUser?.email ?? 'No Email',
+            widget.email,
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,
