@@ -18,6 +18,7 @@ import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
 import 'package:brainboost/screens/game_bingo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class CloudPainter extends CustomPainter {
   @override
@@ -757,10 +758,7 @@ Widget _buildCreateButtons(BuildContext context) {
                       children: gamesToShow
                           .map((game) => HistoryItem(
                                 title: game['game_name'] ?? 'Unknown',
-                                date: (game['played_at'] as Timestamp?)
-                                        ?.toDate()
-                                        .toString() ??
-                                    'No date',
+                                date: DateFormat('dd MMM yyyy').format((game['played_at'] as Timestamp).toDate()),
                                 imagePath: game['image_game'] ?? '',
                                 onPressed: () =>
                                     print(game['game_name'] ?? 'Unknown'),

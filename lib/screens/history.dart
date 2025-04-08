@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class History extends StatefulWidget {
   @override
@@ -167,8 +168,7 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
                 : 'No date';
             return HistoryItem(
               title: game['game_name'] ?? 'Unknown',
-              date: (game['played_at'] as Timestamp?)?.toDate().toString() ??
-                  'No date',
+              date: formattedDate,
               imagePath: game['image_game'] ?? '',
               onPressed: () => print(game['game_name'] ?? 'Unknown'),
             );
