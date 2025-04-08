@@ -17,6 +17,8 @@ class SettingsPage extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor:
+          isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
@@ -31,9 +33,10 @@ class SettingsPage extends StatelessWidget {
             ),
           ),
           centerTitle: true,
-          leading: const Padding(
+          leading: Padding(
             padding: EdgeInsets.only(top: 20),
-            child: BackButton(color: Colors.black),
+            child: BackButton(
+                color: isDarkMode ? AppColors.mainColor : AppColors.gray),
           ),
           backgroundColor:
               isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
@@ -55,9 +58,7 @@ class SettingsPage extends StatelessWidget {
               AppLocalizations.of(context)!.language,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isDarkMode
-                    ? AppColors.accentDarkmode
-                    : AppColors.buttonText,
+                color: isDarkMode ? AppColors.white : AppColors.buttonText,
               ),
             ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -76,9 +77,7 @@ class SettingsPage extends StatelessWidget {
               AppLocalizations.of(context)!.aboutapp,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isDarkMode
-                    ? AppColors.accentDarkmode
-                    : AppColors.buttonText,
+                color: isDarkMode ? AppColors.white : AppColors.buttonText,
               ),
             ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -113,6 +112,8 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor:
+          isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
@@ -132,7 +133,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
             child: BackButton(color: Colors.black),
           ),
           backgroundColor:
-              isDarkMode ? AppColors.backgroundDarkmode : AppColors.buttonText,
+              isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
@@ -152,9 +153,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
               'English',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isDarkMode
-                    ? AppColors.accentDarkmode
-                    : AppColors.buttonText,
+                color: isDarkMode ? AppColors.white : AppColors.buttonText,
               ),
             ),
             value: 'English',
@@ -165,16 +164,15 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
               });
               await switchLanguage('en');
             },
-            activeColor: isDarkMode
-                    ? AppColors.accentDarkmode
-                    : AppColors.buttonText,
+            activeColor: isDarkMode ? AppColors.white : AppColors.buttonText,
           ),
           RadioListTile<String>(
             title: Text(
               'Thai',
-              style: TextStyle(fontWeight: FontWeight.bold,   color: isDarkMode
-                    ? AppColors.accentDarkmode
-                    : AppColors.buttonText,),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? AppColors.white : AppColors.buttonText,
+              ),
             ),
             value: 'Thai',
             groupValue: _selectedLanguage,
@@ -184,9 +182,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
               });
               await switchLanguage('th');
             },
-            activeColor: isDarkMode
-                    ? AppColors.accentDarkmode
-                    : AppColors.buttonText,
+            activeColor: isDarkMode ? AppColors.white : AppColors.buttonText,
           ),
         ],
       ),
@@ -199,7 +195,11 @@ class AboutAppPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor:
+          isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
@@ -209,7 +209,7 @@ class AboutAppPage extends StatelessWidget {
               'About App',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF092866),
+                color: AppColors.white,
               ),
             ),
           ),
@@ -218,49 +218,50 @@ class AboutAppPage extends StatelessWidget {
             padding: EdgeInsets.only(top: 20),
             child: BackButton(color: Colors.black),
           ),
-          backgroundColor: const Color(0xFFECF5FF),
+          backgroundColor:
+              isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(
-              color: const Color(0xFF092866),
+              color: isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
               height: 1,
             ),
           ),
         ),
       ),
       body: ListView(
-        children: const [
+        children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Text(
               'Version 3.3.1',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Color(0xFF05235F),
+                color: isDarkMode ? AppColors.white : AppColors.buttonText,
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
               'Terms of Use',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Color(0xFF05235F),
+                color: isDarkMode ? AppColors.white : AppColors.buttonText,
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
               'Play to learn application make you\nmemorize class lecture more efficiently',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.black87,
+                color: isDarkMode ? AppColors.white : AppColors.accentDarkmode,
               ),
             ),
           ),
