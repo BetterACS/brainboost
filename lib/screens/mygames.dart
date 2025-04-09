@@ -1134,74 +1134,136 @@ class _MyGamesState extends State<MyGames> {
     );
   }
 
-  Widget _buildAddGameCard(bool isSelected) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+Widget _buildAddGameCard(bool isSelected) {
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return GestureDetector(
-      onTap: () {
-        if (isSelected) {
-          if (_slideUpPanelValue <= slideValueThreshold) {
-            setState(() {
-              _slideUpPanelValue = 1.0;
-              _panelController.open();
-              _isEditingTitle = true;
-              _titleEditController.text = _newGameTitle;
-              _gameNameTextController.text = _newGameTitle;
-            });
-          } else {
-            if (_isEditingTitle) {
-              _saveTitleChanges();
-            }
-
-            pickFile();
+  return GestureDetector(
+    onTap: () {
+      if (isSelected) {
+        if (_slideUpPanelValue <= slideValueThreshold) {
+          setState(() {
+            _slideUpPanelValue = 1.0;
+            _panelController.open();
+            _isEditingTitle = true;
+            _titleEditController.text = _newGameTitle;
+            _gameNameTextController.text = _newGameTitle;
+          });
+        } else {
+          if (_isEditingTitle) {
+            _saveTitleChanges();
           }
+
+          pickFile();
         }
-      },
-      child: Transform.scale(
-        scale: isSelected ? 1.2 : 0.85,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          transform: Matrix4.identity()
-            ..translate(0.0, isSelected ? -2.0 : 12.0, isSelected ? 10.0 : 0.0),
-          alignment: Alignment.center,
-          child: _slideUpPanelValue > slideValueThreshold
-              ? Container(
-                  width: 160,
-                  height: 160,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+      }
+    },
+    child: Transform.scale(
+      scale: isSelected ? 1.2 : 0.85,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        transform: Matrix4.identity()
+          ..translate(0.0, isSelected ? -2.0 : 12.0, isSelected ? 10.0 : 0.0),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // วงกลม
+            _slideUpPanelValue > slideValueThreshold
+                ? Container(
+                    width: 160,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isDarkMode
+                          ? AppColors.accentDarkmode2
+                          : const Color(0xFF102247),
+                      border: Border.all(
+                        color: isDarkMode
+                            ? AppColors.white
+                            : const Color.fromARGB(255, 189, 197, 255),
+                        width: 3,
+                      ),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.cloud_upload_outlined,
+                            size: 90,
+                            color: isDarkMode
+                                ? AppColors.white
+                                : const Color.fromARGB(255, 189, 197, 255),
+                          ),
+                          Text(
+                            'Upload file',
+                            style: TextStyle(
+                              color: isDarkMode
+                                  ? AppColors.white
+                                  : const Color.fromARGB(255, 189, 197, 255),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : SvgPicture.asset(
+                    "assets/images/add-icon.svg",
+                    fit: BoxFit.contain,
                     color: isDarkMode
-                            ? AppColors.accentDarkmode2
-                            : Color(0xFF102247),
-                    border: Border.all(
+                        ? AppColors.textPrimary
+                        : AppColors.cardBackground,
+                    colorBlendMode: BlendMode.srcIn,
+                  ),
+            const SizedBox(height: 16),
+            // or
+            if (_slideUpPanelValue > slideValueThreshold)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 30,
+                    child: Container(
+                      height: 1,
                       color: isDarkMode
-                            ? AppColors.white
-                            :Color.fromARGB(255, 189, 197, 255),
-                      width: 3,
+                          ? AppColors.white
+                          : const Color.fromARGB(255, 189, 197, 255),
                     ),
                   ),
-                  child: Center(
-                    child: Icon(
-                      Icons.cloud_upload_outlined,
-                      size: 90,
+                  const SizedBox(width: 8),
+                  Text(
+                    'or',
+                    style: TextStyle(
                       color: isDarkMode
-                            ? AppColors.white
-                            :Color.fromARGB(255, 189, 197, 255),
+                          ? AppColors.white
+                          : const Color.fromARGB(255, 189, 197, 255),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                )
-              : SvgPicture.asset(
-                  "assets/images/add-icon.svg",
-                  fit: BoxFit.contain,
-                  color: isDarkMode
-                      ? AppColors.textPrimary
-                      : AppColors.cardBackground,
-                  colorBlendMode: BlendMode.srcIn,
-                ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 30,
+                    child: Container(
+                      height: 1,
+                      color: isDarkMode
+                          ? AppColors.white
+                          : const Color.fromARGB(255, 189, 197, 255),
+                    ),
+                  ),
+                ],
+              ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
+
 
   Widget _buildOptionIcons() {
     return Stack(

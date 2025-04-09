@@ -117,43 +117,47 @@ class AuthService {
   //   }
   // }
 
-  Future<UserCredential?> signInWithGoogle({required BuildContext context}) async {
-    try {
-      final googleProvider = GoogleAuthProvider();
-      UserCredential result;
+ Future<UserCredential?> signInWithGoogle({required BuildContext context}) async {
+  try {
+    final googleProvider = GoogleAuthProvider();
+    UserCredential result;
 
-      if (kIsWeb) {
-        // Web sign-in
-        result = await FirebaseAuth.instance.signInWithPopup(googleProvider);
-      } else {
-        // Mobile/Desktop sign-in
-        final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: ['email', 'profile']).signIn();
-        if (googleUser == null) return null;
+    if (kIsWeb) {
+      result = await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    } else {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: ['email', 'profile']).signIn();
+      if (googleUser == null) return null;
 
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-        result = await FirebaseAuth.instance.signInWithCredential(credential);
-
-        // ✅ You can use googleUser.photoUrl if you want the image immediately:
-        print("Cached photoURL from GoogleSignIn: ${googleUser.photoUrl}");
-      }
-
-      final user = result.user;
-      if (user != null) {
-        print("Firebase photoURL: ${user.photoURL}");
-        context.go('/home');
-      }
-
-      return result;
-    } catch (e) {
-      print('❌ Error during Google sign-in: $e');
-      return null;
+      result = await FirebaseAuth.instance.signInWithCredential(credential);
+      print("Cached photoURL from GoogleSignIn: ${googleUser.photoUrl}");
     }
+
+    final user = result.user;
+    if (user != null) {
+      final docRef = FirebaseFirestore.instance.collection('users').doc(user.email);
+      final doc = await docRef.get();
+
+      if (!doc.exists) {
+        await userServices.addUser(email: user.email!);
+      } else {
+        await docRef.update({'latest_login': FieldValue.serverTimestamp()});
+      }
+
+      context.go('/home');
+    }
+
+    return result;
+  } catch (e) {
+    print('❌ Error during Google sign-in: $e');
+    return null;
   }
+}
 
 }
