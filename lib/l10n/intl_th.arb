@@ -211,7 +211,12 @@
 "failedToUpdateIcon": "ไม่สามารถอัปเดตไอคอน:",
 "refreshgame":"โหลดเกมอีกครั้ง",
 "enterNewTitle": "ป้อนชื่อเรื่องใหม่",
-"saveTitleChanges": "บันทึกการเปลี่ยนแปลงชื่อเรื่อง"
+"saveTitleChanges": "บันทึกการเปลี่ยนแปลงชื่อเรื่อง",
+  "boost": "บูสต์",
 
-
+"brainToSky": "สมอง\nของคุณสู่ท้องฟ้า",
+  "submit": "ส่ง",
+"errorSigningInWithGoogle": "เกิดข้อผิดพลาดในการลงชื่อเข้าใช้ด้วย Google: {error}",
+"appDescription": "แอปพลิเคชันเล่นเพื่อเรียนรู้ช่วยให้คุณ\nจดจำเนื้อหาการเรียนได้อย่างมีประสิทธิภาพมากขึ้น",
+"signInWithGoogle": "เข้าสู่ระบบด้วย Google"
 }

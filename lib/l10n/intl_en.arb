@@ -203,7 +203,14 @@
 
 "refreshgame":"Refresh Games",
 "enterNewTitle": "Enter new title",
-"saveTitleChanges": "Save title changes"
+"saveTitleChanges": "Save title changes",
+
+ "brainToSky": "your\nbrain to the sky",
+  "submit": "Submit",
+"errorSigningInWithGoogle": "Error signing in with Google: {error}",
+"appDescription": "Play to learn application make you\nmemorize class lecture more efficiently",
+ "signInWithGoogle": "Sign in with Google",
+  "boost": "boost"
 
 
 }

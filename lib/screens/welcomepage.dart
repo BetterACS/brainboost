@@ -2,7 +2,7 @@ import 'package:brainboost/screens/login.dart';
 import 'package:brainboost/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class _CloudPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -94,8 +94,8 @@ class WelcomePage extends StatelessWidget {
                                   color: Colors.amber,
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12.0, vertical: 6.0),
-                                  child: const Text(
-                                    "boost",
+                                  child: Text(
+                                    AppLocalizations.of(context)!.boost,
                                     style: TextStyle(
                                       color: Color(0xFFF5F8FC),
                                       fontWeight: FontWeight.bold,
@@ -105,14 +105,14 @@ class WelcomePage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const TextSpan(text: " your\nbrain to the sky"),
+                            TextSpan(text: AppLocalizations.of(context)!.brainToSky),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      "Play to learn application make you\nmemorize class lecture more efficiently",
+                      AppLocalizations.of(context)!.appDescription,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.raleway(
                         fontWeight: FontWeight.bold,
@@ -139,9 +139,9 @@ class WelcomePage extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  'Error signing in with Google: $e'),
+                                  AppLocalizations.of(context)!.errorSigningInWithGoogle(e.toString())),
                               action: SnackBarAction(
-                                label: 'submit',
+                                label: AppLocalizations.of(context)!.submit,
                                 onPressed: () async {
                                   await AuthService().signup(
                                     email: _emailController.text,
@@ -156,8 +156,8 @@ class WelcomePage extends StatelessWidget {
                       },
 
                       // },
-                      child: const Text(
-                        "Sign in with google",
+                      child: Text(
+                        AppLocalizations.of(context)!.signInWithGoogle,
                         style: TextStyle(
                           color: Color(0xff002366),
                           fontWeight: FontWeight.bold,
