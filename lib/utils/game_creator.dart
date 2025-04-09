@@ -113,6 +113,7 @@ Future<void> createGameFunction(
 
 
     var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
+    
     print("Game dict: $gameDict");
     GameServices gamesServices = GameServices();
 
@@ -226,7 +227,6 @@ Future<void> addLectureToGame(
     currentStage.value = CreationStage.personalizing;
     dialogMessage.value = "Get your personalize";
     creationProgress.value = 0.32;
-
     String? email = FirebaseAuth.instance.currentUser!.email;
     if (email == null) {
       if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
@@ -243,6 +243,7 @@ Future<void> addLectureToGame(
 
     var decodedResponse = utf8.decode(extractResponse.bodyBytes);
     Map<String, dynamic> jsonDict = jsonDecode(decodedResponse);
+    print("Response: $jsonDict");
 
     currentStage.value = CreationStage.crafting;
     dialogMessage.value = "Crafting additional content";
