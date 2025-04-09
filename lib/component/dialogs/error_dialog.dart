@@ -14,40 +14,17 @@ class ErrorDialog extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 35),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE04545).withOpacity(0.25),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE04545).withOpacity(0.5),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Container(
-                      width: 90,
-                      height: 90,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFE04545),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.close,
-                          color: Colors.white, size: 48),
-                    ),
-                  ],
+                ClipOval(
+                  child: Image.asset(
+                    'assets/images/alert.png', // ใช้รูป alert.png
+                    width: 150, // ขนาดของวงกลม
+                    height: 150, // ขนาดของวงกลม
+                    fit: BoxFit.cover, // ให้รูปภาพไม่บิดเบี้ยว
+                  ),
                 ),
                 const SizedBox(height: 30),
                 Text(

@@ -11,6 +11,7 @@ import 'package:brainboost/component/dialogs/success_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum CreationStage { extracting, personalizing, crafting, completed }
+
 ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
 ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
 ValueNotifier<CreationStage> currentStage =
@@ -21,7 +22,8 @@ Future<void> createGameFunction(
   required String uploadLink,
   required String gameName,
   VoidCallback? onSuccess,
-  bool showInternalDialogs = true, // Add parameter to control internal dialog behavior
+  bool showInternalDialogs =
+      true, // Add parameter to control internal dialog behavior
 }) async {
   if (uploadLink.isEmpty || gameName.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -59,12 +61,16 @@ Future<void> createGameFunction(
 
     String? email = FirebaseAuth.instance.currentUser!.email;
     if (email == null) {
-      if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+      if (dialogContext != null &&
+          Navigator.canPop(dialogContext!) &&
+          showInternalDialogs) {
         Navigator.pop(dialogContext!);
       }
       showDialog(
         context: context,
-        builder: (context) => const ErrorDialog(),
+        builder: (context) => const ErrorDialog(
+          errorMessage: 'Please log in to continue.',
+        ),
       );
       return;
     }
@@ -105,12 +111,16 @@ Future<void> createGameFunction(
         media: uploadLink);
 
     if (gameID == null) {
-      if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+      if (dialogContext != null &&
+          Navigator.canPop(dialogContext!) &&
+          showInternalDialogs) {
         Navigator.pop(dialogContext!);
       }
       showDialog(
         context: context,
-        builder: (context) => const ErrorDialog(),
+        builder: (context) => ErrorDialog(
+          errorMessage: 'Failed to create the game. Please try again.',
+        ),
       );
       return;
     }
@@ -130,7 +140,9 @@ Future<void> createGameFunction(
     await Future.delayed(Duration(seconds: 1));
 
     // Close the dialog safely, only if we're showing internal dialogs
-    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+    if (dialogContext != null &&
+        Navigator.canPop(dialogContext!) &&
+        showInternalDialogs) {
       Navigator.pop(dialogContext!);
     }
 
@@ -148,21 +160,40 @@ Future<void> createGameFunction(
     }
   } catch (e) {
     print("Error during game creation: $e");
-    
-    // Make sure to close the dialog if there's an error, only if using internal dialogs
-    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
-      Navigator.pop(dialogContext!);
-    }
-    
-    // Show error dialog only if using internal dialogs
-    if (showInternalDialogs) {
-      showDialog(
-        context: context,
-        builder: (context) => ErrorDialog(),
-      );
+
+    // Check if the error is related to file size
+    if (e.toString().contains('file size')) {
+      if (dialogContext != null &&
+          Navigator.canPop(dialogContext!) &&
+          showInternalDialogs) {
+        Navigator.pop(dialogContext!);
+      }
+      // Show custom error message about file size
+      if (showInternalDialogs) {
+        showDialog(
+          context: context,
+          builder: (context) => ErrorDialog(
+            errorMessage: 'The file size is too small, please upload again.',
+          ),
+        );
+      }
     } else {
-      // If not using internal dialogs, just rethrow to let the caller handle it
-      throw e;
+      // Handle other errors
+      if (dialogContext != null &&
+          Navigator.canPop(dialogContext!) &&
+          showInternalDialogs) {
+        Navigator.pop(dialogContext!);
+      }
+      // Show generic error dialog
+      if (showInternalDialogs) {
+        showDialog(
+          context: context,
+          builder: (context) => ErrorDialog(
+            errorMessage:
+                'An error occurred or the file is too small. Please try again.',
+          ),
+        );
+      }
     }
   }
 }
@@ -173,11 +204,13 @@ Future<void> addLectureToGame(
   required String gamePath,
   required List<dynamic> existingGameData,
   VoidCallback? onSuccess,
-  bool showInternalDialogs = true, // Add parameter to control internal dialog behavior
+  bool showInternalDialogs =
+      true, // Add parameter to control internal dialog behavior
 }) async {
   if (uploadLink.isEmpty || gamePath.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Cannot add lecture: missing required information')),
+      SnackBar(
+          content: Text('Cannot add lecture: missing required information')),
     );
     return;
   }
@@ -211,12 +244,16 @@ Future<void> addLectureToGame(
 
     String? email = FirebaseAuth.instance.currentUser!.email;
     if (email == null) {
-      if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+      if (dialogContext != null &&
+          Navigator.canPop(dialogContext!) &&
+          showInternalDialogs) {
         Navigator.pop(dialogContext!);
       }
       showDialog(
         context: context,
-        builder: (context) => const ErrorDialog(),
+        builder: (context) => const ErrorDialog(
+          errorMessage: '',
+        ),
       );
       return;
     }
@@ -249,7 +286,7 @@ Future<void> addLectureToGame(
 
     // Get the new content to append
     List<dynamic> newGameData = gameDict['data'] as List<dynamic>;
-    
+
     // Merge existing game data with new game data
     List<dynamic> combinedGameData = [...existingGameData, ...newGameData];
 
@@ -269,7 +306,9 @@ Future<void> addLectureToGame(
     await Future.delayed(Duration(seconds: 1));
 
     // Close the dialog safely, only if we're showing internal dialogs
-    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+    if (dialogContext != null &&
+        Navigator.canPop(dialogContext!) &&
+        showInternalDialogs) {
       Navigator.pop(dialogContext!);
     }
 
@@ -287,17 +326,21 @@ Future<void> addLectureToGame(
     }
   } catch (e) {
     print("Error during lecture addition: $e");
-    
+
     // Make sure to close the dialog if there's an error, only if using internal dialogs
-    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+    if (dialogContext != null &&
+        Navigator.canPop(dialogContext!) &&
+        showInternalDialogs) {
       Navigator.pop(dialogContext!);
     }
-    
+
     // Show error dialog only if using internal dialogs
     if (showInternalDialogs) {
       showDialog(
         context: context,
-        builder: (context) => ErrorDialog(),
+        builder: (context) => ErrorDialog(
+          errorMessage: '',
+        ),
       );
     } else {
       // If not using internal dialogs, just rethrow to let the caller handle it
