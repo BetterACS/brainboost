@@ -1187,7 +1187,7 @@ Widget _buildAddGameCard(bool isSelected) {
                                 : const Color.fromARGB(255, 189, 197, 255),
                           ),
                           Text(
-                            'Upload file',
+                           AppLocalizations.of(context)!.uploadFile,
                             style: TextStyle(
                               color: isDarkMode
                                   ? AppColors.white
