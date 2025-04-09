@@ -600,8 +600,8 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
       // Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Profile picture updated successfully!')),
+          SnackBar(
+              content: Text(AppLocalizations.of(context)!.profilePictureUpdated)),
         );
       }
     } catch (e) {

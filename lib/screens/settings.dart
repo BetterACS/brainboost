@@ -150,13 +150,13 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
         children: [
           RadioListTile<String>(
             title: Text(
-              'English',
+              AppLocalizations.of(context)!.english,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: isDarkMode ? AppColors.white : AppColors.buttonText,
               ),
             ),
-            value: 'English',
+            value: AppLocalizations.of(context)!.english,
             groupValue: _selectedLanguage,
             onChanged: (value) async {
               setState(() {
@@ -168,13 +168,13 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
           ),
           RadioListTile<String>(
             title: Text(
-              'Thai',
+              AppLocalizations.of(context)!.thai,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: isDarkMode ? AppColors.white : AppColors.buttonText,
               ),
             ),
-            value: 'Thai',
+            value:  AppLocalizations.of(context)!.thai,
             groupValue: _selectedLanguage,
             onChanged: (value) async {
               setState(() {
@@ -203,11 +203,11 @@ class AboutAppPage extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(
-          title: const Padding(
-            padding: EdgeInsets.only(top: 20),
+          title: Padding(
+            padding: const EdgeInsets.only(top: 20),
             child: Text(
-              'About App',
-              style: TextStyle(
+              AppLocalizations.of(context)!.aboutApp,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: AppColors.white,
               ),
@@ -235,7 +235,7 @@ class AboutAppPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Text(
-              'Version 3.3.1',
+              AppLocalizations.of(context)!.version331,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -247,7 +247,7 @@ class AboutAppPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
-              'Terms of Use',
+              AppLocalizations.of(context)!.termsOfUse,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -258,7 +258,7 @@ class AboutAppPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
-              'Play to learn application make you\nmemorize class lecture more efficiently',
+             AppLocalizations.of(context)!.playToLearnDescription,
               style: TextStyle(
                 fontSize: 14,
                 color: isDarkMode ? AppColors.white : AppColors.accentDarkmode,

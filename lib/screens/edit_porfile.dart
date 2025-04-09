@@ -3,7 +3,7 @@ import 'package:brainboost/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'profile.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 void main() {
   runApp(const EditProfilePage());
 }
@@ -106,10 +106,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
           ),
-          title: const Padding(
+          title: Padding(
             padding: EdgeInsets.only(top: 20),
             child: Text(
-              "Edit Profile",
+              AppLocalizations.of(context)!.editProfile,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -153,11 +153,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildTextField("Username", nameController),
+                  buildTextField(AppLocalizations.of(context)!.username, nameController),
                   const SizedBox(height: 20),
-                  buildTextField("Email", emailController),
+                  buildTextField(AppLocalizations.of(context)!.email, emailController),
                   const SizedBox(height: 20),
-                  buildTextField("Personalize", personalizeController),
+                  buildTextField(AppLocalizations.of(context)!.personalize, personalizeController),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -172,7 +172,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                       onPressed: updateUserProfile,
-                      child: const Text("Save",
+                      child:  Text(AppLocalizations.of(context)!.save,
                           style: TextStyle(fontSize: 18, color: Colors.white)),
                     ),
                   ),

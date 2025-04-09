@@ -8,7 +8,7 @@
   "signIn": "Sign In",
   "newUser": "New User? ",
   "createAccount": "Create Account",
-  
+  "profilePictureUpdated": "Profile picture updated successfully!",
   "registerAccount": "Register Account",
   "signUp": "Sign Up",
   "alreadyHaveAccount": "Already Have Account? ",
@@ -210,7 +210,26 @@
 "errorSigningInWithGoogle": "Error signing in with Google: {error}",
 "appDescription": "Play to learn application make you\nmemorize class lecture more efficiently",
  "signInWithGoogle": "Sign in with Google",
-  "boost": "boost"
+  "boost": "boost",
+"settingSupport": "Setting Support",
+  "supportPageTitle": "This is Support Page",
+"signInWithGoogle": "Sign in with Google",
+  "english": "English",
+  "thai": "Thai",
+  "aboutApp": "About App",
+  "version331": "Version 3.3.1",
+  "termsOfUse": "Terms of Use",
+  "playToLearnDescription": "Play to learn application make you\nmemorize class lecture more efficiently",
+
+"editProfile": "Edit Profile",
+  "save": "Save",
+  "username": "Username",
+  "email": "Email",
+  "personalize": "Personalize"
+
+
+
+
 
 
 }

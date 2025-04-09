@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Add this import
 
 class SupportPage extends StatelessWidget {
   const SupportPage({super.key});
@@ -7,15 +8,18 @@ class SupportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Setting Support'),
+        title: Text(AppLocalizations.of(context)!.settingSupport),
         leading: const BackButton(),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('This is Support Page', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 20),
+            Text(
+              AppLocalizations.of(context)!.supportPageTitle, 
+              style: const TextStyle(fontSize: 20)
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

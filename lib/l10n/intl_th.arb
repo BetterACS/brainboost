@@ -218,5 +218,22 @@
   "submit": "ส่ง",
 "errorSigningInWithGoogle": "เกิดข้อผิดพลาดในการลงชื่อเข้าใช้ด้วย Google: {error}",
 "appDescription": "แอปพลิเคชันเล่นเพื่อเรียนรู้ช่วยให้คุณ\nจดจำเนื้อหาการเรียนได้อย่างมีประสิทธิภาพมากขึ้น",
-"signInWithGoogle": "เข้าสู่ระบบด้วย Google"
+"signInWithGoogle": "เข้าสู่ระบบด้วย Google",
+"profilePictureUpdated": "Profile picture updated successfully!",
+ "settingSupport": "การตั้งค่าการสนับสนุน",
+  "supportPageTitle": "นี่คือหน้าการสนับสนุน",
+"signInWithGoogle": "เข้าสู่ระบบด้วย Google",
+  "english": "ภาษาอังกฤษ",
+  "thai": "ภาษาไทย",
+  "aboutApp": "เกี่ยวกับแอป",
+  "version331": "เวอร์ชัน 3.3.1",
+  "termsOfUse": "ข้อกำหนดในการใช้งาน",
+  "playToLearnDescription": "แอปเล่นเพื่อเรียนรู้ช่วยให้คุณ\nจดจำเนื้อหาจากการเรียนได้อย่างมีประสิทธิภาพมากขึ้น",
+
+  "editProfile": "แก้ไขโปรไฟล์",
+  "save": "บันทึก",
+  "username": "ชื่อผู้ใช้",
+  "email": "อีเมล",
+  "personalize": "ปรับแต่ง"
+
 }
