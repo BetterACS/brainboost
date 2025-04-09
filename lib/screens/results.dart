@@ -6,12 +6,17 @@ import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:brainboost/services/history.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 int _currentPage = 0;
 List<GamesType> games = [];
 const correctAnswersColor = Color.fromRGBO(32, 94, 216, 1);
 const wrongAnswersColor = Color.fromRGBO(223, 69, 69, 1);
 const timeColor = Color.fromRGBO(255, 193, 7, 1);
+const bestScoreColor = Color.fromRGBO(75, 181, 67, 1);
 
 class ShadowEllipse extends StatelessWidget {
   final double width;
@@ -40,7 +45,7 @@ class ShadowEllipse extends StatelessWidget {
   }
 }
 
-class ResultsPage extends StatelessWidget {
+class ResultsPage extends StatefulWidget {
   const ResultsPage({
     super.key,
     required this.correct,
@@ -55,6 +60,48 @@ class ResultsPage extends StatelessWidget {
   final String time;
   final String? gameReference;
   final List<dynamic>? gameData;
+
+  @override
+  State<ResultsPage> createState() => _ResultsPageState();
+}
+
+class _ResultsPageState extends State<ResultsPage> {
+  final GameHistoryService _historyService = GameHistoryService();
+  int bestScore = 0;
+  bool isNewBestScore = false;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateBestScore();
+  }
+
+  Future<void> _updateBestScore() async {
+    if (widget.gameReference != null) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final currentScore = widget.correct;
+        DocumentReference gameDocRef = FirebaseFirestore.instance.doc(widget.gameReference!);
+        
+        final updatedBestScore = await _historyService.updateGameScore(
+          email: currentUser.email!,
+          gameId: gameDocRef,
+          newScore: currentScore,
+        );
+        
+        setState(() {
+          bestScore = updatedBestScore;
+          isNewBestScore = currentScore >= bestScore;
+          isLoading = false;
+        });
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +119,12 @@ class ResultsPage extends StatelessWidget {
               const SizedBox(height: 20),
               _buildCongratulationsText(context, isDarkMode),
               const SizedBox(height: 30),
-              _buildScoreRow(context, correct, wrong, time, isDarkMode),
+              _buildScoreRow(context, widget.correct, widget.wrong, widget.time, isDarkMode),
               const SizedBox(height: 20),
-              // _buildImprovementText(context, isDarkMode),
+              if (isLoading)
+                const CircularProgressIndicator()
+              else if (bestScore > 0)
+                _buildBestScore(context, isDarkMode),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -99,8 +149,8 @@ class ResultsPage extends StatelessWidget {
                     shadowColor: const Color(0xFF1746A2),
                     onPressed: () {
                       context.go(Routes.playGamePage, extra: {
-                        'games': gameData ?? [],
-                        'reference': gameReference
+                        'games': widget.gameData ?? [],
+                        'reference': widget.gameReference
                       });
                     },
                     child:  Text(
@@ -119,6 +169,36 @@ class ResultsPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBestScore(BuildContext context, bool isDarkMode) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InfoCard(
+              title: AppLocalizations.of(context)!.bestScore,
+              value: bestScore.toString(),
+              icon: isNewBestScore ? Icons.emoji_events : Icons.star,
+              cardColor: isDarkMode ? Colors.green[700]! : bestScoreColor,
+            ),
+          ],
+        ),
+        if (isNewBestScore)
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Text(
+              AppLocalizations.of(context)!.newBestScore,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.greenAccent : Colors.green[800],
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -198,19 +278,4 @@ class ResultsPage extends StatelessWidget {
       ],
     );
   }
-
-  // Widget _buildImprovementText(BuildContext context, bool isDarkMode) {
-  //   return ConstrainedBox(
-  //     constraints: const BoxConstraints(maxWidth: 250),
-  //     child: Text(
-  //       AppLocalizations.of(context)!.imporvetext, 
-  //       textAlign: TextAlign.center,
-  //       style: TextStyle(
-  //         fontSize: 20,
-  //         fontWeight: FontWeight.bold,
-  //         color: isDarkMode ? Colors.white70 : Colors.black,
-  //       ),
-  //     ),
-  //   );
-  // }
 }

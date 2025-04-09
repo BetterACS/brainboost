@@ -1,13 +1,9 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
-import 'package:brainboost/screens/game_screen.dart';
-import 'package:go_router/go_router.dart';
-import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/bottom_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:brainboost/main.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BingoScreen extends StatefulWidget {
@@ -56,8 +52,12 @@ class _BingoScreenState extends State<BingoScreen> {
             {'context1': userAnswer.trim(), 'context2': correctAnswer}),
       );
 
+
+
+      final jsonResponse = jsonDecode(extractResponse.body);
+      print(jsonResponse);
+      print("Status: ${extractResponse.statusCode}");
       if (extractResponse.statusCode == 200) {
-        final jsonResponse = jsonDecode(extractResponse.body);
         if (jsonResponse['status'] == 200) {
           double similarity = jsonResponse['data'];
           return similarity >= 0.80;
@@ -84,15 +84,6 @@ class _BingoScreenState extends State<BingoScreen> {
     }
   }
 
-  void _navigateToResults() {
-    int _score = isAnswerCorrect.values.where((correct) => correct).length;
-
-    context.go(Routes.resultPage, extra: {
-      'correct': _score,
-      'wrong': widget.content.bingo_list.length - _score,
-      'time': '00:00',
-    });
-  }
 
   void _checkAnswer(int index) {
     setState(() {

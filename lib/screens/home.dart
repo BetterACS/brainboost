@@ -537,6 +537,7 @@ Widget _buildCreateButtons(BuildContext context) {
                                 title: game['game_name'] ?? 'Unknown',
                                 date: DateFormat('dd MMM yyyy').format((game['played_at'] as Timestamp).toDate()),
                                 imagePath: "assets/${game['icon']}", 
+                                bestScore: game['best_score'] ?? 0,
                                 // gameId: game['game_id'],
                                 documentReference: game['game_id'],
                               ))

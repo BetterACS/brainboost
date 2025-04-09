@@ -8,6 +8,7 @@ class HistoryItem extends StatelessWidget {
   final String title;
   final String date;
   final String imagePath;
+  final int? bestScore;
   final DocumentReference? documentReference;
   final DocumentReference? gameId;
   final VoidCallback? onPressed;
@@ -22,6 +23,7 @@ class HistoryItem extends StatelessWidget {
     this.gameId,
     this.onPressed,
     this.gameData,
+    this.bestScore,
   }) : assert(documentReference != null || gameId != null, 
          'Either documentReference or gameId must be provided');
 
@@ -65,7 +67,7 @@ class HistoryItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Best Score: ${gameData?['best_score'] ?? 0}',
+                  'Best Score: ${bestScore ?? 0}',
                   style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,

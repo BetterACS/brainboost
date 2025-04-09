@@ -196,7 +196,8 @@
 "reversion":"Re-Version",
 "selectGameIcon":"Select Game Icon",
 
-"loadingGames":"Loading your games..."
-
+"loadingGames":"Loading your games...",
+"bestScore": "Best score",
+"newBestScore": "New Best score"
 
 }

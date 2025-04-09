@@ -214,6 +214,7 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
                   date: formattedDate,
                   imagePath: iconPath,
                   gameId: game['game_id'],
+                  bestScore: game['best_score'] ?? 0,
                   // No need for onPressed or document reference - component handles it
                 );
               },
