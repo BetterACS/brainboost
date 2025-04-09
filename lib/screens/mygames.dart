@@ -181,10 +181,10 @@ class _MyGamesState extends State<MyGames> {
           ),
         );
       } catch (e) {
-        print("Error saving title: $e");
+       print("${AppLocalizations.of(context)!.errorSaving} $e");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Failed to update title: $e'),
+              content: Text('${AppLocalizations.of(context)!.failedToUpdateTitle.replaceAll("{error}", e.toString())}'),
               duration: Duration(seconds: 2)),
         );
         setState(() {
@@ -232,12 +232,13 @@ class _MyGamesState extends State<MyGames> {
         setState(() {
           progress = event.bytesTransferred / event.totalBytes;
         });
-        print("Upload Progress: $progress");
+        print("${AppLocalizations.of(context)!.uploadProgress} $progress");
+
       });
 
       await uploadTask;
       final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
-      print("Download-Link: $urlDownload");
+      print("${AppLocalizations.of(context)!.downloadLink} $urlDownload");
       setState(() {
         uploadLink = urlDownload;
         uploadSuccess = true;
@@ -459,7 +460,7 @@ class _MyGamesState extends State<MyGames> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Game icon updated!'),
+          content: Text(AppLocalizations.of(context)!.gameIconUpdated),
           duration: Duration(seconds: 2),
         ),
       );
@@ -508,7 +509,7 @@ class _MyGamesState extends State<MyGames> {
                       child: CircularProgressIndicator(color: Colors.white))
                   : availableIcons.isEmpty
                       ? Center(
-                          child: Text("No icons available",
+                          child: Text(AppLocalizations.of(context)!.noIconsAvailable,
                               style: TextStyle(color: Colors.white)))
                       : GridView.builder(
                           gridDelegate:
@@ -621,7 +622,7 @@ class _MyGamesState extends State<MyGames> {
         _currentPage >= games.length) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Cannot add lecture: Upload failed or invalid game')),
+            content: Text(AppLocalizations.of(context)!.cannotAddLecture)),
       );
       return;
     }
@@ -670,19 +671,20 @@ class _MyGamesState extends State<MyGames> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Add Lecture'),
+              title: Text(AppLocalizations.of(context)!.addLecture),
               content: Text(
-                  'Adding a lecture will extend the current game with new content from a PDF file. Continue?'),
+                  AppLocalizations.of(context)!.addLectureMessage),
               actions: <Widget>[
                 TextButton(
-                  child: Text('Cancel'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                   onPressed: () => Navigator.of(context).pop(false),
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blue,
-                  ),
-                  child: Text('Continue'),
+                  ), 
+                  child: Text(AppLocalizations.of(context)!.continueText
+),
                   onPressed: () => Navigator.of(context).pop(true),
                 ),
               ],
@@ -787,7 +789,7 @@ class _MyGamesState extends State<MyGames> {
                                 toggleSlideUpPanel(0.0);
                               });
                             },
-                            tooltip: 'Refresh Games',
+                            tooltip: AppLocalizations.of(context)!.refreshgame,
                           ),
                       ],
                     ),
@@ -879,7 +881,7 @@ class _MyGamesState extends State<MyGames> {
                                                   contentPadding:
                                                       EdgeInsets.zero,
                                                   border: InputBorder.none,
-                                                  hintText: "Enter new title",
+                                                  hintText: (AppLocalizations.of(context)!.enterNewTitle),
                                                   hintStyle: TextStyle(
                                                     color: titleColor
                                                         .withOpacity(0.5),
@@ -944,7 +946,7 @@ class _MyGamesState extends State<MyGames> {
                                           size: 30,
                                         ),
                                         onPressed: _saveTitleChanges,
-                                        tooltip: 'Save title changes',
+                                        tooltip: AppLocalizations.of(context)!.saveTitleChanges,
                                         padding: EdgeInsets.zero,
                                         constraints: BoxConstraints(),
                                       ),
@@ -1292,12 +1294,12 @@ Widget _buildAddGameCard(bool isSelected) {
                                   '${AppLocalizations.of(context)!.areYouSuretodelete} "${games[_currentPage].name}"? ${AppLocalizations.of(context)!.cannotbeundone}'),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text('Cancel'),
+                                  child: Text(AppLocalizations.of(context)!.close),
                                   onPressed: () =>
                                       Navigator.of(context).pop(false),
                                 ),
                                 TextButton(
-                                  child: Text('Delete'),
+                                  child: Text(AppLocalizations.of(context)!.delete),
                                   onPressed: () =>
                                       Navigator.of(context).pop(true),
                                 ),
@@ -1361,14 +1363,18 @@ Widget _buildAddGameCard(bool isSelected) {
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                              content: Text('Game deleted.'),
+                              content: Text(
+                                  AppLocalizations.of(context)!.gameDeleted),
                               duration: Duration(seconds: 2)),
                         );
                       } catch (e) {
-                        print("Error deleting game: $e");
+                        print(
+                            "${AppLocalizations.of(context)!.errorDeletingGame.replaceAll('{error}', e.toString())}");
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                              content: Text('Error deleting game: $e'),
+                              content: Text(AppLocalizations.of(context)!
+                                  .errorDeletingGame
+                                  .replaceAll('{error}', e.toString())),
                               duration: Duration(seconds: 2)),
                         );
                         if (!mounted) return;
@@ -1406,7 +1412,7 @@ Widget _buildAddGameCard(bool isSelected) {
                 color: Colors.white,
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
-                tooltip: 'Share Game',
+                tooltip: AppLocalizations.of(context)!.shareGameTitle,
                 onPressed: () {
                   if (_currentPage < games.length) {
                     // Get just the hash part
@@ -1429,7 +1435,7 @@ Widget _buildAddGameCard(bool isSelected) {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Share Game",
+                                AppLocalizations.of(context)!.shareGameTitle,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 22,
@@ -1438,7 +1444,7 @@ Widget _buildAddGameCard(bool isSelected) {
                               ),
                               SizedBox(height: 15),
                               Text(
-                                "Share this game code with others:",
+                                AppLocalizations.of(context)!.sharegamecode,
                                 style: TextStyle(
                                   color: Colors.white70,
                                   fontSize: 14,
@@ -1475,7 +1481,7 @@ Widget _buildAddGameCard(bool isSelected) {
                                             .showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                                'Game code copied to clipboard!'),
+                                                AppLocalizations.of(context)!.gameCodeCopied),
                                             duration: Duration(seconds: 2),
                                           ),
                                         );
@@ -1490,7 +1496,7 @@ Widget _buildAddGameCard(bool isSelected) {
                                 child: TextButton(
                                   onPressed: () => Navigator.pop(context),
                                   child: Text(
-                                    "Close",
+                                   AppLocalizations.of(context)!.close,
                                     style: TextStyle(
                                       color: Colors.blue,
                                       fontWeight: FontWeight.bold,
@@ -1530,8 +1536,8 @@ Widget _buildAddGameCard(bool isSelected) {
                 'gameName': games[_currentPage].name
               });
             } else {
-              print(
-                  "Error: Tried to play game with invalid index $_currentPage");
+              print("Error: ${AppLocalizations.of(context)!.failedToUpdateTitle.replaceAll('{error}', 'Tried to play game with invalid index $_currentPage')}");
+
             }
           },
           style: ElevatedButton.styleFrom(

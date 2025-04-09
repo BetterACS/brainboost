@@ -205,5 +205,13 @@
 "reversion":"สร้างเวอร์ชันใหม่",
 "selectGameIcon":"เลือกไอคอนเกม",
 
-"loadingGames":"กำลังโหลดเกมของคุณ..."
+"loadingGames":"กำลังโหลดเกมของคุณ...",
+"gameIconUpdated": "ไอคอนเกมได้รับการอัปเดตแล้ว!",
+"errorUpdatingIcon": "ข้อผิดพลาดในการอัปเดตไอคอน:",
+"failedToUpdateIcon": "ไม่สามารถอัปเดตไอคอน:",
+"refreshgame":"โหลดเกมอีกครั้ง",
+"enterNewTitle": "ป้อนชื่อเรื่องใหม่",
+"saveTitleChanges": "บันทึกการเปลี่ยนแปลงชื่อเรื่อง"
+
+
 }

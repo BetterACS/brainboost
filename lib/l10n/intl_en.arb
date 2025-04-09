@@ -196,7 +196,14 @@
 "reversion":"Re-Version",
 "selectGameIcon":"Select Game Icon",
 
-"loadingGames":"Loading your games..."
+"loadingGames":"Loading your games...",
+"gameIconUpdated": "Game icon updated!",
+"errorUpdatingIcon": "Error updating icon:",
+"failedToUpdateIcon": "Failed to update icon:",
+
+"refreshgame":"Refresh Games",
+"enterNewTitle": "Enter new title",
+"saveTitleChanges": "Save title changes"
 
 
 }
