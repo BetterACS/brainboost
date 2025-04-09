@@ -105,7 +105,7 @@
   "wrong": "Wrong!",
   
   "submit": "Submit",
-  "answer": "Answer",
+  "answer": "Answer Questions",
   
   "playBingo": "Play Bingo",
   "pointsLabel": "{point} Points",
@@ -116,8 +116,13 @@
   "congratulationsScore": "Congratulations! You scored over 75 points!",
   "sorryNoWin": "Sorry, you didn't achieve BINGO or reach 75 points!",
   
+<<<<<<< Updated upstream
   "answerQuestions": "Answer Questions",
   "confirmDelete":"Confirm Delete",
+=======
+
+  
+>>>>>>> Stashed changes
   "noPlayedHistory": "No played history",
   "noUserFound": "User not found",
   "createssuccess":"Success!",

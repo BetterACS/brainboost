@@ -4,6 +4,8 @@ import 'package:brainboost/component/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:brainboost/component/bottom_slider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class QuizScreen extends StatefulWidget {
   final GameQuizContent content;
@@ -109,7 +111,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                               width: 340,
                               height: 48,
                               child: Text(
-                                "ตอบคำถาม",
+                                AppLocalizations.of(context)!.answer,
                                 style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w900,
