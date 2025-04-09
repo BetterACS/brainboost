@@ -110,28 +110,10 @@ class _HomeState extends State<Home> {
     return FutureBuilder<void>(
       future: fetchGamePerformance(),
       builder: (context, snapshot) {
-        if (isLoadCircle && numberGames == 0) {
-          return SizedBox(
-            height: 330,
-            width: 300,
-            child: _buildCircularChartPage(),
-          );
-        }
         return SizedBox(
           height: 330,
           width: 300,
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-              });
-            },
-            children: [
-              _buildCircularChartPage(),
-              _buildRecentGamePage(),
-            ],
-          ),
+          child: _buildCircularChartPage(),
         );
       },
     );
@@ -294,202 +276,8 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildRecentGamePage() {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    if (numberGames == 0) {
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            height: 300,
-            width: 300,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: isDarkMode
-                  ? AppColors.circleGradientdark
-                  : AppColors.circleGradient,
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.noRecentGames,
-                style: TextStyle(
-                  color: isDarkMode ? Colors.white : AppColors.textPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 15),
-              Icon(
-                Icons.sports_esports,
-                size: 80,
-                color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
-              ),
-              const SizedBox(height: 15),
-              Text(
-                AppLocalizations.of(context)!.playFirstGame,
-                style: TextStyle(
-                  color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // context.push(Routes.createGame);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonBackground,
-                  foregroundColor: AppColors.neutralBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 5,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.createGame,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      );
-    }
-
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          height: 300,
-          width: 300,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: isDarkMode
-                ? AppColors.circleGradientdark
-                : AppColors.circleGradient,
-          ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 35),
-            ),
-            Text(
-              AppLocalizations.of(context)!.recentGame,
-              style: TextStyle(
-                color: isDarkMode ? Colors.white : AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              AppLocalizations.of(context)!.worldWar2,
-              style: TextStyle(
-                color: isDarkMode ? Colors.white70 : AppColors.textPrimary,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 5),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(150),
-              child: Image.asset(
-                'assets/images/photomain.png',
-                height: 140,
-                width: 160,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error, size: 80, color: Colors.red);
-                },
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              AppLocalizations.of(context)!.scoreFormat('70', '100'),
-              style: TextStyle(
-                color: isDarkMode ? Colors.white : AppColors.textPrimary,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(top: 0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => const BingoScreen()),
-                  // );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.buttonBackground,
-                  foregroundColor: AppColors.neutralBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 5,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.replay,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildPageIndicator() {
-    return FutureBuilder<void>(
-      future: fetchGamePerformance(),
-      builder: (context, snapshot) {
-        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-        if (isLoadCircle && numberGames == 0) {
-          return const SizedBox.shrink();
-        }
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(2, (index) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 0),
-              height: 8,
-              width: _currentPage == index ? 16 : 8,
-              decoration: BoxDecoration(
-                color: _currentPage == index
-                  ? (isDarkMode
-                      ? AppColors.accentDarkmode 
-                      : AppColors.gradient2) 
-                  : (isDarkMode
-                      ? AppColors.gray5 
-                      : AppColors.gray),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            );
-          }),
-        );
-      },
-    );
+    return const SizedBox.shrink(); // Remove page indicator completely
   }
 
   Widget _buildCreateSection() {
@@ -568,24 +356,13 @@ Widget _buildCreateButtons(BuildContext context) {
                             ),
                           ),
                           SizedBox(height: 10),
-                          // Text(
-                          //   "Make studying fun! Just upload your file\nand start playing.",
-                          //   style: TextStyle(
-                          //     color: Colors.white,
-                          //     fontSize: 14,
-                          //   ),
-                          // ),
                         ],
                       ),
                       const Spacer(),
                       ElevatedButton(
                         onPressed: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           const CreateGameScreen()),
-                          // );
+                          // Navigate to the games page and show the "Add Game" card
+                          GoRouter.of(context).go(Routes.gamePage, extra: {'showAddGame': true});
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.yellow[700],
