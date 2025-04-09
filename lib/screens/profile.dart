@@ -67,55 +67,43 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.myProfile,
+          'My Profile',
           style: TextStyle(
-            color: isDarkMode ? Colors.white : AppColors.buttonText,
+            color: isDarkMode ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: isDarkMode
-            ? AppColors.backgroundDarkmode
-            : AppColors.accentBackground,
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
       ),
-      backgroundColor: isDarkMode
-          ? AppColors.backgroundDarkmode
-          : AppColors.accentBackground,
-      body: Stack(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 80),
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.accentDarkmode
-                  : const Color(0xFF002D72),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50),
-              ),
-            ),
-          ),
-          Column(
-            children: [
-              ProfileHeaderWidget(
-                username: username,
-                email: email,
-              ),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-                  children: [
-                    _buildOptionsList(context, isDarkMode),
-                    const SizedBox(height: 20),
-                    _buildLogOutButton(context, isDarkMode),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser?.email)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading profile'));
+          }
+
+          final data = snapshot.data;
+          if (data != null) {
+            String username = data['username'] ?? 'No username';
+            String email = data['email'] ?? 'No email';
+
+            return Column(
+              children: [
+                ProfileHeaderWidget(username: username, email: email),
+                // other widgets here...
+              ],
+            );
+          }
+
+          return const Center(child: Text('No data found'));
+        },
       ),
     );
   }
