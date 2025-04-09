@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
@@ -22,6 +23,7 @@ import 'package:brainboost/utils/game_creator.dart';
 import 'dart:io' as io;
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart'; // Import kIsWeb
 
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
@@ -259,7 +261,7 @@ class _MyGamesState extends State<MyGames> {
     }
   }
 
-  void onCreateGamePressed() async {
+    void onCreateGamePressed() async {
     if (!uploadSuccess || uploadLink == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.pleaseUploadFile)),
@@ -600,8 +602,9 @@ class _MyGamesState extends State<MyGames> {
     try {
       final ref = FirebaseStorage.instance.ref().child(path);
 
-      // Replace web upload with mobile upload
       final uploadTask = ref.putFile(io.File(pickedFile!.path!));
+
+
       uploadTask.snapshotEvents.listen((event) {
         setState(() {
           lectureUploadProgress = event.bytesTransferred / event.totalBytes;
@@ -721,6 +724,71 @@ class _MyGamesState extends State<MyGames> {
     }
     return path; // Return original if format is unexpected
   }
+
+  Future<void> _saveTitleToFirebase(String newTitle) async {
+  if (_currentPage >= games.length) return; 
+
+  final currentGame = games[_currentPage];
+
+  try {
+    await FirebaseFirestore.instance
+        .doc(currentGame.ref)
+        .update({'name': newTitle});
+
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final String email = user.email!;
+      final DocumentReference historyRef =
+          FirebaseFirestore.instance.collection('history').doc(email);
+
+      final DocumentSnapshot historyDoc = await historyRef.get();
+      if (historyDoc.exists) {
+        final List<dynamic> historyData = historyDoc['data'] ?? [];
+        final updatedHistoryData = historyData.map((entry) {
+          if (entry['game_id'] == currentGame.ref) {
+            return {
+              ...entry,
+              'game_name': newTitle, 
+            };
+          }
+          return entry;
+        }).toList();
+
+        await historyRef.update({'data': updatedHistoryData});
+      }
+    }
+
+    // อัปเดตชื่อเกมใน UI
+    setState(() {
+      games[_currentPage] = GamesType(
+        ref: currentGame.ref,
+        author: currentGame.author,
+        name: newTitle,
+        description: currentGame.description,
+        icon: currentGame.icon,
+        gameList: currentGame.gameList,
+        media: currentGame.media,
+        played_history: currentGame.played_history,
+      );
+      _isEditingTitle = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Game title updated successfully!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  } catch (e) {
+    print("Error updating title: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Failed to update title: $e'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -889,20 +957,21 @@ class _MyGamesState extends State<MyGames> {
                                                         )
                                                       : null,
                                               decoration: InputDecoration(
-                                                  isDense: true,
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  border: InputBorder.none,
-                                                  hintText: "Enter new title",
-                                                  hintStyle: TextStyle(
-                                                    color: titleColor
-                                                        .withOpacity(0.5),
-                                                    fontSize: 25,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                  )),
-                                              onSubmitted: (_) =>
-                                                  _saveTitleChanges(),
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.zero,
+                                                border: InputBorder.none,
+                                                hintText: "Enter new title",
+                                                hintStyle: TextStyle(
+                                                  color: titleColor.withOpacity(0.5),
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                              onSubmitted: (newTitle) async {
+                                                if (newTitle.trim().isNotEmpty) {
+                                                  await _saveTitleToFirebase(newTitle.trim());
+                                                }
+                                              },
                                             )
                                           : Row(
                                               mainAxisAlignment:
