@@ -1,4 +1,3 @@
-// lib/component/cards/profile.dart
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/services/user.dart';
@@ -8,17 +7,16 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/avatar.dart';
-import 'package:brainboost/main.dart';
 
 class ProfileContainer extends StatefulWidget {
-  const ProfileContainer({super.key});
+  const ProfileContainer({Key? key}) : super(key: key);
 
   @override
   State<ProfileContainer> createState() => _ProfileContainerState();
 }
 
 class _ProfileContainerState extends State<ProfileContainer> {
-  User? currentUser;
+  String username = 'Loading...';
   Widget? userAvatar;
   bool isLoading = true;
 
@@ -26,12 +24,13 @@ class _ProfileContainerState extends State<ProfileContainer> {
   void initState() {
     super.initState();
     _loadUserData();
+    fetchUsername();
   }
 
   Future<void> _loadUserData() async {
     FirebaseStorage storage = FirebaseStorage.instance;
+    User? currentUser = FirebaseAuth.instance.currentUser;
 
-    currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
       setState(() {
         isLoading = false;
@@ -43,7 +42,7 @@ class _ProfileContainerState extends State<ProfileContainer> {
       return;
     }
 
-    String? path = await UserServices().getUserIcon(email: currentUser!.email!);
+    String? path = await UserServices().getUserIcon(email: currentUser.email!);
     if (path == null) {
       setState(() {
         isLoading = false;
@@ -58,7 +57,6 @@ class _ProfileContainerState extends State<ProfileContainer> {
     try {
       final ref = storage.ref().child(path);
       final url = await ref.getDownloadURL();
-      print(url);
       setState(() {
         userAvatar = UserAvatar(
           imageUrl: url,
@@ -77,28 +75,35 @@ class _ProfileContainerState extends State<ProfileContainer> {
     }
   }
 
+  Future<void> fetchUsername() async {
+    String? email = UserServices().getCurrentUserEmail();
+    if (email == null) return;
+
+    final DocumentSnapshot userDoc =
+        await UserServices().users.doc(email).get();
+
+    if (userDoc.exists) {
+      setState(() {
+        username = userDoc['username'] ?? 'No username';
+      });
+    } else {
+      setState(() {
+        username = 'No data';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, currentTheme, child) {
         final isDarkMode = currentTheme == ThemeMode.dark;
+        final currentUser = FirebaseAuth.instance.currentUser;
 
-        // return FutureBuilder<DocumentSnapshot>(
-        //   future: fetchUsername(),
-        //   builder: (context, snapshot) {
-        //     if (snapshot.connectionState == ConnectionState.waiting &&
-        //         isProfileLoaded == false) {
-        //       return const CircularProgressIndicator();
-        //     }
-
-        //     if (!snapshot.hasData || !snapshot.data!.exists) {
-        //       return Text(AppLocalizations.of(context)!.noUserFound);
-        //     }
         if (currentUser == null) {
-          return const Text("User not found");
+          return Text(AppLocalizations.of(context)!.noUserFound);
         }
-        final username = currentUser!.displayName ?? 'Guest';
 
         return Container(
           padding: const EdgeInsets.only(left: 10, right: 14, top: 8, bottom: 8),
