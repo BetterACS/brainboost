@@ -112,7 +112,8 @@ class _QuizOptionState extends State<QuizOption> {
               children: [
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 80),
-                  bottom: _isClicked ? -0.5 : 0, // Move down a little when clicked
+                  bottom:
+                      _isClicked ? -0.5 : 0, // Move down a little when clicked
                   left: 2,
                   right: 2,
                   child: GestureDetector(
@@ -146,9 +147,9 @@ class _QuizOptionState extends State<QuizOption> {
                             textAlign:
                                 TextAlign.center, // จัดให้ข้อความอยู่ตรงกลาง
                             softWrap: true, // ให้ตัดบรรทัดอัตโนมัติ
-                            maxLines: 2, // จำกัดจำนวนบรรทัด
-                            overflow: TextOverflow
-                                .ellipsis, // แสดง ... หากข้อความยาวเกินไป
+                            maxLines: null, // รองรับหลายบรรทัด
+                            overflow:
+                                TextOverflow.visible, //หากคำตอบยาวจะไม่ตัด
                             style: TextStyle(
                               fontSize: 18,
                               color: _getTextColor(),
