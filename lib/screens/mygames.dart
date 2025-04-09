@@ -221,12 +221,20 @@ class _MyGamesState extends State<MyGames> {
   }
 
   Future<void> uploadFile() async {
+    if (pickedFile == null) {
+      print("No file selected for upload.");
+      return;
+    }
+
     final path = 'files/${pickedFile!.name}';
 
     try {
       final ref = FirebaseStorage.instance.ref().child(path);
-
-      final uploadTask = ref.putData(pickedFile!.bytes!);
+      
+      // For web
+      // final uploadTask = ref.putData(pickedFile!.bytes!);
+      // For mobile
+      final uploadTask = ref.putFile(io.File(pickedFile!.path!));
       uploadTask.snapshotEvents.listen((event) {
         setState(() {
           progress = event.bytesTransferred / event.totalBytes;
@@ -243,7 +251,7 @@ class _MyGamesState extends State<MyGames> {
         isUploading = false;
       });
     } catch (e) {
-      print(e);
+      print('Error while loading ${e}');
       setState(() {
         isUploading = false;
       });
@@ -565,8 +573,11 @@ class _MyGamesState extends State<MyGames> {
     );
 
     if (result == null) {
+      print("Lecture file picking cancelled or failed.");
       return;
     }
+
+    print("Picked file: ${result.files.single.name}");
 
     setState(() {
       lectureFileName = result.files.single.name;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 // import 'package:brainboost/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/router.dart';
@@ -12,9 +13,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Used to scale smaller devices.
+/// Font and sizes. Not used everywhere. Used for tweaking smaller device.
+
 // Theme controller
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
-
 // Locale controller
 final ValueNotifier<Locale> localeNotifier = ValueNotifier(const Locale('en'));
 
