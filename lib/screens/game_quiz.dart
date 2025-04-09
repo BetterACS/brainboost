@@ -26,8 +26,11 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   bool hasCheckedAnswer = false;
   int score = 0;
 
-  // final player = AudioPlayer();
+    // final player = AudioPlayer();
 // await player.play(UrlSource('https://example.com/my-audio.wav'));
+  
+  // ความสูงของปุ่มและ padding รอบๆ 
+  final double buttonAreaHeight = 80.0;
 
   @override
   void initState() {
@@ -147,6 +150,9 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                                 },
                               ),
                             ),
+                            
+                            // เพิ่ม padding ด้านล่างให้พอดีกับความสูงของปุ่มจะได้ไม่ซ้อนทับกัน
+                            SizedBox(height: buttonAreaHeight),
                           ],
                         ),
                       ],

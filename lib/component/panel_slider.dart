@@ -219,7 +219,7 @@ class _PanelSliderState extends State<PanelSlider> {
                           style: OutlinedButton.styleFrom(
                             backgroundColor: widget.isCurrentUserAuthor
                                 ? Colors.white
-                                : Colors.grey.shade300,
+                                : Colors.grey.shade500,
                             foregroundColor: widget.isCurrentUserAuthor
                                 ? AppColors.buttonText
                                 : Colors.grey.shade600,
@@ -229,7 +229,7 @@ class _PanelSliderState extends State<PanelSlider> {
                             side: BorderSide(
                                 color: widget.isCurrentUserAuthor
                                     ? Colors.white
-                                    : Colors.grey.shade400,
+                                    : Colors.grey.shade600,
                                 width: 2),
                             minimumSize: const Size(160, 40),
                             padding: const EdgeInsets.symmetric(
@@ -250,7 +250,7 @@ class _PanelSliderState extends State<PanelSlider> {
                           style: OutlinedButton.styleFrom(
                             backgroundColor: widget.isCurrentUserAuthor
                                 ? Colors.white
-                                : Colors.grey.shade300,
+                                : Colors.grey.shade500,
                             foregroundColor: widget.isCurrentUserAuthor
                                 ? AppColors.buttonText
                                 : Colors.grey.shade600,
@@ -260,7 +260,7 @@ class _PanelSliderState extends State<PanelSlider> {
                             side: BorderSide(
                                 color: widget.isCurrentUserAuthor
                                     ? Colors.white
-                                    : Colors.grey.shade400,
+                                    : Colors.grey.shade600,
                                 width: 2),
                             minimumSize: const Size(160, 40),
                             padding: const EdgeInsets.symmetric(
