@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/component/dialogs/error_dialog.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,7 +35,8 @@ class _MyGamesState extends State<MyGames> {
   final PageController _pageController = PageController(viewportFraction: 0.7);
   final UserServices userServices = UserServices();
   final GameServices gameServices = GameServices();
-  final GameHistoryService historyService = GameHistoryService(); // Initialize history service
+  final GameHistoryService historyService =
+      GameHistoryService(); // Initialize history service
   final PanelController _panelController = PanelController();
 
   bool _isLoadedGames = false;
@@ -76,7 +78,6 @@ class _MyGamesState extends State<MyGames> {
     _gameNameTextController.dispose();
     super.dispose();
   }
-
 
   Future<void> _loadGamesMethod() async {
     if (_isLoadedGames) return;
@@ -568,6 +569,24 @@ class _MyGamesState extends State<MyGames> {
       return;
     }
 
+    final fileSizeInBytes = result.files.first.size;
+
+    // ตรวจสอบขนาดไฟล์
+    if (fileSizeInBytes < 500 * 1024) {
+      // ขนาดไฟล์เล็กกว่า 500KB
+      // เรียก ErrorDialog ถ้าไฟล์เล็กเกินไป
+      showDialog(
+        context: context,
+        builder: (context) {
+          return ErrorDialog(
+            errorMessage: 'ไฟล์มีขนาดเล็กเกินไป กรุณาเลือกไฟล์ที่ใหญ่กว่านี้',
+          );
+        },
+      );
+      return;
+    }
+
+    // ถ้าไฟล์มีขนาดใหญ่พอ
     setState(() {
       lectureFileName = result.files.single.name;
       pickedFile = result.files.first;
@@ -775,7 +794,9 @@ class _MyGamesState extends State<MyGames> {
                           )
                         else
                           IconButton(
-                            icon: Icon(Icons.refresh, color: isDarkMode ? Colors.white : Colors.black),
+                            icon: Icon(Icons.refresh,
+                                color:
+                                    isDarkMode ? Colors.white : Colors.black),
                             onPressed: () {
                               if (_isEditingTitle) _saveTitleChanges();
                               setState(() {
@@ -927,8 +948,12 @@ class _MyGamesState extends State<MyGames> {
                                                   style: TextStyle(
                                                     color: isDarkMode
                                                         ? AppColors.textPrimary
-                                                        : _slideUpPanelValue > slideValueThreshold ? Colors.white : AppColors.cardBackground,
-                                                        // AppColors.cardBackground,
+                                                        : _slideUpPanelValue >
+                                                                slideValueThreshold
+                                                            ? Colors.white
+                                                            : AppColors
+                                                                .cardBackground,
+                                                    // AppColors.cardBackground,
                                                     fontSize: 25,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -1075,7 +1100,7 @@ class _MyGamesState extends State<MyGames> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                        Image.asset(
+                      Image.asset(
                         games[index].icon.replaceFirst('assets/', ''),
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
@@ -1160,12 +1185,12 @@ class _MyGamesState extends State<MyGames> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isDarkMode
-                            ? AppColors.accentDarkmode2
-                            : Color(0xFF102247),
+                        ? AppColors.accentDarkmode2
+                        : Color(0xFF102247),
                     border: Border.all(
                       color: isDarkMode
-                            ? AppColors.white
-                            :Color.fromARGB(255, 189, 197, 255),
+                          ? AppColors.white
+                          : Color.fromARGB(255, 189, 197, 255),
                       width: 3,
                     ),
                   ),
@@ -1174,8 +1199,8 @@ class _MyGamesState extends State<MyGames> {
                       Icons.cloud_upload_outlined,
                       size: 90,
                       color: isDarkMode
-                            ? AppColors.white
-                            :Color.fromARGB(255, 189, 197, 255),
+                          ? AppColors.white
+                          : Color.fromARGB(255, 189, 197, 255),
                     ),
                   ),
                 )
@@ -1251,9 +1276,10 @@ class _MyGamesState extends State<MyGames> {
                         String gameRefToDelete = games[_currentPage].ref;
                         String userEmail =
                             FirebaseAuth.instance.currentUser!.email!;
-                            
+
                         // Create a DocumentReference from the path string
-                        DocumentReference gameDocRef = FirebaseFirestore.instance.doc(gameRefToDelete);
+                        DocumentReference gameDocRef =
+                            FirebaseFirestore.instance.doc(gameRefToDelete);
 
                         int deletedPageIndex = _currentPage;
                         int newPageIndex =
@@ -1269,7 +1295,7 @@ class _MyGamesState extends State<MyGames> {
                           path: gameRefToDelete,
                           email: userEmail,
                         );
-                        
+
                         // Also remove the game from history
                         await historyService.removeGameFromHistory(
                           email: userEmail,
@@ -1494,7 +1520,7 @@ class _MyGamesState extends State<MyGames> {
                 colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
               const SizedBox(width: 8),
-               Text(
+              Text(
                 AppLocalizations.of(context)!.playGame,
                 style: TextStyle(
                   color: Colors.white,

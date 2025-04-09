@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ErrorDialog extends StatelessWidget {
-  const ErrorDialog({super.key});
+  final String errorMessage;
+
+  const ErrorDialog({super.key, required this.errorMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +53,12 @@ class ErrorDialog extends StatelessWidget {
                 Text(
                   AppLocalizations.of(context)!.errorTitle,
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 14),
+                // แสดงข้อความ error
                 Text(
-                  AppLocalizations.of(context)!.errorMessage,
+                  errorMessage,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 14, color: Colors.black87),
                 ),
@@ -76,8 +77,7 @@ class ErrorDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: Text(
-                        AppLocalizations.of(context)!.tryAgain,
+                    child: Text(AppLocalizations.of(context)!.tryAgain,
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
@@ -97,8 +97,7 @@ class ErrorDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: Text(
-                        AppLocalizations.of(context)!.editFile,
+                    child: Text(AppLocalizations.of(context)!.editFile,
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
