@@ -111,8 +111,9 @@ Future<void> createGameFunction(
 
     creationProgress.value = 0.80;
 
-    var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
 
+    var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
+    print("Game dict: $gameDict");
     GameServices gamesServices = GameServices();
 
     final DocumentReference<Object?>? gameID = await gamesServices.createGame(
@@ -267,6 +268,7 @@ Future<void> addLectureToGame(
 
     creationProgress.value = 0.80;
     var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
+    
 
     // Get the new content to append
     List<dynamic> newGameData = gameDict['data'] as List<dynamic>;

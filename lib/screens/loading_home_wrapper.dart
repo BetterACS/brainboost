@@ -23,7 +23,7 @@ class LoadingHomeWrapper extends StatelessWidget {
           if (snapshot.hasData) {
             context.go(Routes.homePage);
           } else {
-            context.go('/login');
+            context.go('/welcome');
           }
         });
 
