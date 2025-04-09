@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
           stream: FirebaseFirestore.instance
               .collection('users')
               .doc(FirebaseAuth.instance.currentUser?.email)
-              .snapshots(), // ใช้ snapshots() เพื่อให้ได้ข้อมูลแบบ real-time
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -97,7 +97,6 @@ class _ProfilePageState extends State<ProfilePage> {
               return Column(
                 children: [
                   ProfileHeaderWidget(username: username, email: email),
-                  // other widgets here...
                 ],
               );
             }
