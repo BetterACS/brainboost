@@ -96,7 +96,51 @@ class _PanelSliderState extends State<PanelSlider> {
         valueListenable: themeNotifier,
         builder: (context, currentTheme, child) {
           final isDarkMode = currentTheme == ThemeMode.dark;
-
+          
+          // Define theme colors based on mode
+          final Color panelBackgroundColor = isDarkMode 
+              ? AppColors.accentDarkmode 
+              : AppColors.cardBackground;
+              
+          final Color buttonBackgroundColor = isDarkMode
+              ? Colors.white
+              : Colors.white;
+              
+          final Color buttonForegroundColor = isDarkMode
+              ? const Color.fromARGB(255, 52, 70, 105)
+              : AppColors.buttonText;
+              
+          final Color buttonBorderColor = isDarkMode
+              ? Colors.white
+              : Colors.white;
+              
+          // disabled button for light and dark modes
+          final Color disabledButtonBackgroundColor = isDarkMode
+              ? Colors.grey.shade800  
+              : Colors.grey.shade300; 
+              
+          final Color disabledButtonForegroundColor = isDarkMode
+              ? Colors.grey.shade600 
+              : Colors.grey.shade400; 
+              
+          final Color disabledButtonBorderColor = isDarkMode
+              ? Colors.grey.shade800  
+              : Colors.grey.shade300; 
+          
+          final Color playHistoryBackgroundColor = isDarkMode
+              ? Color(0xFF1E293B) 
+              : Color(0xFFECF5FF); 
+              
+          final Color playHistoryTextColor = isDarkMode
+              ? Colors.white
+              : Color(0xFF05235F);
+              
+          final Color playButtonBackgroundColor = isDarkMode
+              ? Colors.yellow[700]!
+              : AppColors.neutralBackground;
+              
+          final Color indicatorColor = Colors.white54;
+          
           BorderRadiusGeometry radius = const BorderRadius.only(
             topLeft: Radius.circular(40.0),
             topRight: Radius.circular(40.0),
@@ -114,7 +158,7 @@ class _PanelSliderState extends State<PanelSlider> {
                     height: 4,
                     width: 160,
                     decoration: BoxDecoration(
-                      color: Colors.white54,
+                      color: indicatorColor,
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                   ),
@@ -129,18 +173,14 @@ class _PanelSliderState extends State<PanelSlider> {
               panel: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.accentDarkmode
-                      : AppColors.cardBackground,
+                  color: panelBackgroundColor,
                   borderRadius: radius,
                 ),
                 child: _buildUploadingPanel(context),
               ),
               collapsed: Container(
                 decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.accentDarkmode
-                      : AppColors.cardBackground,
+                  color: panelBackgroundColor,
                   borderRadius: radius,
                 ),
                 child: Column(
@@ -150,7 +190,7 @@ class _PanelSliderState extends State<PanelSlider> {
                       height: 4,
                       width: 160,
                       decoration: BoxDecoration(
-                        color: Colors.white54,
+                        color: indicatorColor,
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -180,10 +220,11 @@ class _PanelSliderState extends State<PanelSlider> {
                   height: 4,
                   width: 160,
                   decoration: BoxDecoration(
-                      color: Colors.white54,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      )),
+                    color: indicatorColor,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    )
+                  ),
                 ),
               ),
             ),
@@ -199,9 +240,7 @@ class _PanelSliderState extends State<PanelSlider> {
             panel: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.accentDarkmode
-                      : AppColors.cardBackground,
+                  color: panelBackgroundColor,
                   borderRadius: radius,
                 ),
                 child: Column(
@@ -218,18 +257,18 @@ class _PanelSliderState extends State<PanelSlider> {
                               : null,
                           style: OutlinedButton.styleFrom(
                             backgroundColor: widget.isCurrentUserAuthor
-                                ? Colors.white
-                                : Colors.grey.shade500,
+                                ? buttonBackgroundColor
+                                : disabledButtonBackgroundColor,
                             foregroundColor: widget.isCurrentUserAuthor
-                                ? AppColors.buttonText
-                                : Colors.grey.shade600,
+                                ? buttonForegroundColor
+                                : disabledButtonForegroundColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                             side: BorderSide(
                                 color: widget.isCurrentUserAuthor
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
+                                    ? buttonBorderColor
+                                    : disabledButtonBorderColor,
                                 width: 2),
                             minimumSize: const Size(160, 40),
                             padding: const EdgeInsets.symmetric(
@@ -249,18 +288,18 @@ class _PanelSliderState extends State<PanelSlider> {
                               : null,
                           style: OutlinedButton.styleFrom(
                             backgroundColor: widget.isCurrentUserAuthor
-                                ? Colors.white
-                                : Colors.grey.shade500,
+                                ? buttonBackgroundColor
+                                : disabledButtonBackgroundColor,
                             foregroundColor: widget.isCurrentUserAuthor
-                                ? AppColors.buttonText
-                                : Colors.grey.shade600,
+                                ? buttonForegroundColor
+                                : disabledButtonForegroundColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                             side: BorderSide(
                                 color: widget.isCurrentUserAuthor
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
+                                    ? buttonBorderColor
+                                    : disabledButtonBorderColor,
                                 width: 2),
                             minimumSize: const Size(160, 40),
                             padding: const EdgeInsets.symmetric(
@@ -285,7 +324,7 @@ class _PanelSliderState extends State<PanelSlider> {
                         height: 110,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: Color(0xFFECF5FF),
+                          color: playHistoryBackgroundColor,
                         ),
                         child: Center(
                           child: Row(
@@ -297,7 +336,7 @@ class _PanelSliderState extends State<PanelSlider> {
                                       AppLocalizations.of(context)!
                                           .noplayhistoryyet,
                                       style: TextStyle(
-                                        color: Color(0xFF05235F),
+                                        color: playHistoryTextColor,
                                         fontSize: 18,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -336,7 +375,7 @@ class _PanelSliderState extends State<PanelSlider> {
                                                 .played_history[index]['score']
                                                 .toString(),
                                             style: TextStyle(
-                                              color: Color(0xFF05235F),
+                                              color: playHistoryTextColor,
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -362,9 +401,7 @@ class _PanelSliderState extends State<PanelSlider> {
                           'reference': widget.games[widget.currentPage].ref
                         }),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDarkMode
-                              ? Colors.yellow[700]
-                              : AppColors.neutralBackground,
+                          backgroundColor: playButtonBackgroundColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -405,16 +442,15 @@ class _PanelSliderState extends State<PanelSlider> {
                   height: 4,
                   width: 160,
                   decoration: BoxDecoration(
-                      color: Colors.white54,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      )),
+                    color: indicatorColor,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    )
+                  ),
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.accentDarkmode
-                        : AppColors.cardBackground,
+                    color: panelBackgroundColor,
                     borderRadius: radius,
                   ),
                   child: Column(
