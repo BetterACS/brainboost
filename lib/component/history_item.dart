@@ -1,19 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:go_router/go_router.dart';
+import 'package:brainboost/router/routes.dart';
 
 class HistoryItem extends StatelessWidget {
   final String title;
   final String date;
   final String imagePath;
+  final DocumentReference? documentReference;
+  final DocumentReference? gameId;
   final VoidCallback? onPressed;
+  final Map<String, dynamic>? gameData;
 
   const HistoryItem({
     super.key,
     required this.title,
     required this.date,
     required this.imagePath,
+    this.documentReference,
+    this.gameId,
     this.onPressed,
-  });
+    this.gameData,
+  }) : assert(documentReference != null || gameId != null, 
+         'Either documentReference or gameId must be provided');
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +51,7 @@ class HistoryItem extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.asset(
-              'assets/images/photomain.png',
+              imagePath,
               width: 80,
               height: 80,
               fit: BoxFit.cover,
@@ -106,7 +116,7 @@ class HistoryItem extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: onPressed,
+              onPressed: onPressed ?? () => _handlePlayButtonPressed(context),
               icon: Icon(
                 Icons.play_arrow,
                 color: Colors.white,
@@ -117,5 +127,99 @@ class HistoryItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // Method to handle play button press with data fetching
+  void _handlePlayButtonPressed(BuildContext context) {
+    // Determine which reference to use
+    // final String gameIdToUse = gameId ?? 
+    //     (documentReference != null ? documentReference!.id : '');
+
+    // if (gameId.id) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Game reference not found')),
+    //   );
+    //   return;
+    // }
+
+    // Create the proper reference path
+    // final String refPath = gameId;//documentReference?.path ?? 'games/$gameIdToUse';
+    if (documentReference == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Game reference not found')),
+      );
+      return;
+    }
+
+    // Show loading indicator
+    final loadingOverlay = _showLoadingOverlay(context);
+
+    // Fetch game data and navigate
+    FirebaseFirestore.instance
+        .doc(documentReference.toString())
+        .get()
+        .then((gameDoc) {
+          // Hide loading indicator
+          loadingOverlay?.remove();
+          
+          print(gameDoc);
+          if (gameDoc.exists) {
+            var gameData = gameDoc.data();
+            if (gameData != null && gameData.containsKey('game_list')) {
+              context.push(Routes.playGamePage, extra: {
+                'games': gameData['game_list'],
+                'reference': documentReference,
+                'gameName': title,
+              });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Game data format is invalid')),
+              );
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Game data not found')),
+            );
+          }
+        })
+        .catchError((error) {
+          // Hide loading indicator
+          loadingOverlay?.remove();
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error loading game: $error')),
+          );
+        });
+  }
+
+  // Helper method to show a loading overlay
+  OverlayEntry? _showLoadingOverlay(BuildContext context) {
+    final overlayState = Overlay.of(context);
+    
+    final overlay = OverlayEntry(
+      builder: (context) => Container(
+        color: Colors.black.withOpacity(0.4),
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Loading game...'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    
+    overlayState.insert(overlay);
+    return overlay;
   }
 }

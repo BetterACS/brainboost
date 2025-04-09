@@ -2,7 +2,7 @@ import 'package:brainboost/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:brainboost/component/bottom_slider.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -26,8 +26,11 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   bool hasCheckedAnswer = false;
   int score = 0;
 
-  final player = AudioPlayer();
+    // final player = AudioPlayer();
 // await player.play(UrlSource('https://example.com/my-audio.wav'));
+  
+  // ความสูงของปุ่มและ padding รอบๆ 
+  final double buttonAreaHeight = 80.0;
 
   @override
   void initState() {
@@ -50,13 +53,14 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   void checkAnswer() async {
     if (selectedAnswerIndex == widget.content.correctAnswerIndex) {
       score++;
-      await player.play(
-          AssetSource('sounds/level-up-2-universfield-pixabay.mp3'),
-          position: const Duration(milliseconds: 10));
-    } else {
-      await player.play(AssetSource('sounds/error-8-universfield-pixabay.mp3'),
-          position: const Duration(milliseconds: 60));
+      // await player.play(
+      //     AssetSource('sounds/level-up-2-universfield-pixabay.mp3'),
+      //     position: const Duration(milliseconds: 10));
     }
+    // else {
+    //   await player.play(AssetSource('sounds/error-8-universfield-pixabay.mp3'),
+    //       position: const Duration(milliseconds: 60));
+    // }
 
     setState(() {
       hasCheckedAnswer = true;
@@ -74,9 +78,12 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
-    final textColor = isDarkMode ? Colors.white : const Color.fromARGB(255, 13, 15, 53);
-    final questionColor = isDarkMode ? Colors.grey[300] : const Color(0xFF1A1F71);
+    final backgroundColor =
+        isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
+    final textColor =
+        isDarkMode ? Colors.white : const Color.fromARGB(255, 13, 15, 53);
+    final questionColor =
+        isDarkMode ? Colors.grey[300] : const Color(0xFF1A1F71);
 
     return SafeArea(
       child: Stack(
@@ -125,7 +132,6 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                             SizedBox(height: 26),
 
                             // [choices] is a list of options for the quiz.
-                            // use [QuizOption] to display each option.
                             Center(
                               child: ListView.separated(
                                 shrinkWrap: true,
@@ -146,6 +152,9 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                                 },
                               ),
                             ),
+                            
+                            // เพิ่ม padding ด้านล่างให้พอดีกับความสูงของปุ่มจะได้ไม่ซ้อนทับกัน
+                            SizedBox(height: buttonAreaHeight),
                           ],
                         ),
                       ],

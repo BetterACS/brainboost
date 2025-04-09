@@ -1,4 +1,7 @@
 import 'package:brainboost/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -7,6 +10,7 @@ import 'package:brainboost/models/games.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:brainboost/component/avatar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PanelSlider extends StatefulWidget {
@@ -54,6 +58,22 @@ class _PanelSliderState extends State<PanelSlider> {
   bool _isImporting = false;
   String? _importError;
 
+  // Add static cache for profile images
+  static final Map<String, Widget> _profileCache = {};
+  static const int _maxCacheSize = 100; // Limit cache size
+
+  // Add cache cleanup method
+  void _cleanupCache() {
+    if (_profileCache.length > _maxCacheSize) {
+      // Remove oldest 20% of entries when cache is full
+      final entriesToRemove = (_maxCacheSize * 0.2).round();
+      final keys = _profileCache.keys.toList();
+      for (var i = 0; i < entriesToRemove && i < keys.length; i++) {
+        _profileCache.remove(keys[i]);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +83,7 @@ class _PanelSliderState extends State<PanelSlider> {
   @override
   void dispose() {
     _importPathController.dispose();
+    _cleanupCache();
     super.dispose();
   }
 
@@ -75,7 +96,51 @@ class _PanelSliderState extends State<PanelSlider> {
         valueListenable: themeNotifier,
         builder: (context, currentTheme, child) {
           final isDarkMode = currentTheme == ThemeMode.dark;
-
+          
+          // Define theme colors based on mode
+          final Color panelBackgroundColor = isDarkMode 
+              ? AppColors.accentDarkmode 
+              : AppColors.cardBackground;
+              
+          final Color buttonBackgroundColor = isDarkMode
+              ? Colors.white
+              : Colors.white;
+              
+          final Color buttonForegroundColor = isDarkMode
+              ? const Color.fromARGB(255, 52, 70, 105)
+              : AppColors.buttonText;
+              
+          final Color buttonBorderColor = isDarkMode
+              ? Colors.white
+              : Colors.white;
+              
+          // disabled button for light and dark modes
+          final Color disabledButtonBackgroundColor = isDarkMode
+              ? Colors.grey.shade800  
+              : Colors.grey.shade300; 
+              
+          final Color disabledButtonForegroundColor = isDarkMode
+              ? Colors.grey.shade600 
+              : Colors.grey.shade400; 
+              
+          final Color disabledButtonBorderColor = isDarkMode
+              ? Colors.grey.shade800  
+              : Colors.grey.shade300; 
+          
+          final Color playHistoryBackgroundColor = isDarkMode
+              ? Color(0xFF1E293B) 
+              : Color(0xFFECF5FF); 
+              
+          final Color playHistoryTextColor = isDarkMode
+              ? Colors.white
+              : Color(0xFF05235F);
+              
+          final Color playButtonBackgroundColor = isDarkMode
+              ? Colors.yellow[700]!
+              : AppColors.neutralBackground;
+              
+          final Color indicatorColor = Colors.white54;
+          
           BorderRadiusGeometry radius = const BorderRadius.only(
             topLeft: Radius.circular(40.0),
             topRight: Radius.circular(40.0),
@@ -93,7 +158,7 @@ class _PanelSliderState extends State<PanelSlider> {
                     height: 4,
                     width: 160,
                     decoration: BoxDecoration(
-                      color: Colors.white54,
+                      color: indicatorColor,
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                   ),
@@ -108,18 +173,14 @@ class _PanelSliderState extends State<PanelSlider> {
               panel: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.accentDarkmode
-                      : AppColors.cardBackground,
+                  color: panelBackgroundColor,
                   borderRadius: radius,
                 ),
                 child: _buildUploadingPanel(context),
               ),
               collapsed: Container(
                 decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.accentDarkmode
-                      : AppColors.cardBackground,
+                  color: panelBackgroundColor,
                   borderRadius: radius,
                 ),
                 child: Column(
@@ -129,7 +190,7 @@ class _PanelSliderState extends State<PanelSlider> {
                       height: 4,
                       width: 160,
                       decoration: BoxDecoration(
-                        color: Colors.white54,
+                        color: indicatorColor,
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                     ),
@@ -159,10 +220,11 @@ class _PanelSliderState extends State<PanelSlider> {
                   height: 4,
                   width: 160,
                   decoration: BoxDecoration(
-                      color: Colors.white54,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      )),
+                    color: indicatorColor,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    )
+                  ),
                 ),
               ),
             ),
@@ -178,9 +240,7 @@ class _PanelSliderState extends State<PanelSlider> {
             panel: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.accentDarkmode
-                      : AppColors.cardBackground,
+                  color: panelBackgroundColor,
                   borderRadius: radius,
                 ),
                 child: Column(
@@ -197,18 +257,18 @@ class _PanelSliderState extends State<PanelSlider> {
                               : null,
                           style: OutlinedButton.styleFrom(
                             backgroundColor: widget.isCurrentUserAuthor
-                                ? Colors.white
-                                : Colors.grey.shade300,
+                                ? buttonBackgroundColor
+                                : disabledButtonBackgroundColor,
                             foregroundColor: widget.isCurrentUserAuthor
-                                ? AppColors.buttonText
-                                : Colors.grey.shade600,
+                                ? buttonForegroundColor
+                                : disabledButtonForegroundColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                             side: BorderSide(
                                 color: widget.isCurrentUserAuthor
-                                    ? Colors.white
-                                    : Colors.grey.shade400,
+                                    ? buttonBorderColor
+                                    : disabledButtonBorderColor,
                                 width: 2),
                             minimumSize: const Size(160, 40),
                             padding: const EdgeInsets.symmetric(
@@ -228,18 +288,18 @@ class _PanelSliderState extends State<PanelSlider> {
                               : null,
                           style: OutlinedButton.styleFrom(
                             backgroundColor: widget.isCurrentUserAuthor
-                                ? Colors.white
-                                : Colors.grey.shade300,
+                                ? buttonBackgroundColor
+                                : disabledButtonBackgroundColor,
                             foregroundColor: widget.isCurrentUserAuthor
-                                ? AppColors.buttonText
-                                : Colors.grey.shade600,
+                                ? buttonForegroundColor
+                                : disabledButtonForegroundColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                             side: BorderSide(
                                 color: widget.isCurrentUserAuthor
-                                    ? Colors.white
-                                    : Colors.grey.shade400,
+                                    ? buttonBorderColor
+                                    : disabledButtonBorderColor,
                                 width: 2),
                             minimumSize: const Size(160, 40),
                             padding: const EdgeInsets.symmetric(
@@ -264,7 +324,7 @@ class _PanelSliderState extends State<PanelSlider> {
                         height: 110,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: Color(0xFFECF5FF),
+                          color: playHistoryBackgroundColor,
                         ),
                         child: Center(
                           child: Row(
@@ -276,7 +336,7 @@ class _PanelSliderState extends State<PanelSlider> {
                                       AppLocalizations.of(context)!
                                           .noplayhistoryyet,
                                       style: TextStyle(
-                                        color: Color(0xFF05235F),
+                                        color: playHistoryTextColor,
                                         fontSize: 18,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -290,14 +350,30 @@ class _PanelSliderState extends State<PanelSlider> {
                                           EdgeInsets.symmetric(horizontal: 4),
                                       child: Column(
                                         children: [
-                                          CircleAvatar(
-                                            radius: 26,
-                                            backgroundColor: Color(0xFF05235F),
-                                            child: CircleAvatar(
-                                              radius: 24,
-                                              backgroundImage: AssetImage(
-                                                  'assets/images/profile.jpg'),
-                                            ),
+                                          FutureBuilder<Widget>(
+                                            future: buildUserIconForPanel(
+                                                widget.games[widget.currentPage]
+                                                        .played_history[index]
+                                                    ['player'],
+                                                40),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return SizedBox(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 2),
+                                                );
+                                              } else if (snapshot.hasError) {
+                                                return Icon(Icons.error,
+                                                    size: 40,
+                                                    color: Colors.red);
+                                              } else {
+                                                return snapshot.data!;
+                                              }
+                                            },
                                           ),
                                           SizedBox(height: 2),
                                           Text(
@@ -305,7 +381,7 @@ class _PanelSliderState extends State<PanelSlider> {
                                                 .played_history[index]['score']
                                                 .toString(),
                                             style: TextStyle(
-                                              color: Color(0xFF05235F),
+                                              color: playHistoryTextColor,
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -331,9 +407,7 @@ class _PanelSliderState extends State<PanelSlider> {
                           'reference': widget.games[widget.currentPage].ref
                         }),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDarkMode
-                              ? Colors.yellow[700]
-                              : AppColors.neutralBackground,
+                          backgroundColor: playButtonBackgroundColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -374,16 +448,15 @@ class _PanelSliderState extends State<PanelSlider> {
                   height: 4,
                   width: 160,
                   decoration: BoxDecoration(
-                      color: Colors.white54,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      )),
+                    color: indicatorColor,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    )
+                  ),
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.accentDarkmode
-                        : AppColors.cardBackground,
+                    color: panelBackgroundColor,
                     borderRadius: radius,
                   ),
                   child: Column(
@@ -421,14 +494,29 @@ class _PanelSliderState extends State<PanelSlider> {
                                         EdgeInsets.symmetric(horizontal: 8),
                                     child: Column(
                                       children: [
-                                        CircleAvatar(
-                                          radius: 24,
-                                          backgroundColor: Colors.white,
-                                          child: CircleAvatar(
-                                            radius: 22,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/profile.jpg'),
-                                          ),
+                                        FutureBuilder<Widget>(
+                                          future: buildUserIconForPanel(
+                                              widget.games[widget.currentPage]
+                                                      .played_history[index]
+                                                  ['player'],
+                                              40),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return SizedBox(
+                                                width: 40,
+                                                height: 40,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                        strokeWidth: 2),
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              return Icon(Icons.error,
+                                                  size: 40, color: Colors.red);
+                                            } else {
+                                              return snapshot.data!;
+                                            }
+                                          },
                                         ),
                                         SizedBox(height: 5),
                                         Text(
@@ -476,28 +564,33 @@ class _PanelSliderState extends State<PanelSlider> {
           children: [
             GestureDetector(
               onTap: () => _showImportDialog(context),
-              child: Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.accentDarkmode
-                      : Colors.blue.shade700,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.file_download_outlined,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ),
-            SizedBox(width: 6),
-            Text(
-              AppLocalizations.of(context)!.importGame,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: isDarkMode
+                          ? AppColors.accentDarkmode
+                          : Colors.blue.shade700,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.file_download_outlined,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  SizedBox(width: 6),
+                  Text(
+                    AppLocalizations.of(context)!.importGame,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -791,5 +884,46 @@ class _PanelSliderState extends State<PanelSlider> {
 
   void closePanel() {
     _panelController.close();
+  }
+
+  Future<Widget> buildUserIconForPanel(
+      DocumentReference<Map<String, dynamic>> userEmail, double size) async {
+    final String cacheKey = '${userEmail.path}_$size';
+
+    // Return cached version if available
+    if (_profileCache.containsKey(cacheKey)) {
+      return _profileCache[cacheKey]!;
+    }
+
+    FirebaseStorage storage = FirebaseStorage.instance;
+    String? path = await UserServices().getUserIcon(email: userEmail.path);
+
+    Widget avatar;
+    if (path == null) {
+      avatar = UserAvatar(
+        imageUrl: 'assets/images/profile.png',
+        width: size,
+      );
+    } else {
+      try {
+        final ref = storage.ref().child(path);
+        final url = await ref.getDownloadURL();
+        avatar = UserAvatar(
+          imageUrl: url,
+          width: size,
+        );
+      } catch (e) {
+        avatar = UserAvatar(
+          imageUrl: 'assets/images/profile.png',
+          width: size,
+        );
+      }
+    }
+
+    // Store in cache
+    _profileCache[cacheKey] = avatar;
+    _cleanupCache();
+
+    return avatar;
   }
 }
