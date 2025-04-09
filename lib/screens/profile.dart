@@ -65,47 +65,46 @@ class _ProfilePageState extends State<ProfilePage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'My Profile',
-          style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          title: Text(
+            'My Profile',
+            style: TextStyle(
+              color: isDarkMode ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-      ),
-      backgroundColor: isDarkMode ? Colors.black : Colors.white,
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser?.email)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser?.email)
+              .snapshots(), // ใช้ snapshots() เพื่อให้ได้ข้อมูลแบบ real-time
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return const Center(child: Text('Error loading profile'));
-          }
+            if (snapshot.hasError) {
+              return const Center(child: Text('Error loading profile'));
+            }
 
-          final data = snapshot.data;
-          if (data != null) {
-            String username = data['username'] ?? 'No username';
-            String email = data['email'] ?? 'No email';
+            final data = snapshot.data;
+            if (data != null) {
+              String username = data['username'] ?? 'No username';
+              String email = data['email'] ?? 'No email';
 
-            return Column(
-              children: [
-                ProfileHeaderWidget(username: username, email: email),
-                // other widgets here...
-              ],
-            );
-          }
+              return Column(
+                children: [
+                  ProfileHeaderWidget(username: username, email: email),
+                  // other widgets here...
+                ],
+              );
+            }
 
-          return const Center(child: Text('No data found'));
-        },
-      ),
-    );
+            return const Center(child: Text('No data found'));
+          },
+        ));
   }
 
   // Profile Header
