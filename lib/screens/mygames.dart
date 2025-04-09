@@ -50,7 +50,7 @@ class _MyGamesState extends State<MyGames> {
   bool isUploading = false;
   bool uploadSuccess = false;
   final TextEditingController _gameNameTextController = TextEditingController();
-  String _newGameTitle = "New Game";
+  String _newGameTitle = "New Game"; // Default title for new game
 
   // List to hold available animation icons
   List<String> availableIcons = [];
@@ -143,9 +143,10 @@ class _MyGamesState extends State<MyGames> {
       } else {
         // Default to "New Game" if empty
         setState(() {
-          _titleEditController.text = "New Game";
-          _gameNameTextController.text = "New Game";
-          _newGameTitle = "New Game"; // Also update our variable
+          _titleEditController.text = AppLocalizations.of(context)!.newGame;
+          _gameNameTextController.text = AppLocalizations.of(context)!.newGame;
+          _newGameTitle = AppLocalizations.of(context)!.newGame;
+ // Also update our variable
           _isEditingTitle = false;
         });
         return;
@@ -175,7 +176,7 @@ class _MyGamesState extends State<MyGames> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Game title updated!'),
+            content: Text(AppLocalizations.of(context)!.gameTitleUpdated),
             duration: Duration(seconds: 2),
           ),
         );
@@ -253,7 +254,7 @@ class _MyGamesState extends State<MyGames> {
   void onCreateGamePressed() async {
     if (!uploadSuccess || uploadLink == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please upload a file first')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseUploadFile)),
       );
       return;
     }
@@ -280,7 +281,8 @@ class _MyGamesState extends State<MyGames> {
           pickedFile = null;
           uploadSuccess = false;
           _gameNameTextController.clear();
-          _newGameTitle = "New Game";
+          _newGameTitle = AppLocalizations.of(context)!.newGame;
+;
 
           // Mark games as needing reload
           _isLoadedGames = false;
@@ -313,43 +315,40 @@ class _MyGamesState extends State<MyGames> {
     // Check if media URL exists
     if (currentGame.media == null || currentGame.media.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Cannot re-version: No source file available')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.cannotReversion)),
       );
       return;
     }
 
     // Show confirmation dialog
     final bool confirmReVersion = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Confirm Re-Version'),
-              content: Text(
-                'Are you sure you want to re-version "${currentGame.name}"? '
-                'This will create a new version based on the same source file.',
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Cancel'),
-                  onPressed: () => Navigator.of(context).pop(false),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blue,
-                  ),
-                  child: Text('Re-Version'),
-                  onPressed: () => Navigator.of(context).pop(true),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-
+  context: context,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      title: Text(AppLocalizations.of(context)!.confirmReversion),
+      content: Text(
+        '${AppLocalizations.of(context)!.areYouSureReversion} "${currentGame.name}"? ${AppLocalizations.of(context)!.createversion}'
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text(AppLocalizations.of(context)!.cancel),
+          onPressed: () => Navigator.of(context).pop(false),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.blue,
+          ),
+          child: Text(AppLocalizations.of(context)!.reversion),
+          onPressed: () => Navigator.of(context).pop(true),
+        ),
+      ],
+    );
+  },
+) ?? false;
     if (!confirmReVersion) return;
 
     // Get the actual game name from the text controller or use the stored variable
-    String gameName = currentGame.name + " (Re-Version)";
+   String gameName = "${currentGame.name} (${AppLocalizations.of(context)!.reversion})";
     // Make gameName length 20 characters
     if (gameName.length > 20) {
       gameName = gameName.substring(0, 20);
@@ -372,7 +371,8 @@ class _MyGamesState extends State<MyGames> {
           pickedFile = null;
           uploadSuccess = false;
           _gameNameTextController.clear();
-          _newGameTitle = "New Game";
+          _newGameTitle =AppLocalizations.of(context)!.newGame;
+
 
           // Mark games as needing reload
           _isLoadedGames = false;
@@ -494,7 +494,7 @@ class _MyGamesState extends State<MyGames> {
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
-                "Select Game Icon",
+                AppLocalizations.of(context)!.noExplanationAvailable,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -1022,7 +1022,7 @@ class _MyGamesState extends State<MyGames> {
                           )
                         ]),
                     body: Center(
-                        child: Text("Loading your games...",
+                        child: Text(AppLocalizations.of(context)!.loadingGames,
                             style: TextStyle(color: Colors.white))),
                   );
                 }
@@ -1102,7 +1102,7 @@ class _MyGamesState extends State<MyGames> {
                                 Icon(Icons.edit, color: Colors.white, size: 16),
                                 SizedBox(width: 4),
                                 Text(
-                                  "Change Icon",
+                                 AppLocalizations.of(context)!.changeIcon,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
@@ -1279,16 +1279,17 @@ Widget _buildAddGameCard(bool isSelected) {
                 color: Colors.white,
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
-                tooltip: 'Delete Game',
+                tooltip: AppLocalizations.of(context)!.deletegame,
                 onPressed: () async {
                   if (_currentPage < games.length) {
                     final bool confirmDelete = await showDialog<bool>(
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Confirm Delete'),
+                              title: Text(
+                                  AppLocalizations.of(context)!.confirmDelete),
                               content: Text(
-                                  'Are you sure you want to delete "${games[_currentPage].name}"? This cannot be undone.'),
+                                  '${AppLocalizations.of(context)!.areYouSuretodelete} "${games[_currentPage].name}"? ${AppLocalizations.of(context)!.cannotbeundone}'),
                               actions: <Widget>[
                                 TextButton(
                                   child: Text('Cancel'),
@@ -1296,8 +1297,6 @@ Widget _buildAddGameCard(bool isSelected) {
                                       Navigator.of(context).pop(false),
                                 ),
                                 TextButton(
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: Colors.red),
                                   child: Text('Delete'),
                                   onPressed: () =>
                                       Navigator.of(context).pop(true),

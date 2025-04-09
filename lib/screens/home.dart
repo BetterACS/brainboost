@@ -20,6 +20,7 @@ import 'package:brainboost/screens/game_bingo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
+
 class CloudPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -556,11 +557,11 @@ Widget _buildCreateButtons(BuildContext context) {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Let’s Gamify Your Learning!",
+                            AppLocalizations.of(context)!.expianedmaincreategame,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -569,7 +570,7 @@ Widget _buildCreateButtons(BuildContext context) {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            "Make studying fun! Just upload your file\nand start playing.",
+                             AppLocalizations.of(context)!.makeStudyingFun,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -595,8 +596,8 @@ Widget _buildCreateButtons(BuildContext context) {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 12),
                         ),
-                        child: const Text(
-                          "Create Game",
+                        child: Text(
+                          AppLocalizations.of(context)!.createGame,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
