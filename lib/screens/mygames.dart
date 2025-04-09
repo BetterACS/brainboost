@@ -62,13 +62,17 @@ class _MyGamesState extends State<MyGames> {
   bool lectureUploadSuccess = false;
   String? lectureFileName;
 
-  @override
-  void initState() {
-    super.initState();
-    _titleEditController.addListener(() {});
-    _loadAvailableIcons();
-  }
-
+ @override
+void initState() {
+  super.initState();
+  _titleEditController.addListener(() {});
+  _loadAvailableIcons().then((_) {
+    // เมื่อโหลด icon เสร็จแล้ว ทำการ precache
+    for (String icon in availableIcons) {
+      precacheImage(AssetImage(icon), context);
+    }
+  });
+}
   @override
   void dispose() {
     _pageController.dispose();
@@ -1031,97 +1035,101 @@ class _MyGamesState extends State<MyGames> {
   }
 
   Widget _buildGameCard(int index, bool isSelected) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    double backgroundSize = 300;
-
-    return Transform.scale(
-      scale: isSelected ? 1.0 : 0.85,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        transform: Matrix4.identity()
-          ..translate(0.0, isSelected ? -2.0 : 12.0, isSelected ? 10.0 : 0.0),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              height: isSelected ? 265 : 240,
-              top: 26,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ClipOval(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    width: backgroundSize,
-                    color: _slideUpPanelValue <= slideValueThreshold
-                        ? (isDarkMode
-                            ? AppColors.accentDarkmode
-                            : Colors.grey.shade300)
-                        : (isDarkMode
-                            ? AppColors.accentDarkmode2
-                            : Color(0xFF102247)),
-                  ),
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  double backgroundSize = 300;
+  
+  final Color backgroundColor = _slideUpPanelValue <= slideValueThreshold
+      ? (isDarkMode ? AppColors.accentDarkmode : Colors.grey.shade300)
+      : (isDarkMode ? AppColors.accentDarkmode2 : Color(0xFF102247));
+  
+  return Transform.scale(
+    scale: isSelected ? 1.0 : 0.85,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutQuad,
+      transform: Matrix4.identity()
+        ..translate(0.0, isSelected ? -2.0 : 12.0, isSelected ? 10.0 : 0.0),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            height: isSelected ? 265 : 240,
+            top: 26,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: ClipOval(
+                child: Container(
+                  width: backgroundSize,
+                  color: backgroundColor,
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: isSelected && _slideUpPanelValue > slideValueThreshold
-                  ? _showIconSelectionModal
-                  : null,
-              child: SizedBox(
-                child: Transform.scale(
-                  scale: 1.08,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                        Image.asset(
+          ),
+          GestureDetector(
+            onTap: isSelected && _slideUpPanelValue > slideValueThreshold
+                ? _showIconSelectionModal
+                : null,
+            child: SizedBox(
+              child: Transform.scale(
+                scale: 1.08,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // แก้ไขส่วนนี้ โดยใช้ RepaintBoundary และ MemoryImage
+                    RepaintBoundary(
+                      child: Image.asset(
                         games[index].icon.replaceFirst('assets/', ''),
                         fit: BoxFit.contain,
+                        gaplessPlayback: true, // เพิ่ม gaplessPlayback เป็น true
+                        cacheWidth: 400, // กำหนดความกว้างของแคช
+                        cacheHeight: 400, // กำหนดความสูงของแคช
                         errorBuilder: (context, error, stackTrace) {
+                          print("Error loading image: $error");
                           return Image.asset(
                             'assets/animations/map2.GIF',
                             fit: BoxFit.contain,
+                            gaplessPlayback: true,
                           );
                         },
                       ),
-                      if (isSelected &&
-                          _slideUpPanelValue > slideValueThreshold)
-                        Positioned(
-                          bottom: 70,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.edit, color: Colors.white, size: 16),
-                                SizedBox(width: 4),
-                                Text(
-                                  "Change Icon",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ),
+                    ),
+                    if (isSelected && _slideUpPanelValue > slideValueThreshold)
+                      Positioned(
+                        bottom: 70,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.edit, color: Colors.white, size: 16),
+                              SizedBox(width: 4),
+                              Text(
+                                "Change Icon",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
 Widget _buildAddGameCard(bool isSelected) {
   final isDarkMode = Theme.of(context).brightness == Brightness.dark;
