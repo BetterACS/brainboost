@@ -313,18 +313,24 @@ class _PanelSliderState extends State<PanelSlider> {
                                         children: [
                                           FutureBuilder<Widget>(
                                             future: buildUserIconForPanel(
-                                              widget.games[widget.currentPage]
-                                                  .played_history[index]['player'], 40
-                                            ),
+                                                widget.games[widget.currentPage]
+                                                        .played_history[index]
+                                                    ['player'],
+                                                40),
                                             builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
                                                 return SizedBox(
                                                   width: 40,
                                                   height: 40,
-                                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 2),
                                                 );
                                               } else if (snapshot.hasError) {
-                                                return Icon(Icons.error, size: 40, color: Colors.red);
+                                                return Icon(Icons.error,
+                                                    size: 40,
+                                                    color: Colors.red);
                                               } else {
                                                 return snapshot.data!;
                                               }
@@ -452,25 +458,30 @@ class _PanelSliderState extends State<PanelSlider> {
                                         EdgeInsets.symmetric(horizontal: 8),
                                     child: Column(
                                       children: [
-                                          FutureBuilder<Widget>(
-                                            future: buildUserIconForPanel(
+                                        FutureBuilder<Widget>(
+                                          future: buildUserIconForPanel(
                                               widget.games[widget.currentPage]
-                                                  .played_history[index]['player'], 40
-                                            ),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                                return SizedBox(
-                                                  width: 40,
-                                                  height: 40,
-                                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                                );
-                                              } else if (snapshot.hasError) {
-                                                return Icon(Icons.error, size: 40, color: Colors.red);
-                                              } else {
-                                                return snapshot.data!;
-                                              }
-                                            },
-                                          ),
+                                                      .played_history[index]
+                                                  ['player'],
+                                              40),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return SizedBox(
+                                                width: 40,
+                                                height: 40,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                        strokeWidth: 2),
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              return Icon(Icons.error,
+                                                  size: 40, color: Colors.red);
+                                            } else {
+                                              return snapshot.data!;
+                                            }
+                                          },
+                                        ),
                                         SizedBox(height: 5),
                                         Text(
                                           widget.games[widget.currentPage]
@@ -517,28 +528,33 @@ class _PanelSliderState extends State<PanelSlider> {
           children: [
             GestureDetector(
               onTap: () => _showImportDialog(context),
-              child: Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? AppColors.accentDarkmode
-                      : Colors.blue.shade700,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.file_download_outlined,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ),
-            SizedBox(width: 6),
-            Text(
-              AppLocalizations.of(context)!.importGame,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: isDarkMode
+                          ? AppColors.accentDarkmode
+                          : Colors.blue.shade700,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.file_download_outlined,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  SizedBox(width: 6),
+                  Text(
+                    AppLocalizations.of(context)!.importGame,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -834,9 +850,10 @@ class _PanelSliderState extends State<PanelSlider> {
     _panelController.close();
   }
 
-  Future<Widget> buildUserIconForPanel(DocumentReference<Map<String, dynamic>> userEmail, double size) async {
+  Future<Widget> buildUserIconForPanel(
+      DocumentReference<Map<String, dynamic>> userEmail, double size) async {
     final String cacheKey = '${userEmail.path}_$size';
-    
+
     // Return cached version if available
     if (_profileCache.containsKey(cacheKey)) {
       return _profileCache[cacheKey]!;
@@ -844,7 +861,7 @@ class _PanelSliderState extends State<PanelSlider> {
 
     FirebaseStorage storage = FirebaseStorage.instance;
     String? path = await UserServices().getUserIcon(email: userEmail.path);
-    
+
     Widget avatar;
     if (path == null) {
       avatar = UserAvatar(
