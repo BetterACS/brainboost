@@ -422,6 +422,8 @@ class _MyGamesState extends State<MyGames> {
               (key.endsWith('.gif') || key.endsWith('.GIF')))
           .toList();
 
+      print("Icons: $icons");
+
       setState(() {
         availableIcons = icons;
         _isLoadingIcons = false;
@@ -1087,7 +1089,7 @@ class _MyGamesState extends State<MyGames> {
                     alignment: Alignment.center,
                     children: [
                         Image.asset(
-                        games[index].icon.replaceFirst('assets/', ''),
+                        games[index].icon, //.replaceFirst('assets/', ''),
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(

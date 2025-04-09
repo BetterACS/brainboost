@@ -21,6 +21,7 @@ class _ProfileContainerState extends State<ProfileContainer> {
   User? currentUser;
   Widget? userAvatar;
   bool isLoading = true;
+  String username = 'Loading...';
 
   @override
   void initState() {
@@ -39,8 +40,19 @@ class _ProfileContainerState extends State<ProfileContainer> {
           imageUrl: 'assets/images/profile.png',
           width: 32,
         );
+        username = 'Guest';
       });
       return;
+    }
+
+    // Fetch username from Firestore
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser!.email)
+        .get();
+
+    if (userDoc.exists) {
+      username = userDoc['username'] ?? 'Guest';
     }
 
     String? path = await UserServices().getUserIcon(email: currentUser!.email!);
@@ -84,21 +96,9 @@ class _ProfileContainerState extends State<ProfileContainer> {
       builder: (context, currentTheme, child) {
         final isDarkMode = currentTheme == ThemeMode.dark;
 
-        // return FutureBuilder<DocumentSnapshot>(
-        //   future: fetchUsername(),
-        //   builder: (context, snapshot) {
-        //     if (snapshot.connectionState == ConnectionState.waiting &&
-        //         isProfileLoaded == false) {
-        //       return const CircularProgressIndicator();
-        //     }
-
-        //     if (!snapshot.hasData || !snapshot.data!.exists) {
-        //       return Text(AppLocalizations.of(context)!.noUserFound);
-        //     }
         if (currentUser == null) {
           return const Text("User not found");
         }
-        final username = currentUser!.displayName ?? 'Guest';
 
         return Container(
           padding: const EdgeInsets.only(left: 10, right: 14, top: 8, bottom: 8),

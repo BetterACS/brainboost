@@ -124,7 +124,7 @@ class _PanelSliderState extends State<PanelSlider> {
               onPanelOpened: () => widget.slidePanelFunction(1.0),
               onPanelClosed: () => widget.slidePanelFunction(0.0),
               minHeight: 240,
-              maxHeight: 780,
+              maxHeight: 720,
               borderRadius: radius,
               panel: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -194,7 +194,7 @@ class _PanelSliderState extends State<PanelSlider> {
                     widget.games[widget.currentPage].played_history.isEmpty
                 ? 172
                 : 240,
-            maxHeight: 780,
+            maxHeight: 720,
             borderRadius: radius,
             panel: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),

@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
 
 /// Used to scale smaller devices.
 /// Font and sizes. Not used everywhere. Used for tweaking smaller device.
@@ -50,6 +51,17 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, currentTheme, child) {
+        // Set system UI overlay style based on theme
+        SystemChrome.setSystemUIOverlayStyle(
+          currentTheme == ThemeMode.light
+              ? SystemUiOverlayStyle.dark.copyWith(
+                  statusBarColor: Colors.transparent,
+                )
+              : SystemUiOverlayStyle.light.copyWith(
+                  statusBarColor: Colors.transparent,
+                ),
+        );
+
         return ValueListenableBuilder<Locale>(
           valueListenable: localeNotifier,
           builder: (context, currentLocale, _) {

@@ -568,13 +568,13 @@ Widget _buildCreateButtons(BuildContext context) {
                             ),
                           ),
                           SizedBox(height: 10),
-                          Text(
-                            "Make studying fun! Just upload your file\nand start playing.",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
+                          // Text(
+                          //   "Make studying fun! Just upload your file\nand start playing.",
+                          //   style: TextStyle(
+                          //     color: Colors.white,
+                          //     fontSize: 14,
+                          //   ),
+                          // ),
                         ],
                       ),
                       const Spacer(),
@@ -611,7 +611,7 @@ Widget _buildCreateButtons(BuildContext context) {
                   child: FittedBox(
                     fit: BoxFit.contain,
                     child: Image.asset(
-                      'assets/images/rockety.webp',
+                      'assets/images/rockety.png',
                     ),
                   ),
                 ),

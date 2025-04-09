@@ -138,8 +138,8 @@ class ResultsPage extends StatelessWidget {
         const Center(
           child: Image(
             image: AssetImage('assets/icons/trophy.png'),
-            width: 238,
-            height: 262,
+            width: 360,
+            height: 340,
             fit: BoxFit.contain,
           ),
         ),
