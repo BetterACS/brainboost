@@ -114,11 +114,11 @@ class _ResultsPageState extends State<ResultsPage> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              const SizedBox(height: 80),
+              // const SizedBox(height: 80),
               _buildTrophy(isDarkMode),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               _buildCongratulationsText(context, isDarkMode),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               _buildScoreRow(context, widget.correct, widget.wrong, widget.time, isDarkMode),
               const SizedBox(height: 20),
               if (isLoading)
@@ -209,8 +209,8 @@ class _ResultsPageState extends State<ResultsPage> {
         Transform.translate(
           offset: const Offset(0, 110),
           child: ShadowEllipse(
-            width: 280,
-            height: 160,
+            width: 240,
+            height: 120,
             backgroundColor:
                 isDarkMode ? Colors.grey[800]! : const Color(0xFFE1E3E9),
           ),
