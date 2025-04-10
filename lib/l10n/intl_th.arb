@@ -75,7 +75,11 @@
   "games": "เกม",
   "history": "ประวัติ",
   "profile": "โปรไฟล์",
-  
+  "expianedmaincreategame": "มาทำให้การเรียนรู้ของคุณเป็นเกมกันเถอะ!",
+"makeStudyingFun": "ทำให้การเรียนเป็นเรื่องสนุก! เพียงอัปโหลดไฟล์ของคุณแล้วเริ่มเล่นได้เลย",
+
+
+
   "successRate": "อัตราความสำเร็จ",
   "outOfQuestions": "จาก {number} คำถาม",
   "recentGame": "เกมล่าสุด",
@@ -138,7 +142,7 @@
   "selectPdfDocument": "เลือกเอกสาร PDF เพื่อสร้างเกมของคุณ",
   "usernotloggedin": "ผู้ใช้ไม่ได้เข้าสู่ระบบ",
 
-  "expianedmaincreategame": "มาเปลี่ยนการเรียนรู้ของคุณให้สนุกเหมือนเล่นเกมกันเถอะ!",
+  "expianedmaincreategame": "มาเปลี่ยนการเรียนรู้ของคุณให้สนุกขึ้น!",
   "expianedcreategame": "เปลี่ยนการเรียนให้สนุก! แค่อัปโหลดไฟล์แล้วเริ่มเล่นได้เลย!",
 
   "tabcomingsoon": "เร็วๆนี้",
@@ -154,7 +158,7 @@
   "time": "เวลา",
   "playagain": "เล่นอีกครั้ง",
   "imporvetext": "เยี่ยมเลย! คุณทำได้ดีกว่าครั้งก่อน 20",
-
+ "createGame": "สร้างเกมส์",
   "exitmodalmain": "คุณแน่ใจไหม? ",
   "exitmodal1": "คะแนนนี้จะไม่ถูกบันทึกหากออกตอนนี้",
   "exitmodal2": "ต้องการออกจากหน้านี้จริงหรือไม่?",
@@ -168,12 +172,40 @@
   "playFirstGame": "เล่นเกมแรกของคุณเลย!",
   "historyWillAppearHere": "ประวัติการเรียนรู้ของคุณจะแสดงที่นี่",
   "completeGameToSeeHistory": "เล่นเกมให้จบเพื่อดูประวัติของคุณ!",
-
+  "confirmDelete":"ยืนยันว่าจะลบเกมส์",
   "language": "ภาษา",
   "aboutapp": "ข้อมูลเกี่ยวกับแอป",
-  "removeGame": "Remove Game",
-  "removeGameConfirmTitle": "Remove Game",
-  "removeGameConfirmMessage": "Are you sure you want to remove this game? This will delete it from your history.",
-  "gameRemovedSuccess": "Game removed successfully"
-}
+  "removeGame": "ลบเกมส์",
+  "removeGameConfirmTitle": "ลบเกมส์",
+  "removeGameConfirmMessage": "คุณแน่ใจหรือไม่ว่าต้องการลบเกมนี้? การทำเช่นนี้จะลบเกมนี้ออกจากประวัติของคุณ",
+  "gameRemovedSuccess": "ลบเกมส์เรียบร้อยแล้ว",
+  "changeIcon":"เปลี่ยนไอคอน",
+  "deletegame":"ลบเกมส์",
+"areYouSuretodelete":"คุณแน่ใจว่าต้องการลบหรือไม่",
+"cannotbeundone":"นี่ไม่สามารถย้อนกลับได้.",
 
+"gameDeleted":"ลบเกมแล้ว",
+  "errorDeletingGame":"เกิดข้อผิดพลาดในการลบเกม:",
+  "share":"แบ่งปันเกม",
+"sharegamecode":"แบ่งปันรหัสเกมนี้กับผู้อื่น:",
+"gameCodeCopied":"คัดลอกรหัสเกมไปยังคลิปบอร์ดแล้ว!",
+ "close":"ปิด",
+
+"gameTitleUpdated":"ชื่อเกมได้รับการอัปเดตแล้ว!",
+"errorsaving":"ข้อผิดพลาดในการบันทึกชื่อเกม:",
+"failedToUpdateTitle":"ไม่สามารถอัปเดตชื่อเกมได้:",
+"uploadprogress":"ความคืบหน้าในการอัปโหลด:",
+"Downloadlink":"ลิงก์ดาวน์โหลด:",
+"pleaseUploadFile":"กรุณาอัปโหลดไฟล์ก่อน",
+
+"cannotReversion":"ไม่สามารถสร้างเวอร์ชันใหม่ได้: ไม่มีไฟล์ต้นฉบับ",
+"confirmReversion":"ยืนยันการเวอร์ชันใหม่",
+"areYouSureReversion":"คุณแน่ใจหรือไม่ว่าต้องการสร้างเวอร์ชันใหม่",
+"createversion":"นี่จะสร้างเวอร์ชันใหม่โดยใช้ไฟล์ต้นฉบับเดียวกัน",
+"reversion":"สร้างเวอร์ชันใหม่",
+"selectGameIcon":"เลือกไอคอนเกม",
+
+"loadingGames":"กำลังโหลดเกมของคุณ...",
+"bestScore": "คะแนนดีที่สุด",
+"newBestScore": "คะแนนดีที่สุด ณ ตอนนี้"
+}

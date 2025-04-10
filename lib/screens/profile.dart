@@ -9,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/screens/edit_porfile.dart';
-import 'package:brainboost/screens/support.dart';
+// import 'package:brainboost/screens/support.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:go_router/go_router.dart';
@@ -183,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildOptionsList(BuildContext context, bool isDarkMode) {
     return Container(
       width: 380,
-      height: 300,
+      height: 220,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.accentDarkmode : Colors.white,
@@ -258,18 +258,18 @@ class _ProfilePageState extends State<ProfilePage> {
             },
             isDarkMode: isDarkMode,
           ),
-          const SizedBox(height: 20),
-          _buildOption(
-            icon: Icons.support,
-            title: AppLocalizations.of(context)!.support,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SupportPage()),
-              );
-            },
-            isDarkMode: isDarkMode,
-          ),
+          // const SizedBox(height: 20),
+          // _buildOption(
+          //   icon: Icons.support,
+          //   title: AppLocalizations.of(context)!.support,
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => SupportPage()),
+          //     );
+          //   },
+          //   isDarkMode: isDarkMode,
+          // ),
         ],
       ),
     );

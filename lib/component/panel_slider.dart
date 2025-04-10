@@ -168,7 +168,7 @@ class _PanelSliderState extends State<PanelSlider> {
               onPanelOpened: () => widget.slidePanelFunction(1.0),
               onPanelClosed: () => widget.slidePanelFunction(0.0),
               minHeight: 240,
-              maxHeight: 780,
+              maxHeight: MediaQuery.of(context).size.height * 0.805,
               borderRadius: radius,
               panel: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -235,7 +235,7 @@ class _PanelSliderState extends State<PanelSlider> {
                     widget.games[widget.currentPage].played_history.isEmpty
                 ? 172
                 : 240,
-            maxHeight: 780,
+            maxHeight: MediaQuery.of(context).size.height * 0.805,
             borderRadius: radius,
             panel: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -564,7 +564,18 @@ class _PanelSliderState extends State<PanelSlider> {
           children: [
             GestureDetector(
               onTap: () => _showImportDialog(context),
-              child: Row(
+              child: 
+              Container(
+                height: 36,
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: isDarkMode ? Colors.blue : Colors.blue,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: 
+              
+              
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
@@ -592,6 +603,7 @@ class _PanelSliderState extends State<PanelSlider> {
                   ),
                 ],
               ),
+              ),
             ),
           ],
         ),
@@ -600,7 +612,7 @@ class _PanelSliderState extends State<PanelSlider> {
             widget.uploadProgress <= 0 &&
             !widget.uploadSuccess)
           Container(
-            margin: EdgeInsets.symmetric(vertical: 24, horizontal: 4),
+            margin: EdgeInsets.symmetric(vertical: 24,),
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: isDarkMode ? AppColors.accentDarkmode2 : Color(0xFF152A56),
@@ -617,7 +629,7 @@ class _PanelSliderState extends State<PanelSlider> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 6),
                 Text(
                   AppLocalizations.of(context)!.selectPdfDocument,
                   textAlign: TextAlign.center,
@@ -827,7 +839,7 @@ class _PanelSliderState extends State<PanelSlider> {
                             if (email != null) {
                               await widget.userServices.addSharedGame(
                                   email: email,
-                                  gamePath: _importPathController.text.trim());
+                                  gamePath: _importPathController.text);
 
                               Navigator.of(context).pop();
                               if (widget.onImportSuccess != null) {
@@ -897,7 +909,7 @@ class _PanelSliderState extends State<PanelSlider> {
 
     FirebaseStorage storage = FirebaseStorage.instance;
     String? path = await UserServices().getUserIcon(email: userEmail.path);
-
+    print("User icon path: $path");
     Widget avatar;
     if (path == null) {
       avatar = UserAvatar(

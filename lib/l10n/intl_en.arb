@@ -70,12 +70,12 @@
   "gamePathEmpty": "Game path cannot be empty",
   "gameImportedSuccess": "Game imported successfully",
   "import": "Import",
-  
+  "deletegame":"Delete Game",
   "home": "home",
   "games": "games",
   "history": "history",
   "profile": "profile",
-  
+ "changeIcon":"Change Icon",
   "successRate": "Success rate",
   "outOfQuestions": "out of {number} questions",
   "recentGame": "Recent Game",
@@ -107,17 +107,17 @@
   "submit": "Submit",
   "answer": "Answer",
   
-  "playBingo": "เล่นบิงโก",
+  "playBingo": "Play Bingo",
   "pointsLabel": "{point} Points",
-  "yourPoints": "คุณมี {score} คะแนน",
-  "bingoRequirement": "เพื่อผ่านเกมนี้ คุณต้องบิงโกหรือสะสมคะแนนให้ครบ 75 คะแนนขึ้นไป",
+  "yourPoints": "You have {score} points.",
+  "bingoRequirement": "To pass the bingo selection or collect 75 or more points.",
   "gameCompleted": "Game Completed!",
   "congratulationsBingo": "Congratulations! You got BINGO!",
   "congratulationsScore": "Congratulations! You scored over 75 points!",
   "sorryNoWin": "Sorry, you didn't achieve BINGO or reach 75 points!",
   
-  "answerQuestions": "ตอบคำถาม",
-  
+  "answerQuestions": "Answer Questions",
+  "confirmDelete":"Confirm Delete",
   "noPlayedHistory": "No played history",
   "noUserFound": "User not found",
   "createssuccess":"Success!",
@@ -166,12 +166,38 @@
   "playFirstGame": "Play your first game!",
   "historyWillAppearHere": "Your Learning History Will Appear Here",
   "completeGameToSeeHistory": "Complete a game to see your history!",
-
+  "cannotbeundone":"This cannot be undone.",
   "language": "Language",
-  "aboutapp": "About"
-,
+  "aboutapp": "About",
+  "areYouSuretodelete":"คุณแน่ใจว่าต้องการลบหรือไม่",
   "removeGame": "Remove Game",
   "removeGameConfirmTitle": "Remove Game",
   "removeGameConfirmMessage": "Are you sure you want to remove this game? This will delete it from your history.",
-  "gameRemovedSuccess": "Game removed successfully"
+  "gameRemovedSuccess": "Game removed successfully",
+
+  "gameDeleted":"Game deleted.",
+  "errorDeletingGame":"Error deleting game:",
+  "share":"Share Game",
+"sharegamecode":"Share this game code with others:",
+"gameCodeCopied":"Game code copied to clipboard!",
+ "close":"Close",
+
+"gameTitleUpdated": "Game title updated!",
+"errorSaving": "Error saving title:",
+"failedToUpdateTitle": "Failed to update title:",
+"uploadProgress": "Upload Progress:",
+"downloadLink": "Download-Link:",
+"pleaseUploadFile": "Please upload a file first",
+
+"cannotReversion":"Cannot re-version: No source file available",
+"confirmReversion":"Confirm Re-Version",
+"areYouSureReversion":"Are you sure you want to re-version",
+"createversion":"This will create a new version based on the same source file.",
+"reversion":"Re-Version",
+"selectGameIcon":"Select Game Icon",
+
+"loadingGames":"Loading your games...",
+"bestScore": "Best score",
+"newBestScore": "New Best score"
+
 }

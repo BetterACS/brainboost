@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
@@ -22,6 +23,7 @@ import 'package:brainboost/utils/game_creator.dart';
 import 'dart:io' as io;
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart'; // Import kIsWeb
 
 class MyGames extends StatefulWidget {
   const MyGames({super.key});
@@ -50,7 +52,7 @@ class _MyGamesState extends State<MyGames> {
   bool isUploading = false;
   bool uploadSuccess = false;
   final TextEditingController _gameNameTextController = TextEditingController();
-  String _newGameTitle = "New Game";
+  String _newGameTitle = "New Game"; // Default title for new game
 
   // List to hold available animation icons
   List<String> availableIcons = [];
@@ -143,9 +145,10 @@ class _MyGamesState extends State<MyGames> {
       } else {
         // Default to "New Game" if empty
         setState(() {
-          _titleEditController.text = "New Game";
-          _gameNameTextController.text = "New Game";
-          _newGameTitle = "New Game"; // Also update our variable
+          _titleEditController.text = AppLocalizations.of(context)!.newGame;
+          _gameNameTextController.text = AppLocalizations.of(context)!.newGame;
+          _newGameTitle = AppLocalizations.of(context)!.newGame;
+ // Also update our variable
           _isEditingTitle = false;
         });
         return;
@@ -175,7 +178,7 @@ class _MyGamesState extends State<MyGames> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Game title updated!'),
+            content: Text(AppLocalizations.of(context)!.gameTitleUpdated),
             duration: Duration(seconds: 2),
           ),
         );
@@ -221,12 +224,20 @@ class _MyGamesState extends State<MyGames> {
   }
 
   Future<void> uploadFile() async {
+    if (pickedFile == null) {
+      print("No file selected for upload.");
+      return;
+    }
+
     final path = 'files/${pickedFile!.name}';
 
     try {
       final ref = FirebaseStorage.instance.ref().child(path);
-
-      final uploadTask = ref.putData(pickedFile!.bytes!);
+      
+      // For web
+      // final uploadTask = ref.putData(pickedFile!.bytes!);
+      // For mobile
+      final uploadTask = ref.putFile(io.File(pickedFile!.path!));
       uploadTask.snapshotEvents.listen((event) {
         setState(() {
           progress = event.bytesTransferred / event.totalBytes;
@@ -243,17 +254,17 @@ class _MyGamesState extends State<MyGames> {
         isUploading = false;
       });
     } catch (e) {
-      print(e);
+      print('Error while loading ${e}');
       setState(() {
         isUploading = false;
       });
     }
   }
 
-  void onCreateGamePressed() async {
+    void onCreateGamePressed() async {
     if (!uploadSuccess || uploadLink == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please upload a file first')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseUploadFile)),
       );
       return;
     }
@@ -280,7 +291,8 @@ class _MyGamesState extends State<MyGames> {
           pickedFile = null;
           uploadSuccess = false;
           _gameNameTextController.clear();
-          _newGameTitle = "New Game";
+          _newGameTitle = AppLocalizations.of(context)!.newGame;
+;
 
           // Mark games as needing reload
           _isLoadedGames = false;
@@ -313,43 +325,40 @@ class _MyGamesState extends State<MyGames> {
     // Check if media URL exists
     if (currentGame.media == null || currentGame.media.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Cannot re-version: No source file available')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.cannotReversion)),
       );
       return;
     }
 
     // Show confirmation dialog
     final bool confirmReVersion = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Confirm Re-Version'),
-              content: Text(
-                'Are you sure you want to re-version "${currentGame.name}"? '
-                'This will create a new version based on the same source file.',
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Cancel'),
-                  onPressed: () => Navigator.of(context).pop(false),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blue,
-                  ),
-                  child: Text('Re-Version'),
-                  onPressed: () => Navigator.of(context).pop(true),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-
+  context: context,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      title: Text(AppLocalizations.of(context)!.confirmReversion),
+      content: Text(
+        '${AppLocalizations.of(context)!.areYouSureReversion} "${currentGame.name}"? ${AppLocalizations.of(context)!.createversion}'
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text(AppLocalizations.of(context)!.cancel),
+          onPressed: () => Navigator.of(context).pop(false),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.blue,
+          ),
+          child: Text(AppLocalizations.of(context)!.reversion),
+          onPressed: () => Navigator.of(context).pop(true),
+        ),
+      ],
+    );
+  },
+) ?? false;
     if (!confirmReVersion) return;
 
     // Get the actual game name from the text controller or use the stored variable
-    String gameName = currentGame.name + " (Re-Version)";
+   String gameName = "${currentGame.name} (${AppLocalizations.of(context)!.reversion})";
     // Make gameName length 20 characters
     if (gameName.length > 20) {
       gameName = gameName.substring(0, 20);
@@ -372,7 +381,8 @@ class _MyGamesState extends State<MyGames> {
           pickedFile = null;
           uploadSuccess = false;
           _gameNameTextController.clear();
-          _newGameTitle = "New Game";
+          _newGameTitle =AppLocalizations.of(context)!.newGame;
+
 
           // Mark games as needing reload
           _isLoadedGames = false;
@@ -413,6 +423,8 @@ class _MyGamesState extends State<MyGames> {
               key.startsWith('assets/animations/') &&
               (key.endsWith('.gif') || key.endsWith('.GIF')))
           .toList();
+
+      print("Icons: $icons");
 
       setState(() {
         availableIcons = icons;
@@ -494,7 +506,7 @@ class _MyGamesState extends State<MyGames> {
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
-                "Select Game Icon",
+                AppLocalizations.of(context)!.noExplanationAvailable,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -565,8 +577,11 @@ class _MyGamesState extends State<MyGames> {
     );
 
     if (result == null) {
+      print("Lecture file picking cancelled or failed.");
       return;
     }
+
+    print("Picked file: ${result.files.single.name}");
 
     setState(() {
       lectureFileName = result.files.single.name;
@@ -587,7 +602,9 @@ class _MyGamesState extends State<MyGames> {
     try {
       final ref = FirebaseStorage.instance.ref().child(path);
 
-      final uploadTask = ref.putData(pickedFile!.bytes!);
+      final uploadTask = ref.putFile(io.File(pickedFile!.path!));
+
+
       uploadTask.snapshotEvents.listen((event) {
         setState(() {
           lectureUploadProgress = event.bytesTransferred / event.totalBytes;
@@ -707,6 +724,71 @@ class _MyGamesState extends State<MyGames> {
     }
     return path; // Return original if format is unexpected
   }
+
+  Future<void> _saveTitleToFirebase(String newTitle) async {
+  if (_currentPage >= games.length) return; 
+
+  final currentGame = games[_currentPage];
+
+  try {
+    await FirebaseFirestore.instance
+        .doc(currentGame.ref)
+        .update({'name': newTitle});
+
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final String email = user.email!;
+      final DocumentReference historyRef =
+          FirebaseFirestore.instance.collection('history').doc(email);
+
+      final DocumentSnapshot historyDoc = await historyRef.get();
+      if (historyDoc.exists) {
+        final List<dynamic> historyData = historyDoc['data'] ?? [];
+        final updatedHistoryData = historyData.map((entry) {
+          if (entry['game_id'] == currentGame.ref) {
+            return {
+              ...entry,
+              'game_name': newTitle, 
+            };
+          }
+          return entry;
+        }).toList();
+
+        await historyRef.update({'data': updatedHistoryData});
+      }
+    }
+
+    // อัปเดตชื่อเกมใน UI
+    setState(() {
+      games[_currentPage] = GamesType(
+        ref: currentGame.ref,
+        author: currentGame.author,
+        name: newTitle,
+        description: currentGame.description,
+        icon: currentGame.icon,
+        gameList: currentGame.gameList,
+        media: currentGame.media,
+        played_history: currentGame.played_history,
+      );
+      _isEditingTitle = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Game title updated successfully!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  } catch (e) {
+    print("Error updating title: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Failed to update title: $e'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -875,20 +957,21 @@ class _MyGamesState extends State<MyGames> {
                                                         )
                                                       : null,
                                               decoration: InputDecoration(
-                                                  isDense: true,
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  border: InputBorder.none,
-                                                  hintText: "Enter new title",
-                                                  hintStyle: TextStyle(
-                                                    color: titleColor
-                                                        .withOpacity(0.5),
-                                                    fontSize: 25,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                  )),
-                                              onSubmitted: (_) =>
-                                                  _saveTitleChanges(),
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.zero,
+                                                border: InputBorder.none,
+                                                hintText: "Enter new title",
+                                                hintStyle: TextStyle(
+                                                  color: titleColor.withOpacity(0.5),
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                              onSubmitted: (newTitle) async {
+                                                if (newTitle.trim().isNotEmpty) {
+                                                  await _saveTitleToFirebase(newTitle.trim());
+                                                }
+                                              },
                                             )
                                           : Row(
                                               mainAxisAlignment:
@@ -1022,7 +1105,7 @@ class _MyGamesState extends State<MyGames> {
                           )
                         ]),
                     body: Center(
-                        child: Text("Loading your games...",
+                        child: Text(AppLocalizations.of(context)!.loadingGames,
                             style: TextStyle(color: Colors.white))),
                   );
                 }
@@ -1076,7 +1159,7 @@ class _MyGamesState extends State<MyGames> {
                     alignment: Alignment.center,
                     children: [
                         Image.asset(
-                        games[index].icon.replaceFirst('assets/', ''),
+                        games[index].icon, //.replaceFirst('assets/', ''),
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
@@ -1102,7 +1185,7 @@ class _MyGamesState extends State<MyGames> {
                                 Icon(Icons.edit, color: Colors.white, size: 16),
                                 SizedBox(width: 4),
                                 Text(
-                                  "Change Icon",
+                                 AppLocalizations.of(context)!.changeIcon,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
@@ -1279,16 +1362,17 @@ Widget _buildAddGameCard(bool isSelected) {
                 color: Colors.white,
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
-                tooltip: 'Delete Game',
+                tooltip: AppLocalizations.of(context)!.deletegame,
                 onPressed: () async {
                   if (_currentPage < games.length) {
                     final bool confirmDelete = await showDialog<bool>(
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Confirm Delete'),
+                              title: Text(
+                                  AppLocalizations.of(context)!.confirmDelete),
                               content: Text(
-                                  'Are you sure you want to delete "${games[_currentPage].name}"? This cannot be undone.'),
+                                  '${AppLocalizations.of(context)!.areYouSuretodelete} "${games[_currentPage].name}"? ${AppLocalizations.of(context)!.cannotbeundone}'),
                               actions: <Widget>[
                                 TextButton(
                                   child: Text('Cancel'),
@@ -1296,8 +1380,6 @@ Widget _buildAddGameCard(bool isSelected) {
                                       Navigator.of(context).pop(false),
                                 ),
                                 TextButton(
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: Colors.red),
                                   child: Text('Delete'),
                                   onPressed: () =>
                                       Navigator.of(context).pop(true),

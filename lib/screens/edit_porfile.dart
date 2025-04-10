@@ -35,7 +35,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+  // final TextEditingController emailController = TextEditingController();
   final TextEditingController personalizeController = TextEditingController();
 
   Future<DocumentSnapshot> fetchUserData() async {
@@ -51,13 +51,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     final userDoc = await UserServices().users.doc(email).get();
     final currentUsername = userDoc['username'] ?? '';
-    final currentEmail = userDoc['email'] ?? '';
+    // final currentEmail = userDoc['email'] ?? '';
     final currentPersonalize = userDoc.data().toString().contains('personalize')
         ? userDoc['personalize']
         : '';
 
     if (nameController.text == currentUsername &&
-        emailController.text == currentEmail &&
+        // emailController.text == currentEmail &&
         personalizeController.text == currentPersonalize) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("No changes made")),
@@ -68,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     try {
       await UserServices().users.doc(email).update({
         'username': nameController.text,
-        'email': emailController.text,
+        // 'email': emailController.text,
         'personalize': personalizeController.text,
       });
 
@@ -147,7 +147,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : '';
 
               nameController.text = username;
-              emailController.text = email;
+              // emailController.text = email;
               personalizeController.text = personalize;
 
               return Column(
@@ -155,9 +155,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 children: [
                   buildTextField("Username", nameController),
                   const SizedBox(height: 20),
-                  buildTextField("Email", emailController),
-                  const SizedBox(height: 20),
-                  buildTextField("Personalize", personalizeController),
+                  // buildTextField("Email", emailController),
+                  // const SizedBox(height: 20),
+                  buildTextField("Personalize", personalizeController, maxLines: 4),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -186,7 +186,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget buildTextField(String label, TextEditingController controller,
-      {bool obscureText = false}) {
+      {bool obscureText = false, int? maxLines}) {
             final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
@@ -200,6 +200,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         TextField(
           controller: controller,
           obscureText: obscureText,
+          maxLines: maxLines ?? 1,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,

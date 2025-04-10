@@ -8,6 +8,7 @@ class HistoryItem extends StatelessWidget {
   final String title;
   final String date;
   final String imagePath;
+  final int? bestScore;
   final DocumentReference? documentReference;
   final DocumentReference? gameId;
   final VoidCallback? onPressed;
@@ -22,6 +23,7 @@ class HistoryItem extends StatelessWidget {
     this.gameId,
     this.onPressed,
     this.gameData,
+    this.bestScore,
   }) : assert(documentReference != null || gameId != null, 
          'Either documentReference or gameId must be provided');
 
@@ -48,23 +50,6 @@ class HistoryItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset(
-              imagePath,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Icon(
-                  Icons.image,
-                  size: 80,
-                  color: isDarkMode ? Colors.grey[700] : Colors.grey,
-                );
-              },
-            ),
-          ),
-          const SizedBox(width: 16.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,54 +60,47 @@ class HistoryItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 22.0,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode
-                        ? Colors.white
-                        : AppColors.buttonText,
+                    color: isDarkMode ? Colors.white : AppColors.buttonText,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8.0),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 4.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? Colors.blueGrey
-                        : AppColors.neutralBackground,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Text(
-                    date,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                Text(
+                  'Best Score: ${bestScore ?? 0}',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
                   ),
                 ),
               ],
             ),
           ),
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? Colors.yellow[700]
-                  : AppColors.neutralBackground,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              onPressed: onPressed ?? () => _handlePlayButtonPressed(context),
-              icon: Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-                size: 29,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12.0,
+                  vertical: 4.0,
+                ),
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? Colors.blueGrey
+                      : AppColors.neutralBackground,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Text(
+                  date,
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
