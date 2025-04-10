@@ -4,11 +4,12 @@ import 'package:brainboost/models/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/layout/layout_scaffold.dart';
-import 'package:brainboost/screens/all.dart';
+import 'package:brainboost/screens/all.dart'; //hide WelcomePage; // Hide the old WelcomePage
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:brainboost/presentation/pages/auth/auth.dart';
+import 'package:brainboost/presentation/pages/auth/auth.dart'
+    as clean_arch; // Alias for clean architecture // This has the new WelcomePage
 import 'package:brainboost/presentation/pages/profile/profile.dart';
 import 'package:brainboost/presentation/pages/home/home.dart';
 import 'package:brainboost/presentation/pages/games/games.dart';
@@ -24,17 +25,18 @@ final router = GoRouter(
     /// Auth routes using clean architecture
     GoRoute(
       path: '/welcome',
-      builder: (context, state) => const WelcomePage(),
+      builder: (context, state) => const clean_arch
+          .WelcomePage(), // Explicitly use clean architecture version // Now unambiguously uses the one from auth.dart
     ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginPage(),
-    ),
-    GoRoute(
-      path: '/signup',
-      builder: (context, state) => const SignupPage(),
-    ),
-    
+    // GoRoute(
+    //   path: '/login',
+    //   builder: (context, state) => const LoginPage(),
+    // ),
+    // GoRoute(
+    //   path: '/signup',
+    //   builder: (context, state) => const SignupPage(),
+    // ),
+
     // Profile routes using clean architecture
     GoRoute(
       path: '/edit-profile',
@@ -105,7 +107,8 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.homePage,
-              builder: (context, state) => const HomePage(), // Using clean architecture HomePage
+              builder: (context, state) =>
+                  const HomePage(), // Using clean architecture HomePage
             ),
           ],
         ),
@@ -129,11 +132,11 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.profilePage,
-              builder: (context, state) => const ProfilePage(), // Using clean architecture ProfilePage
+              builder: (context, state) =>
+                  History(), // Using clean architecture ProfilePage
             ),
           ],
         ),
-        
       ],
     ),
   ],

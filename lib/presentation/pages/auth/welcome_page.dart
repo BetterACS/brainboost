@@ -15,7 +15,7 @@ class _CloudPainter extends CustomPainter {
     final Paint yellowPaint = Paint()
       ..color = Colors.amber
       ..style = PaintingStyle.fill;
-    
+
     canvas.drawCircle(Offset(size.width * 0.1, size.height * 1.2), 114, paint);
     canvas.drawCircle(Offset(size.width * 0.38, size.height * 0.95), 45, paint);
     canvas.drawCircle(
@@ -32,193 +32,70 @@ class _CloudPainter extends CustomPainter {
 }
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
+  const WelcomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is Authenticated) {
-          context.go('/home');
-        } else if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        }
-      },
-      child: Scaffold(
-        backgroundColor: const Color(0xff002366),
-        body: SafeArea(
-          child: Stack(
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Positioned(
-                top: 250,
-                left: 0,
-                right: 0,
-                child: CustomPaint(
-                  size: const Size(double.infinity, 100),
-                  painter: _CloudPainter(),
+              const Spacer(),
+              // App logo or icon
+              Icon(
+                Icons.psychology,
+                size: 100,
+                color: Theme.of(context).primaryColor,
+              ),
+              const SizedBox(height: 24),
+              // App name
+              Text(
+                'BrainBoost',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              // App tagline
+              Text(
+                'Train your brain with fun games',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const Spacer(),
+              // Login button
+              ElevatedButton(
+                onPressed: () => context.go('/login'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                child: const Text('Login'),
+              ),
+              const SizedBox(height: 16),
+              // Signup button
+              OutlinedButton(
+                onPressed: () => context.go('/signup'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+                child: Text(
+                  'Sign Up',
+                  style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
               ),
-              Positioned(
-                top: 50,
-                left: 0,
-                right: 0,
-                child: Image.asset(
-                  'assets/images/logo.png',
-                  height: 200,
-                ),
-              ),
-              Positioned(
-                top: 370,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
-                  ),
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                  child: Column(
-                    children: [
-                      Transform.translate(
-                        offset: const Offset(0, -20),
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: GoogleFonts.raleway(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xff002366),
-                            ),
-                            children: [
-                              const TextSpan(text: "Let's "),
-                              WidgetSpan(
-                                child: Transform.rotate(
-                                  angle: -5 * 3.14159 / 180,
-                                  child: Container(
-                                    color: Colors.amber,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0, vertical: 6.0),
-                                    child: const Text(
-                                      "boost",
-                                      style: TextStyle(
-                                        color: Color(0xFFF5F8FC),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 24,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const TextSpan(text: " your\nbrain to the sky"),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        "Play to learn application make you\nmemorize class lecture more efficiently",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.raleway(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: const Color(0xff002366),
-                        ),
-                      ),
-                      const Expanded(child: SizedBox()),
-                      _buildGoogleSignInButton(context),
-                      const SizedBox(height: 20),
-                      _buildNavigationButtons(context),
-                    ],
-                  ),
-                ),
-              ),
+              const SizedBox(height: 32),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildGoogleSignInButton(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        return ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF2F6F9),
-            foregroundColor: const Color(0xff002366),
-            elevation: 0,
-            minimumSize: const Size(300, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-          ),
-          onPressed: state is AuthLoading
-              ? null
-              : () {
-                  context.read<AuthBloc>().add(SignInWithGoogleEvent());
-                },
-          child: state is AuthLoading
-              ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Color(0xff002366),
-                  ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/google_logo.png', 
-                      height: 24,
-                      width: 24,
-                    ),
-                    const SizedBox(width: 12),
-                    const Text(
-                      "Sign in with Google",
-                      style: TextStyle(
-                        color: Color(0xff002366),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-        );
-      },
-    );
-  }
-
-  Widget _buildNavigationButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextButton(
-          onPressed: () => context.push('/login'),
-          child: const Text(
-            'Login',
-            style: TextStyle(
-              color: Color(0xff002366),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(width: 24),
-        TextButton(
-          onPressed: () => context.push('/signup'),
-          child: const Text(
-            'Sign Up',
-            style: TextStyle(
-              color: Color(0xff002366),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

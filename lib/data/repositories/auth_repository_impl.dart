@@ -81,4 +81,9 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<bool> isLoggedIn() async {
+    return await dataSource.isLoggedIn();
+  }
 }

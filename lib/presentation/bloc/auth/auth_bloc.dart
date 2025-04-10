@@ -7,6 +7,8 @@ import 'package:brainboost/domain/repositories/auth_repository.dart';
 import 'package:brainboost/presentation/bloc/auth/auth_event.dart';
 import 'package:brainboost/presentation/bloc/auth/auth_state.dart';
 
+class CheckAuthStatusEvent extends AuthEvent {}
+
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInWithEmailPassword signInWithEmailPassword;
   final SignUpWithEmailPassword signUpWithEmailPassword;
@@ -85,12 +87,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-    final result = await authRepository.getCurrentUser();
-    result.fold(
-      (failure) => emit(Unauthenticated()),
-      (user) => user != null
-          ? emit(Authenticated(user))
-          : emit(Unauthenticated()),
-    );
+    try {
+      final isLoggedIn = await authRepository.isLoggedIn();
+      if (isLoggedIn) {
+        final user = await authRepository.getCurrentUser();
+        emit(Authenticated(user: user));
+      } else {
+        emit(Unauthenticated());
+      }
+    } catch (e) {
+      emit(AuthError(message: e.toString()));
+    }
   }
 }

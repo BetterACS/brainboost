@@ -1,4 +1,4 @@
-import 'package:brainboost/screens/login.dart';
+// import 'package:brainboost/screens/login.dart';
 import 'package:brainboost/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -138,8 +138,7 @@ class WelcomePage extends StatelessWidget {
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                  'Error signing in with Google: $e'),
+                              content: Text('Error signing in with Google: $e'),
                               action: SnackBarAction(
                                 label: 'submit',
                                 onPressed: () async {

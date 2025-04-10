@@ -26,6 +26,12 @@ abstract class FirebaseAuthDataSource {
 
   /// Get current user
   Future<UserModel?> getCurrentUser();
+
+  /// Check if user is logged in
+  Future<bool> isLoggedIn();
+
+  /// Get current user data
+  Future<dynamic> getCurrentUser();
 }
 
 class FirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
@@ -115,7 +121,7 @@ class FirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
       };
 
       await firestore.collection('users').doc(email).set(userData);
-      
+
       // Initialize history document with empty data array
       await firestore.collection('history').doc(email).set({
         'data': [],
@@ -144,14 +150,16 @@ class FirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
         throw AuthException('Google sign in cancelled');
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await firebaseAuth.signInWithCredential(credential);
+      final userCredential =
+          await firebaseAuth.signInWithCredential(credential);
       final user = userCredential.user;
 
       if (user == null || user.email == null) {
@@ -179,12 +187,12 @@ class FirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
         };
 
         await docRef.set(userData);
-        
+
         // Initialize history document with empty data array
         await firestore.collection('history').doc(user.email).set({
           'data': [],
         });
-        
+
         // Fetch the newly created user
         final newUserDoc = await docRef.get();
         return UserModel.fromFirestore(newUserDoc.data()!);
@@ -216,10 +224,8 @@ class FirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
         return null;
       }
 
-      final userDoc = await firestore
-          .collection('users')
-          .doc(currentUser.email)
-          .get();
+      final userDoc =
+          await firestore.collection('users').doc(currentUser.email).get();
 
       if (!userDoc.exists) {
         return null;
@@ -229,5 +235,37 @@ class FirebaseAuthDataSourceImpl implements FirebaseAuthDataSource {
     } catch (e) {
       throw AuthException(e.toString());
     }
+  }
+
+  @override
+  Future<bool> isLoggedIn() async {
+    return firebaseAuth.currentUser != null;
+  }
+
+  @override
+  Future<dynamic> getCurrentUser() async {
+    final user = firebaseAuth.currentUser;
+    if (user != null) {
+      final userData =
+          await firestore.collection('users').doc(user.email).get();
+
+      if (userData.exists) {
+        return {
+          'uid': user.uid,
+          'email': user.email,
+          'displayName': user.displayName,
+          'photoURL': user.photoURL,
+          ...userData.data() ?? {},
+        };
+      }
+
+      return {
+        'uid': user.uid,
+        'email': user.email,
+        'displayName': user.displayName,
+        'photoURL': user.photoURL,
+      };
+    }
+    return null;
   }
 }

@@ -19,6 +19,7 @@ import 'package:brainboost/presentation/bloc/games/games_bloc.dart';
 import 'package:brainboost/presentation/bloc/games/games_event.dart';
 import 'package:brainboost/presentation/bloc/games/games_state.dart';
 import 'package:brainboost/domain/entities/game_entity.dart';
+import 'package:brainboost/domain/entities/games_type.dart'; // Add this import for GamesType
 
 class MyGamesPage extends StatefulWidget {
   const MyGamesPage({super.key});
@@ -35,27 +36,27 @@ class _MyGamesPageState extends State<MyGamesPage> {
   final TextEditingController _titleEditController = TextEditingController();
   final TextEditingController _gameNameTextController = TextEditingController();
   String _newGameTitle = "New Game"; // Default title for new game
-  
+
   int _currentPage = 0;
   List<GamesTypeEntity> games = [];
-  
+
   PlatformFile? pickedFile;
   String? fileName;
   String? uploadLink;
   double progress = 0.0;
   bool isUploading = false;
   bool uploadSuccess = false;
-  
+
   // List to hold available animation icons
   List<String> availableIcons = [];
   bool _isLoadingIcons = false;
-  
+
   String? lectureUploadLink;
   bool isLectureUploading = false;
   double lectureUploadProgress = 0.0;
   bool lectureUploadSuccess = false;
   String? lectureFileName;
-  
+
   double _slideUpPanelValue = 0.0;
   final double slideValueThreshold = 0.4;
 
@@ -82,7 +83,7 @@ class _MyGamesPageState extends State<MyGamesPage> {
       GoRouter.of(context).go('/login');
       return;
     }
-    
+
     final String email = user.email as String;
     context.read<GamesBloc>().add(GetUserGamesEvent(email));
   }
@@ -128,12 +129,12 @@ class _MyGamesPageState extends State<MyGamesPage> {
         // Update game name using the BLoC
         final User? user = FirebaseAuth.instance.currentUser;
         final String? email = user?.email;
-        
+
         context.read<GamesBloc>().add(UpdateGameNameEvent(
-          gamePath: currentGame.id,
-          newName: newTitle,
-          userEmail: email,
-        ));
+              gamePath: currentGame.id,
+              newName: newTitle,
+              userEmail: email,
+            ));
 
         setState(() {
           _isEditingTitle = false;
@@ -189,9 +190,9 @@ class _MyGamesPageState extends State<MyGamesPage> {
     try {
       // Use BLoC to upload file
       context.read<GamesBloc>().add(UploadFileEvent(
-        file: io.File(pickedFile!.path!),
-        fileName: pickedFile!.name,
-      ));
+            file: io.File(pickedFile!.path!),
+            fileName: pickedFile!.name,
+          ));
     } catch (e) {
       print('Error while loading ${e}');
       setState(() {
@@ -220,13 +221,13 @@ class _MyGamesPageState extends State<MyGamesPage> {
       );
       return;
     }
-    
+
     // Create game from PDF using BLoC
     context.read<GamesBloc>().add(CreateGameFromPdfEvent(
-      pdfUrl: uploadLink!,
-      gameName: gameName,
-      userEmail: user.email!,
-    ));
+          pdfUrl: uploadLink!,
+          gameName: gameName,
+          userEmail: user.email!,
+        ));
 
     // First update panel state
     if (_panelController.isPanelOpen) {
@@ -265,32 +266,33 @@ class _MyGamesPageState extends State<MyGamesPage> {
 
     // Show confirmation dialog
     final bool confirmReVersion = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.confirmReversion),
-          content: Text(
-            '${AppLocalizations.of(context)!.areYouSureReversion} "${currentGame.name}"? ${AppLocalizations.of(context)!.createversion}'
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.cancel),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.blue,
-              ),
-              child: Text(AppLocalizations.of(context)!.reversion),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    ) ?? false;
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.confirmReversion),
+              content: Text(
+                  '${AppLocalizations.of(context)!.areYouSureReversion} "${currentGame.name}"? ${AppLocalizations.of(context)!.createversion}'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                  ),
+                  child: Text(AppLocalizations.of(context)!.reversion),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
     if (!confirmReVersion) return;
 
-    String gameName = "${currentGame.name} (${AppLocalizations.of(context)!.reversion})";
+    String gameName =
+        "${currentGame.name} (${AppLocalizations.of(context)!.reversion})";
     // Make gameName length 20 characters
     if (gameName.length > 20) {
       gameName = gameName.substring(0, 20);
@@ -303,13 +305,13 @@ class _MyGamesPageState extends State<MyGamesPage> {
       );
       return;
     }
-    
+
     // Create game from the existing PDF using BLoC
     context.read<GamesBloc>().add(CreateGameFromPdfEvent(
-      pdfUrl: currentGame.media,
-      gameName: gameName,
-      userEmail: user.email!,
-    ));
+          pdfUrl: currentGame.media,
+          gameName: gameName,
+          userEmail: user.email!,
+        ));
 
     // First update panel state
     if (_panelController.isPanelOpen) {
@@ -377,9 +379,9 @@ class _MyGamesPageState extends State<MyGamesPage> {
     try {
       // Update game icon using BLoC
       context.read<GamesBloc>().add(UpdateGameIconEvent(
-        gamePath: currentGame.id,
-        newIcon: newIcon,
-      ));
+            gamePath: currentGame.id,
+            newIcon: newIcon,
+          ));
     } catch (e) {
       print("Error updating icon: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -411,7 +413,7 @@ class _MyGamesPageState extends State<MyGamesPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
-                AppLocalizations.of(context)!.selectIcon,
+                "Not sure",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -505,9 +507,9 @@ class _MyGamesPageState extends State<MyGamesPage> {
     try {
       // Use BLoC to upload file
       context.read<GamesBloc>().add(UploadFileEvent(
-        file: io.File(pickedFile!.path!),
-        fileName: "lectures/${pickedFile!.name}",
-      ));
+            file: io.File(pickedFile!.path!),
+            fileName: "lectures/${pickedFile!.name}",
+          ));
     } catch (e) {
       print("Error uploading lecture file: $e");
       setState(() {
@@ -532,9 +534,9 @@ class _MyGamesPageState extends State<MyGamesPage> {
 
     // Use BLoC to add lecture to game
     context.read<GamesBloc>().add(AddLectureToGameEvent(
-      pdfUrl: lectureUploadLink!,
-      gamePath: currentGame.id,
-    ));
+          pdfUrl: lectureUploadLink!,
+          gamePath: currentGame.id,
+        ));
 
     // Reset lecture upload states
     setState(() {
@@ -592,6 +594,22 @@ class _MyGamesPageState extends State<MyGamesPage> {
     return path; // Return original if format is unexpected
   }
 
+  // Add this conversion method
+  List<GamesType> _convertToGamesType(List<GamesTypeEntity> entities) {
+    return entities
+        .map((entity) => GamesType(
+              id: entity.id,
+              author: entity.author,
+              name: entity.name,
+              description: entity.description,
+              icon: entity.icon,
+              gameList: entity.gameList,
+              media: entity.media,
+              playedHistory: entity.playedHistory,
+            ))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<GamesBloc, GamesState>(
@@ -616,7 +634,7 @@ class _MyGamesPageState extends State<MyGamesPage> {
               );
               _isEditingTitle = false;
             });
-            
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(AppLocalizations.of(context)!.gameTitleUpdated),
@@ -639,7 +657,7 @@ class _MyGamesPageState extends State<MyGamesPage> {
                 playedHistory: updatedGame.playedHistory,
               );
             });
-            
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Game icon updated!'),
@@ -703,12 +721,40 @@ class _MyGamesPageState extends State<MyGamesPage> {
       },
       builder: (context, state) {
         return ValueListenableBuilder<ThemeMode>(
-          valueListenable: themeNotifier,
-          builder: (context, currentTheme, child) {
-            final isDarkMode = currentTheme == ThemeMode.dark;
-            
-            // Show loading state
-            if (state is GamesLoading && games.isEmpty) {
+            valueListenable: themeNotifier,
+            builder: (context, currentTheme, child) {
+              final isDarkMode = currentTheme == ThemeMode.dark;
+
+              // Show loading state
+              if (state is GamesLoading && games.isEmpty) {
+                return Scaffold(
+                  backgroundColor: isDarkMode
+                      ? AppColors.backgroundDarkmode
+                      : AppColors.mainColor,
+                  appBar: AppBar(
+                    title: const Text(""),
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                  ),
+                  body: Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                );
+              }
+
+              final bool canEditTitle = _isEditingTitle &&
+                  (_currentPage < games.length || _currentPage == games.length);
+              final bool showTitleEditor =
+                  canEditTitle && _slideUpPanelValue >= slideValueThreshold;
+              final bool showNormalTitle = !showTitleEditor;
+              final Color titleColor = _slideUpPanelValue <= slideValueThreshold
+                  ? AppColors.cardBackground
+                  : Colors.white;
+
+              // Get current user email for author check
+              final String? currentUserEmail =
+                  FirebaseAuth.instance.currentUser?.email;
+
               return Scaffold(
                 backgroundColor: isDarkMode
                     ? AppColors.backgroundDarkmode
@@ -717,276 +763,245 @@ class _MyGamesPageState extends State<MyGamesPage> {
                   title: const Text(""),
                   elevation: 0,
                   backgroundColor: Colors.transparent,
-                ),
-                body: Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                ),
-              );
-            }
-            
-            final bool canEditTitle = _isEditingTitle &&
-                (_currentPage < games.length ||
-                    _currentPage == games.length);
-            final bool showTitleEditor =
-                canEditTitle && _slideUpPanelValue >= slideValueThreshold;
-            final bool showNormalTitle = !showTitleEditor;
-            final Color titleColor =
-                _slideUpPanelValue <= slideValueThreshold
-                    ? AppColors.cardBackground
-                    : Colors.white;
-
-            // Get current user email for author check
-            final String? currentUserEmail =
-                FirebaseAuth.instance.currentUser?.email;
-
-            return Scaffold(
-              backgroundColor: isDarkMode
-                  ? AppColors.backgroundDarkmode
-                  : AppColors.mainColor,
-              appBar: AppBar(
-                title: const Text(""),
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-                actions: [
-                  if (state is GamesLoading)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white)),
-                    )
-                  else
-                    IconButton(
-                      icon: Icon(Icons.refresh, color: isDarkMode ? Colors.white : Colors.black),
-                      onPressed: () {
-                        if (_isEditingTitle) _saveTitleChanges();
-                        _loadUserGames();
-                        setState(() {
-                          _currentPage = 0;
-                          _slideUpPanelValue = 0;
-                          toggleSlideUpPanel(0.0);
-                        });
-                      },
-                      tooltip: 'Refresh Games',
-                    ),
-                ],
-              ),
-              body: Stack(
-                children: [
-                  PanelSlider(
-                    games: games,
-                    currentPage: _currentPage,
-                    slidePanelFunction: toggleSlideUpPanel,
-                    isUploading: isUploading,
-                    uploadProgress: progress,
-                    fileName: fileName,
-                    panelController: _panelController,
-                    gameName: _currentPage < games.length &&
-                            games.isNotEmpty
-                        ? games[_currentPage].name
-                        : _newGameTitle,
-                    uploadSuccess: uploadSuccess,
-                    onCreateGamePressed: onCreateGamePressed,
-                    onReVersionPressed: onReVersionPressed,
-                    onAddLecturePressed: onAddLecturePressed,
-                    isCurrentUserAuthor: _currentPage < games.length &&
-                            games.isNotEmpty
-                        ? games[_currentPage].author == currentUserEmail
-                        : true, // Default to true for new games
-                  ),
-                  Column(
-                    children: <Widget>[
-                      const ProfileContainer(),
-                      const SizedBox(height: 40),
-                      GestureDetector(
-                        onTap: () {
-                          if (!_isEditingTitle &&
-                              (_currentPage < games.length ||
-                                  _currentPage == games.length) &&
-                              _slideUpPanelValue >= slideValueThreshold) {
-                            setState(() {
-                              _isEditingTitle = true;
-                              if (_currentPage < games.length) {
-                                _titleEditController.text =
-                                    games[_currentPage].name;
-                              } else {
-                                _titleEditController.text =
-                                    _newGameTitle; // Use stored title
-                              }
-                            });
-                          }
+                  actions: [
+                    if (state is GamesLoading)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white)),
+                      )
+                    else
+                      IconButton(
+                        icon: Icon(Icons.refresh,
+                            color: isDarkMode ? Colors.white : Colors.black),
+                        onPressed: () {
+                          if (_isEditingTitle) _saveTitleChanges();
+                          _loadUserGames();
+                          setState(() {
+                            _currentPage = 0;
+                            _slideUpPanelValue = 0;
+                            toggleSlideUpPanel(0.0);
+                          });
                         },
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 180),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: showTitleEditor
-                                    ? TextField(
-                                        controller: _titleEditController,
-                                        autofocus: true,
-                                        style: TextStyle(
-                                          color: titleColor,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        maxLength: 20,
-                                        buildCounter: (context,
-                                                {required currentLength,
-                                                required isFocused,
-                                                maxLength}) =>
-                                            currentLength > 12
-                                                ? Text(
-                                                    '$currentLength/$maxLength',
-                                                    style: TextStyle(
-                                                      color:
-                                                          currentLength >=
-                                                                  20
-                                                              ? Colors.red
-                                                              : Colors
-                                                                  .white70,
-                                                      fontSize: 12,
-                                                    ),
-                                                  )
-                                                : null,
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          contentPadding: EdgeInsets.zero,
-                                          border: InputBorder.none,
-                                          hintText: "Enter new title",
-                                          hintStyle: TextStyle(
-                                            color: titleColor.withOpacity(0.5),
+                        tooltip: 'Refresh Games',
+                      ),
+                  ],
+                ),
+                body: Stack(
+                  children: [
+                    PanelSlider(
+                      games: _convertToGamesType(games),
+                      currentPage: _currentPage,
+                      slidePanelFunction: toggleSlideUpPanel,
+                      isUploading: isUploading,
+                      uploadProgress: progress,
+                      fileName: fileName,
+                      panelController: _panelController,
+                      gameName: _currentPage < games.length && games.isNotEmpty
+                          ? games[_currentPage].name
+                          : _newGameTitle,
+                      uploadSuccess: uploadSuccess,
+                      onCreateGamePressed: onCreateGamePressed,
+                      onReVersionPressed: onReVersionPressed,
+                      onAddLecturePressed: onAddLecturePressed,
+                      isCurrentUserAuthor:
+                          _currentPage < games.length && games.isNotEmpty
+                              ? games[_currentPage].author == currentUserEmail
+                              : true, // Default to true for new games
+                    ),
+                    Column(
+                      children: <Widget>[
+                        const ProfileContainer(),
+                        const SizedBox(height: 40),
+                        GestureDetector(
+                          onTap: () {
+                            if (!_isEditingTitle &&
+                                (_currentPage < games.length ||
+                                    _currentPage == games.length) &&
+                                _slideUpPanelValue >= slideValueThreshold) {
+                              setState(() {
+                                _isEditingTitle = true;
+                                if (_currentPage < games.length) {
+                                  _titleEditController.text =
+                                      games[_currentPage].name;
+                                } else {
+                                  _titleEditController.text =
+                                      _newGameTitle; // Use stored title
+                                }
+                              });
+                            }
+                          },
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 180),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: showTitleEditor
+                                      ? TextField(
+                                          controller: _titleEditController,
+                                          autofocus: true,
+                                          style: TextStyle(
+                                            color: titleColor,
                                             fontSize: 25,
-                                            fontWeight: FontWeight.normal,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ),
-                                        onSubmitted: (newTitle) async {
-                                          if (newTitle.trim().isNotEmpty) {
-                                            await _saveTitleChanges();
-                                          }
-                                        },
-                                      )
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          if ((_currentPage <
-                                                      games.length ||
-                                                  _currentPage ==
-                                                      games.length) &&
-                                              _slideUpPanelValue >=
-                                                  slideValueThreshold &&
-                                              !_isEditingTitle)
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(
-                                                      right: 4.0),
-                                              child: Icon(
-                                                Icons.edit,
-                                                size: 20,
-                                                color: titleColor,
+                                          textAlign: TextAlign.center,
+                                          maxLength: 20,
+                                          buildCounter: (context,
+                                                  {required currentLength,
+                                                  required isFocused,
+                                                  maxLength}) =>
+                                              currentLength > 12
+                                                  ? Text(
+                                                      '$currentLength/$maxLength',
+                                                      style: TextStyle(
+                                                        color: currentLength >=
+                                                                20
+                                                            ? Colors.red
+                                                            : Colors.white70,
+                                                        fontSize: 12,
+                                                      ),
+                                                    )
+                                                  : null,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            contentPadding: EdgeInsets.zero,
+                                            border: InputBorder.none,
+                                            hintText: "Enter new title",
+                                            hintStyle: TextStyle(
+                                              color:
+                                                  titleColor.withOpacity(0.5),
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                          onSubmitted: (newTitle) async {
+                                            if (newTitle.trim().isNotEmpty) {
+                                              await _saveTitleChanges();
+                                            }
+                                          },
+                                        )
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            if ((_currentPage < games.length ||
+                                                    _currentPage ==
+                                                        games.length) &&
+                                                _slideUpPanelValue >=
+                                                    slideValueThreshold &&
+                                                !_isEditingTitle)
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 4.0),
+                                                child: Icon(
+                                                  Icons.edit,
+                                                  size: 20,
+                                                  color: titleColor,
+                                                ),
+                                              ),
+                                            Text(
+                                              showNormalTitle &&
+                                                      _currentPage <
+                                                          games.length
+                                                  ? games[_currentPage].name
+                                                  : showNormalTitle &&
+                                                          _currentPage ==
+                                                              games.length &&
+                                                          _slideUpPanelValue >
+                                                              slideValueThreshold
+                                                      ? _newGameTitle // Use our stored variable here
+                                                      : "",
+                                              style: TextStyle(
+                                                color: isDarkMode
+                                                    ? AppColors.textPrimary
+                                                    : _slideUpPanelValue >
+                                                            slideValueThreshold
+                                                        ? Colors.white
+                                                        : AppColors
+                                                            .cardBackground,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                          Text(
-                                            showNormalTitle &&
-                                                    _currentPage <
-                                                        games.length
-                                                ? games[_currentPage].name
-                                                : showNormalTitle &&
-                                                        _currentPage ==
-                                                            games
-                                                                .length &&
-                                                        _slideUpPanelValue >
-                                                            slideValueThreshold
-                                                    ? _newGameTitle // Use our stored variable here
-                                                    : "",
-                                            style: TextStyle(
-                                              color: isDarkMode
-                                                  ? AppColors.textPrimary
-                                                  : _slideUpPanelValue > slideValueThreshold ? Colors.white : AppColors.cardBackground,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                              ),
-                              if (_isEditingTitle)
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.check_circle,
-                                    color: titleColor,
-                                    size: 30,
-                                  ),
-                                  onPressed: _saveTitleChanges,
-                                  tooltip: 'Save title changes',
-                                  padding: EdgeInsets.zero,
-                                  constraints: BoxConstraints(),
+                                          ],
+                                        ),
                                 ),
-                            ],
+                                if (_isEditingTitle)
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.check_circle,
+                                      color: titleColor,
+                                      size: 30,
+                                    ),
+                                    onPressed: _saveTitleChanges,
+                                    tooltip: 'Save title changes',
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(),
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Stack(
-                        children: [
-                          SizedBox(
-                            height: 300,
-                            child: PageView.builder(
-                              controller: _pageController,
-                              onPageChanged: (index) {
-                                if (_isEditingTitle) {
-                                  _saveTitleChanges();
-                                }
+                        const SizedBox(height: 10),
+                        Stack(
+                          children: [
+                            SizedBox(
+                              height: 300,
+                              child: PageView.builder(
+                                controller: _pageController,
+                                onPageChanged: (index) {
+                                  if (_isEditingTitle) {
+                                    _saveTitleChanges();
+                                  }
 
-                                setState(() {
-                                  _currentPage = index;
-                                  _isEditingTitle = false;
-                                  _titleEditController.clear();
-                                });
-                              },
-                              itemCount:
-                                  games.isNotEmpty ? games.length + 1 : 1,
-                              itemBuilder: (context, index) {
-                                if (games.isEmpty && index == 0) {
-                                  return _buildAddGameCard(true);
-                                }
+                                  setState(() {
+                                    _currentPage = index;
+                                    _isEditingTitle = false;
+                                    _titleEditController.clear();
+                                  });
+                                },
+                                itemCount:
+                                    games.isNotEmpty ? games.length + 1 : 1,
+                                itemBuilder: (context, index) {
+                                  if (games.isEmpty && index == 0) {
+                                    return _buildAddGameCard(true);
+                                  }
 
-                                bool isAddButton = index == games.length;
-                                bool isSelected = index == _currentPage;
+                                  bool isAddButton = index == games.length;
+                                  bool isSelected = index == _currentPage;
 
-                                return isAddButton
-                                    ? _buildAddGameCard(isSelected)
-                                    : _buildGameCard(index, isSelected);
-                              },
+                                  return isAddButton
+                                      ? _buildAddGameCard(isSelected)
+                                      : _buildGameCard(index, isSelected);
+                                },
+                              ),
                             ),
-                          ),
-                          if (_slideUpPanelValue > slideValueThreshold &&
-                              _currentPage < games.length &&
-                              !_isEditingTitle)
-                            Positioned.fill(
-                              child: _buildOptionIcons(),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      if (_currentPage < games.length &&
-                          _slideUpPanelValue <= slideValueThreshold &&
-                          games.isNotEmpty)
-                        _buildPlayGameButton()
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }
-        );
+                            if (_slideUpPanelValue > slideValueThreshold &&
+                                _currentPage < games.length &&
+                                !_isEditingTitle)
+                              Positioned.fill(
+                                child: _buildOptionIcons(),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        if (_currentPage < games.length &&
+                            _slideUpPanelValue <= slideValueThreshold &&
+                            games.isNotEmpty)
+                          _buildPlayGameButton()
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            });
       },
     );
   }
@@ -1274,7 +1289,7 @@ class _MyGamesPageState extends State<MyGamesPage> {
                           );
                           return;
                         }
-                        
+
                         int deletedPageIndex = _currentPage;
                         int newPageIndex =
                             _currentPage > 0 ? _currentPage - 1 : 0;
@@ -1286,15 +1301,15 @@ class _MyGamesPageState extends State<MyGamesPage> {
 
                         // Delete game using BLoC
                         context.read<GamesBloc>().add(DeleteGameEvent(
-                          games[_currentPage].id, 
-                          user.email!,
-                        ));
+                              games[_currentPage].id,
+                              user.email!,
+                            ));
 
                         // Animate to new page
                         if (games.length > 1) {
                           _pageController.animateToPage(newPageIndex,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeInOut);
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeInOut);
                         }
                       } catch (e) {
                         print("Error deleting game: $e");
