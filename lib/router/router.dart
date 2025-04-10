@@ -4,10 +4,15 @@ import 'package:brainboost/models/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/layout/layout_scaffold.dart';
-import 'package:brainboost/screens/all.dart';
+import 'package:brainboost/screens/all.dart'; //hide WelcomePage; // Hide the old WelcomePage
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:brainboost/presentation/pages/auth/auth.dart'
+    as clean_arch; // Alias for clean architecture // This has the new WelcomePage
+import 'package:brainboost/presentation/pages/profile/profile.dart';
+import 'package:brainboost/presentation/pages/home/home.dart';
+import 'package:brainboost/presentation/pages/games/games.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -17,21 +22,30 @@ final router = GoRouter(
 
   /// Define routes here.
   routes: [
-    /// Example of a simple route.
-    /// GoRoute(
-    ///   path: '/simple', You should add the routes to the routes.dart file
-    ///   builder: (context, state) => const SimplePage(),
-    /// ),
-    ///
+    /// Auth routes using clean architecture
+    GoRoute(
+      path: '/welcome',
+      builder: (context, state) => const clean_arch
+          .WelcomePage(), // Explicitly use clean architecture version // Now unambiguously uses the one from auth.dart
+    ),
+    // GoRoute(
+    //   path: '/login',
+    //   builder: (context, state) => const LoginPage(),
+    // ),
+    // GoRoute(
+    //   path: '/signup',
+    //   builder: (context, state) => const SignupPage(),
+    // ),
+
+    // Profile routes using clean architecture
+    GoRoute(
+      path: '/edit-profile',
+      builder: (context, state) => const EditProfilePage(),
+    ),
+
     GoRoute(
         path: '/home-wrapper',
         builder: (context, state) => const LoadingHomeWrapper()),
-    // GoRoute(path: '/login', builder: (context, state) => Login()),
-    // GoRoute(path: '/signup', builder: (context, state) => Signup()),
-    GoRoute(
-      path: '/welcome',
-      builder: (context, state) => const WelcomePage(),
-    ),
 
     GoRoute(
         path: Routes.settingsPage,
@@ -93,7 +107,8 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.homePage,
-              builder: (context, state) => const Home(),
+              builder: (context, state) =>
+                  const HomePage(), // Using clean architecture HomePage
             ),
           ],
         ),
@@ -101,7 +116,7 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.gamePage,
-              builder: (context, state) => const MyGames(),
+              builder: (context, state) => const MyGamesPage(),
             ),
           ],
         ),
@@ -117,20 +132,11 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.profilePage,
-              builder: (context, state) => const ProfilePage(),
-
-              // Example of nested routes on navigation shell.
-              // Don't remove this comment (kept for future reference)
-              // routes: [
-              //   GoRoute(
-              //     path: Routes.settingsPage,
-              //     builder: (context, state) => const SettingsPage()
-              //   ),
-              // ],
+              builder: (context, state) =>
+                  History(), // Using clean architecture ProfilePage
             ),
           ],
         ),
-        
       ],
     ),
   ],
