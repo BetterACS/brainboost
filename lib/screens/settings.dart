@@ -1,7 +1,9 @@
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/main.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -14,7 +16,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       backgroundColor:
@@ -90,7 +92,6 @@ class SettingsPage extends StatelessWidget {
               );
             },
           ),
-          const Divider(),
         ],
       ),
     );
@@ -109,7 +110,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       backgroundColor:
@@ -195,7 +196,7 @@ class AboutAppPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       backgroundColor:
@@ -224,7 +225,8 @@ class AboutAppPage extends StatelessWidget {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(
-              color: isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
+              color:
+                  isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
               height: 1,
             ),
           ),
@@ -233,7 +235,8 @@ class AboutAppPage extends StatelessWidget {
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Text(
               'Version 3.3.1',
               style: TextStyle(
@@ -245,7 +248,8 @@ class AboutAppPage extends StatelessWidget {
           ),
           const Divider(),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
               'Terms of Use',
               style: TextStyle(
@@ -256,7 +260,8 @@ class AboutAppPage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
               'Play to learn application make you\nmemorize class lecture more efficiently',
               style: TextStyle(

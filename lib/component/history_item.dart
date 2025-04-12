@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
+import 'package:provider/provider.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 
 class HistoryItem extends StatelessWidget {
   final String title;
@@ -29,99 +31,88 @@ class HistoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16.0),
-      padding: const EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.accentDarkmode : Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: isDarkMode
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 6.0,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : AppColors.buttonText,
+    return GestureDetector(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: isDarkMode ? AppColors.accentDarkmode : Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: isDarkMode
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 6.0,
+                    offset: const Offset(0, 3),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'Best Score: ${bestScore ?? 0}',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : AppColors.buttonText,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    'Best Score: ${bestScore ?? 0}',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 4.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? Colors.blueGrey
+                        : AppColors.neutralBackground,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    date,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 4.0,
-                ),
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? Colors.blueGrey
-                      : AppColors.neutralBackground,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  date,
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   // Method to handle play button press with data fetching
   void _handlePlayButtonPressed(BuildContext context) {
-    // Determine which reference to use
-    // final String gameIdToUse = gameId ?? 
-    //     (documentReference != null ? documentReference!.id : '');
-
-    // if (gameId.id) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Game reference not found')),
-    //   );
-    //   return;
-    // }
-
-    // Create the proper reference path
-    // final String refPath = gameId;//documentReference?.path ?? 'games/$gameIdToUse';
     if (documentReference == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Game reference not found')),

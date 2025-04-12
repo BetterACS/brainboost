@@ -5,6 +5,7 @@ import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/models/games.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +14,7 @@ import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/cards/profile_header.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainboost/component/panel_slider.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/services/games.dart';
@@ -36,7 +38,8 @@ class _MyGamesState extends State<MyGames> {
   final PageController _pageController = PageController(viewportFraction: 0.7);
   final UserServices userServices = UserServices();
   final GameServices gameServices = GameServices();
-  final GameHistoryService historyService = GameHistoryService(); // Initialize history service
+  final GameHistoryService historyService =
+      GameHistoryService(); // Initialize history service
   final PanelController _panelController = PanelController();
 
   bool _isLoadedGames = false;
@@ -78,7 +81,6 @@ class _MyGamesState extends State<MyGames> {
     _gameNameTextController.dispose();
     super.dispose();
   }
-
 
   Future<void> _loadGamesMethod() async {
     if (_isLoadedGames) return;
@@ -148,7 +150,7 @@ class _MyGamesState extends State<MyGames> {
           _titleEditController.text = AppLocalizations.of(context)!.newGame;
           _gameNameTextController.text = AppLocalizations.of(context)!.newGame;
           _newGameTitle = AppLocalizations.of(context)!.newGame;
- // Also update our variable
+          // Also update our variable
           _isEditingTitle = false;
         });
         return;
@@ -233,7 +235,7 @@ class _MyGamesState extends State<MyGames> {
 
     try {
       final ref = FirebaseStorage.instance.ref().child(path);
-      
+
       // For web
       // final uploadTask = ref.putData(pickedFile!.bytes!);
       // For mobile
@@ -261,7 +263,7 @@ class _MyGamesState extends State<MyGames> {
     }
   }
 
-    void onCreateGamePressed() async {
+  void onCreateGamePressed() async {
     if (!uploadSuccess || uploadLink == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.pleaseUploadFile)),
@@ -292,7 +294,7 @@ class _MyGamesState extends State<MyGames> {
           uploadSuccess = false;
           _gameNameTextController.clear();
           _newGameTitle = AppLocalizations.of(context)!.newGame;
-;
+          ;
 
           // Mark games as needing reload
           _isLoadedGames = false;
@@ -332,33 +334,34 @@ class _MyGamesState extends State<MyGames> {
 
     // Show confirmation dialog
     final bool confirmReVersion = await showDialog<bool>(
-  context: context,
-  builder: (BuildContext context) {
-    return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.confirmReversion),
-      content: Text(
-        '${AppLocalizations.of(context)!.areYouSureReversion} "${currentGame.name}"? ${AppLocalizations.of(context)!.createversion}'
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: Text(AppLocalizations.of(context)!.cancel),
-          onPressed: () => Navigator.of(context).pop(false),
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.blue,
-          ),
-          child: Text(AppLocalizations.of(context)!.reversion),
-          onPressed: () => Navigator.of(context).pop(true),
-        ),
-      ],
-    );
-  },
-) ?? false;
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.confirmReversion),
+              content: Text(
+                  '${AppLocalizations.of(context)!.areYouSureReversion} "${currentGame.name}"? ${AppLocalizations.of(context)!.createversion}'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                  ),
+                  child: Text(AppLocalizations.of(context)!.reversion),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
     if (!confirmReVersion) return;
 
     // Get the actual game name from the text controller or use the stored variable
-   String gameName = "${currentGame.name} (${AppLocalizations.of(context)!.reversion})";
+    String gameName =
+        "${currentGame.name} (${AppLocalizations.of(context)!.reversion})";
     // Make gameName length 20 characters
     if (gameName.length > 20) {
       gameName = gameName.substring(0, 20);
@@ -381,8 +384,7 @@ class _MyGamesState extends State<MyGames> {
           pickedFile = null;
           uploadSuccess = false;
           _gameNameTextController.clear();
-          _newGameTitle =AppLocalizations.of(context)!.newGame;
-
+          _newGameTitle = AppLocalizations.of(context)!.newGame;
 
           // Mark games as needing reload
           _isLoadedGames = false;
@@ -604,7 +606,6 @@ class _MyGamesState extends State<MyGames> {
 
       final uploadTask = ref.putFile(io.File(pickedFile!.path!));
 
-
       uploadTask.snapshotEvents.listen((event) {
         setState(() {
           lectureUploadProgress = event.bytesTransferred / event.totalBytes;
@@ -726,395 +727,389 @@ class _MyGamesState extends State<MyGames> {
   }
 
   Future<void> _saveTitleToFirebase(String newTitle) async {
-  if (_currentPage >= games.length) return; 
+    if (_currentPage >= games.length) return;
 
-  final currentGame = games[_currentPage];
+    final currentGame = games[_currentPage];
 
-  try {
-    await FirebaseFirestore.instance
-        .doc(currentGame.ref)
-        .update({'name': newTitle});
+    try {
+      await FirebaseFirestore.instance
+          .doc(currentGame.ref)
+          .update({'name': newTitle});
 
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final String email = user.email!;
-      final DocumentReference historyRef =
-          FirebaseFirestore.instance.collection('history').doc(email);
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final String email = user.email!;
+        final DocumentReference historyRef =
+            FirebaseFirestore.instance.collection('history').doc(email);
 
-      final DocumentSnapshot historyDoc = await historyRef.get();
-      if (historyDoc.exists) {
-        final List<dynamic> historyData = historyDoc['data'] ?? [];
-        final updatedHistoryData = historyData.map((entry) {
-          if (entry['game_id'] == currentGame.ref) {
-            return {
-              ...entry,
-              'game_name': newTitle, 
-            };
-          }
-          return entry;
-        }).toList();
+        final DocumentSnapshot historyDoc = await historyRef.get();
+        if (historyDoc.exists) {
+          final List<dynamic> historyData = historyDoc['data'] ?? [];
+          final updatedHistoryData = historyData.map((entry) {
+            if (entry['game_id'] == currentGame.ref) {
+              return {
+                ...entry,
+                'game_name': newTitle,
+              };
+            }
+            return entry;
+          }).toList();
 
-        await historyRef.update({'data': updatedHistoryData});
+          await historyRef.update({'data': updatedHistoryData});
+        }
       }
-    }
 
-    // อัปเดตชื่อเกมใน UI
-    setState(() {
-      games[_currentPage] = GamesType(
-        ref: currentGame.ref,
-        author: currentGame.author,
-        name: newTitle,
-        description: currentGame.description,
-        icon: currentGame.icon,
-        gameList: currentGame.gameList,
-        media: currentGame.media,
-        played_history: currentGame.played_history,
+      // อัปเดตชื่อเกมใน UI
+      setState(() {
+        games[_currentPage] = GamesType(
+          ref: currentGame.ref,
+          author: currentGame.author,
+          name: newTitle,
+          description: currentGame.description,
+          icon: currentGame.icon,
+          gameList: currentGame.gameList,
+          media: currentGame.media,
+          played_history: currentGame.played_history,
+        );
+        _isEditingTitle = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Game title updated successfully!'),
+          duration: Duration(seconds: 2),
+        ),
       );
-      _isEditingTitle = false;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Game title updated successfully!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  } catch (e) {
-    print("Error updating title: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Failed to update title: $e'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    } catch (e) {
+      print("Error updating title: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update title: $e'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-        valueListenable: themeNotifier,
-        builder: (context, currentTheme, child) {
-          final isDarkMode = currentTheme == ThemeMode.dark;
+    final bool isDarkMode = context.watch<ThemeProvider>().isDarkMode;
+    // final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
-          return FutureBuilder<void>(
-              future: _loadGamesMethod(),
-              builder: (context, AsyncSnapshot<void> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting &&
-                    !_isLoadedGames) {
-                  return Scaffold(
-                    backgroundColor: isDarkMode
-                        ? AppColors.backgroundDarkmode
-                        : AppColors.mainColor,
-                    body: Center(
-                        child: CircularProgressIndicator(color: Colors.white)),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return Scaffold(
-                    backgroundColor: isDarkMode
-                        ? AppColors.backgroundDarkmode
-                        : Colors.transparent,
-                    body: Center(
-                        child: Text('Error loading games: ${snapshot.error}',
-                            style: TextStyle(color: Colors.white))),
-                  );
-                }
+    return FutureBuilder<void>(
+        future: _loadGamesMethod(),
+        builder: (context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              !_isLoadedGames) {
+            return Scaffold(
+              backgroundColor: isDarkMode
+                  ? AppColors.backgroundDarkmode
+                  : AppColors.mainColor,
+              body:
+                  Center(child: CircularProgressIndicator(color: Colors.white)),
+            );
+          }
+          if (snapshot.hasError) {
+            return Scaffold(
+              backgroundColor: isDarkMode
+                  ? AppColors.backgroundDarkmode
+                  : Colors.transparent,
+              body: Center(
+                  child: Text('Error loading games: ${snapshot.error}',
+                      style: TextStyle(color: Colors.white))),
+            );
+          }
 
-                if (_isLoadedGames) {
-                  final bool canEditTitle = _isEditingTitle &&
-                      (_currentPage < games.length ||
-                          _currentPage == games.length);
-                  final bool showTitleEditor =
-                      canEditTitle && _slideUpPanelValue >= slideValueThreshold;
-                  final bool showNormalTitle = !showTitleEditor;
-                  final Color titleColor =
-                      _slideUpPanelValue <= slideValueThreshold
-                          ? AppColors.cardBackground
-                          : Colors.white;
+          if (_isLoadedGames) {
+            final bool canEditTitle = _isEditingTitle &&
+                (_currentPage < games.length || _currentPage == games.length);
+            final bool showTitleEditor =
+                canEditTitle && _slideUpPanelValue >= slideValueThreshold;
+            final bool showNormalTitle = !showTitleEditor;
+            final Color titleColor = _slideUpPanelValue <= slideValueThreshold
+                ? AppColors.cardBackground
+                : Colors.white;
 
-                  // Get current user email for author check
-                  final String? currentUserEmail =
-                      FirebaseAuth.instance.currentUser?.email;
+            // Get current user email for author check
+            final String? currentUserEmail =
+                FirebaseAuth.instance.currentUser?.email;
 
-                  return Scaffold(
-                    backgroundColor: isDarkMode
-                        ? AppColors.backgroundDarkmode
-                        : AppColors.mainColor,
-                    appBar: AppBar(
-                      title: const Text(""),
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                      actions: [
-                        if (!_isLoadedGames)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 16.0),
-                            child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: Colors.white)),
-                          )
-                        else
-                          IconButton(
-                            icon: Icon(Icons.refresh, color: isDarkMode ? Colors.white : Colors.black),
-                            onPressed: () {
-                              if (_isEditingTitle) _saveTitleChanges();
-                              setState(() {
-                                _isLoadedGames = false;
-                                games = [];
-                                _currentPage = 0;
+            return Scaffold(
+              backgroundColor: isDarkMode
+                  ? AppColors.backgroundDarkmode
+                  : AppColors.mainColor,
+              appBar: AppBar(
+                title: const Text(""),
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                actions: [
+                  if (!_isLoadedGames)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white)),
+                    )
+                  else
+                    IconButton(
+                      icon: Icon(Icons.refresh,
+                          color: isDarkMode ? Colors.white : Colors.black),
+                      onPressed: () {
+                        if (_isEditingTitle) _saveTitleChanges();
+                        setState(() {
+                          _isLoadedGames = false;
+                          games = [];
+                          _currentPage = 0;
 
-                                _slideUpPanelValue = 0;
-                                toggleSlideUpPanel(0.0);
-                              });
-                            },
-                            tooltip: 'Refresh Games',
-                          ),
-                      ],
+                          _slideUpPanelValue = 0;
+                          toggleSlideUpPanel(0.0);
+                        });
+                      },
+                      tooltip: 'Refresh Games',
                     ),
-                    body: Stack(
-                      children: [
-                        PanelSlider(
-                          games: games,
-                          currentPage: _currentPage,
-                          slidePanelFunction: toggleSlideUpPanel,
-                          isUploading: isUploading,
-                          uploadProgress: progress,
-                          fileName: fileName,
-                          panelController: _panelController,
-                          gameName: _currentPage < games.length &&
-                                  games.isNotEmpty
-                              ? games[_currentPage].name
-                              : _newGameTitle, // Use our stored variable here
-                          uploadSuccess: uploadSuccess,
-                          onCreateGamePressed: onCreateGamePressed,
-                          onReVersionPressed: onReVersionPressed,
-                          onAddLecturePressed:
-                              onAddLecturePressed, // Add this new callback
-                          isCurrentUserAuthor: _currentPage < games.length &&
-                                  games.isNotEmpty
-                              ? games[_currentPage].author == currentUserEmail
-                              : true, // Default to true for new games
-                        ),
-                        Column(
-                          children: <Widget>[
-                            const ProfileContainer(),
-                            const SizedBox(height: 40),
-                            GestureDetector(
-                              onTap: () {
-                                if (!_isEditingTitle &&
-                                    (_currentPage < games.length ||
-                                        _currentPage == games.length) &&
-                                    _slideUpPanelValue >= slideValueThreshold) {
-                                  setState(() {
-                                    _isEditingTitle = true;
-                                    if (_currentPage < games.length) {
-                                      _titleEditController.text =
-                                          games[_currentPage].name;
-                                    } else {
-                                      _titleEditController.text =
-                                          _newGameTitle; // Use stored title
-                                    }
-                                  });
-                                }
-                              },
-                              child: AnimatedContainer(
-                                duration: Duration(milliseconds: 180),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: showTitleEditor
-                                          ? TextField(
-                                              controller: _titleEditController,
-                                              autofocus: true,
-                                              style: TextStyle(
-                                                color: titleColor,
-                                                fontSize: 25,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                              maxLength: 20,
-                                              buildCounter: (context,
-                                                      {required currentLength,
-                                                      required isFocused,
-                                                      maxLength}) =>
-                                                  currentLength > 12
-                                                      ? Text(
-                                                          '$currentLength/$maxLength',
-                                                          style: TextStyle(
-                                                            color:
-                                                                currentLength >=
-                                                                        20
-                                                                    ? Colors.red
-                                                                    : Colors
-                                                                        .white70,
-                                                            fontSize: 12,
-                                                          ),
-                                                        )
-                                                      : null,
-                                              decoration: InputDecoration(
-                                                isDense: true,
-                                                contentPadding: EdgeInsets.zero,
-                                                border: InputBorder.none,
-                                                hintText: "Enter new title",
-                                                hintStyle: TextStyle(
-                                                  color: titleColor.withOpacity(0.5),
-                                                  fontSize: 25,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-                                              ),
-                                              onSubmitted: (newTitle) async {
-                                                if (newTitle.trim().isNotEmpty) {
-                                                  await _saveTitleToFirebase(newTitle.trim());
-                                                }
-                                              },
-                                            )
-                                          : Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                if ((_currentPage <
-                                                            games.length ||
-                                                        _currentPage ==
-                                                            games.length) &&
-                                                    _slideUpPanelValue >=
-                                                        slideValueThreshold &&
-                                                    !_isEditingTitle)
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 4.0),
-                                                    child: Icon(
-                                                      Icons.edit,
-                                                      size: 20,
-                                                      color: titleColor,
-                                                    ),
-                                                  ),
-                                                Text(
-                                                  showNormalTitle &&
-                                                          _currentPage <
-                                                              games.length
-                                                      ? games[_currentPage].name
-                                                      : showNormalTitle &&
-                                                              _currentPage ==
-                                                                  games
-                                                                      .length &&
-                                                              _slideUpPanelValue >
-                                                                  slideValueThreshold
-                                                          ? _newGameTitle // Use our stored variable here
-                                                          : "",
-                                                  style: TextStyle(
-                                                    color: isDarkMode
-                                                        ? AppColors.textPrimary
-                                                        : _slideUpPanelValue > slideValueThreshold ? Colors.white : AppColors.cardBackground,
-                                                        // AppColors.cardBackground,
-                                                    fontSize: 25,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                    ),
-                                    if (_isEditingTitle)
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.check_circle,
+                ],
+              ),
+              body: Stack(
+                children: [
+                  PanelSlider(
+                    games: games,
+                    currentPage: _currentPage,
+                    slidePanelFunction: toggleSlideUpPanel,
+                    isUploading: isUploading,
+                    uploadProgress: progress,
+                    fileName: fileName,
+                    panelController: _panelController,
+                    gameName: _currentPage < games.length && games.isNotEmpty
+                        ? games[_currentPage].name
+                        : _newGameTitle, // Use our stored variable here
+                    uploadSuccess: uploadSuccess,
+                    onCreateGamePressed: onCreateGamePressed,
+                    onReVersionPressed: onReVersionPressed,
+                    onAddLecturePressed:
+                        onAddLecturePressed, // Add this new callback
+                    isCurrentUserAuthor:
+                        _currentPage < games.length && games.isNotEmpty
+                            ? games[_currentPage].author == currentUserEmail
+                            : true, // Default to true for new games
+                  ),
+                  Column(
+                    children: <Widget>[
+                      const ProfileContainer(),
+                      const SizedBox(height: 40),
+                      GestureDetector(
+                        onTap: () {
+                          if (!_isEditingTitle &&
+                              (_currentPage < games.length ||
+                                  _currentPage == games.length) &&
+                              _slideUpPanelValue >= slideValueThreshold) {
+                            setState(() {
+                              _isEditingTitle = true;
+                              if (_currentPage < games.length) {
+                                _titleEditController.text =
+                                    games[_currentPage].name;
+                              } else {
+                                _titleEditController.text =
+                                    _newGameTitle; // Use stored title
+                              }
+                            });
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 180),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: showTitleEditor
+                                    ? TextField(
+                                        controller: _titleEditController,
+                                        autofocus: true,
+                                        style: TextStyle(
                                           color: titleColor,
-                                          size: 30,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        onPressed: _saveTitleChanges,
-                                        tooltip: 'Save title changes',
-                                        padding: EdgeInsets.zero,
-                                        constraints: BoxConstraints(),
+                                        textAlign: TextAlign.center,
+                                        maxLength: 20,
+                                        buildCounter: (context,
+                                                {required currentLength,
+                                                required isFocused,
+                                                maxLength}) =>
+                                            currentLength > 12
+                                                ? Text(
+                                                    '$currentLength/$maxLength',
+                                                    style: TextStyle(
+                                                      color: currentLength >= 20
+                                                          ? Colors.red
+                                                          : Colors.white70,
+                                                      fontSize: 12,
+                                                    ),
+                                                  )
+                                                : null,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                          border: InputBorder.none,
+                                          hintText: "Enter new title",
+                                          hintStyle: TextStyle(
+                                            color: titleColor.withOpacity(0.5),
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        onSubmitted: (newTitle) async {
+                                          if (newTitle.trim().isNotEmpty) {
+                                            await _saveTitleToFirebase(
+                                                newTitle.trim());
+                                          }
+                                        },
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          if ((_currentPage < games.length ||
+                                                  _currentPage ==
+                                                      games.length) &&
+                                              _slideUpPanelValue >=
+                                                  slideValueThreshold &&
+                                              !_isEditingTitle)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 4.0),
+                                              child: Icon(
+                                                Icons.edit,
+                                                size: 20,
+                                                color: titleColor,
+                                              ),
+                                            ),
+                                          Text(
+                                            showNormalTitle &&
+                                                    _currentPage < games.length
+                                                ? games[_currentPage].name
+                                                : showNormalTitle &&
+                                                        _currentPage ==
+                                                            games.length &&
+                                                        _slideUpPanelValue >
+                                                            slideValueThreshold
+                                                    ? _newGameTitle // Use our stored variable here
+                                                    : "",
+                                            style: TextStyle(
+                                              color: isDarkMode
+                                                  ? AppColors.textPrimary
+                                                  : _slideUpPanelValue >
+                                                          slideValueThreshold
+                                                      ? Colors.white
+                                                      : AppColors
+                                                          .cardBackground,
+                                              // AppColors.cardBackground,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                  ],
-                                ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            Stack(
-                              children: [
-                                SizedBox(
-                                  height: 300,
-                                  child: PageView.builder(
-                                    controller: _pageController,
-                                    onPageChanged: (index) {
-                                      if (_isEditingTitle) {
-                                        _saveTitleChanges();
-                                      }
-
-                                      setState(() {
-                                        _currentPage = index;
-                                        _isEditingTitle = false;
-                                        _titleEditController.clear();
-                                      });
-                                    },
-                                    itemCount:
-                                        games.isNotEmpty ? games.length + 1 : 1,
-                                    itemBuilder: (context, index) {
-                                      if (games.isEmpty && index == 0) {
-                                        return _buildAddGameCard(true);
-                                      }
-
-                                      bool isAddButton = index == games.length;
-                                      bool isSelected = index == _currentPage;
-
-                                      return isAddButton
-                                          ? _buildAddGameCard(isSelected)
-                                          : _buildGameCard(index, isSelected);
-                                    },
+                              if (_isEditingTitle)
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.check_circle,
+                                    color: titleColor,
+                                    size: 30,
                                   ),
+                                  onPressed: _saveTitleChanges,
+                                  tooltip: 'Save title changes',
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
                                 ),
-                                if (_slideUpPanelValue > slideValueThreshold &&
-                                    _currentPage < games.length &&
-                                    !_isEditingTitle)
-                                  Positioned.fill(
-                                    child: _buildOptionIcons(),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 5),
-                            if (_currentPage < games.length &&
-                                _slideUpPanelValue <= slideValueThreshold &&
-                                games.isNotEmpty)
-                              _buildPlayGameButton()
-                          ],
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Scaffold(
-                    backgroundColor: AppColors.mainColor,
-                    appBar: AppBar(
-                        title: const Text(""),
-                        elevation: 0,
-                        backgroundColor: Colors.transparent,
-                        actions: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 16.0),
-                            child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: Colors.white)),
-                          )
-                        ]),
-                    body: Center(
-                        child: Text(AppLocalizations.of(context)!.loadingGames,
-                            style: TextStyle(color: Colors.white))),
-                  );
-                }
-              });
+                      ),
+                      const SizedBox(height: 10),
+                      Stack(
+                        children: [
+                          SizedBox(
+                            height: 300,
+                            child: PageView.builder(
+                              controller: _pageController,
+                              onPageChanged: (index) {
+                                if (_isEditingTitle) {
+                                  _saveTitleChanges();
+                                }
+
+                                setState(() {
+                                  _currentPage = index;
+                                  _isEditingTitle = false;
+                                  _titleEditController.clear();
+                                });
+                              },
+                              itemCount:
+                                  games.isNotEmpty ? games.length + 1 : 1,
+                              itemBuilder: (context, index) {
+                                if (games.isEmpty && index == 0) {
+                                  return _buildAddGameCard(true);
+                                }
+
+                                bool isAddButton = index == games.length;
+                                bool isSelected = index == _currentPage;
+
+                                return isAddButton
+                                    ? _buildAddGameCard(isSelected)
+                                    : _buildGameCard(index, isSelected);
+                              },
+                            ),
+                          ),
+                          if (_slideUpPanelValue > slideValueThreshold &&
+                              _currentPage < games.length &&
+                              !_isEditingTitle)
+                            Positioned.fill(
+                              child: _buildOptionIcons(),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      if (_currentPage < games.length &&
+                          _slideUpPanelValue <= slideValueThreshold &&
+                          games.isNotEmpty)
+                        _buildPlayGameButton()
+                    ],
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Scaffold(
+              backgroundColor: AppColors.mainColor,
+              appBar: AppBar(
+                  title: const Text(""),
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white)),
+                    )
+                  ]),
+              body: Center(
+                  child: Text(AppLocalizations.of(context)!.loadingGames,
+                      style: TextStyle(color: Colors.white))),
+            );
+          }
         });
+    // });
   }
 
   Widget _buildGameCard(int index, bool isSelected) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     double backgroundSize = 300;
 
@@ -1158,7 +1153,7 @@ class _MyGamesState extends State<MyGames> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                        Image.asset(
+                      Image.asset(
                         games[index].icon, //.replaceFirst('assets/', ''),
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
@@ -1185,7 +1180,7 @@ class _MyGamesState extends State<MyGames> {
                                 Icon(Icons.edit, color: Colors.white, size: 16),
                                 SizedBox(width: 4),
                                 Text(
-                                 AppLocalizations.of(context)!.changeIcon,
+                                  AppLocalizations.of(context)!.changeIcon,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
@@ -1206,136 +1201,133 @@ class _MyGamesState extends State<MyGames> {
     );
   }
 
-Widget _buildAddGameCard(bool isSelected) {
-  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildAddGameCard(bool isSelected) {
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
-  return GestureDetector(
-    onTap: () {
-      if (isSelected) {
-        if (_slideUpPanelValue <= slideValueThreshold) {
-          setState(() {
-            _slideUpPanelValue = 1.0;
-            _panelController.open();
-            _isEditingTitle = true;
-            _titleEditController.text = _newGameTitle;
-            _gameNameTextController.text = _newGameTitle;
-          });
-        } else {
-          if (_isEditingTitle) {
-            _saveTitleChanges();
+    return GestureDetector(
+      onTap: () {
+        if (isSelected) {
+          if (_slideUpPanelValue <= slideValueThreshold) {
+            setState(() {
+              _slideUpPanelValue = 1.0;
+              _panelController.open();
+              _isEditingTitle = true;
+              _titleEditController.text = _newGameTitle;
+              _gameNameTextController.text = _newGameTitle;
+            });
+          } else {
+            if (_isEditingTitle) {
+              _saveTitleChanges();
+            }
+
+            pickFile();
           }
-
-          pickFile();
         }
-      }
-    },
-    child: Transform.scale(
-      scale: isSelected ? 1.2 : 0.85,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        transform: Matrix4.identity()
-          ..translate(0.0, isSelected ? -2.0 : 12.0, isSelected ? 10.0 : 0.0),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // วงกลม
-            _slideUpPanelValue > slideValueThreshold
-                ? Container(
-                    width: 160,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isDarkMode
-                          ? AppColors.accentDarkmode2
-                          : const Color(0xFF102247),
-                      border: Border.all(
+      },
+      child: Transform.scale(
+        scale: isSelected ? 1.2 : 0.85,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          transform: Matrix4.identity()
+            ..translate(0.0, isSelected ? -2.0 : 12.0, isSelected ? 10.0 : 0.0),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // วงกลม
+              _slideUpPanelValue > slideValueThreshold
+                  ? Container(
+                      width: 160,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
                         color: isDarkMode
-                            ? AppColors.white
-                            : const Color.fromARGB(255, 189, 197, 255),
-                        width: 3,
+                            ? AppColors.accentDarkmode2
+                            : const Color(0xFF102247),
+                        border: Border.all(
+                          color: isDarkMode
+                              ? AppColors.white
+                              : const Color.fromARGB(255, 189, 197, 255),
+                          width: 3,
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.cloud_upload_outlined,
-                            size: 90,
-                            color: isDarkMode
-                                ? AppColors.white
-                                : const Color.fromARGB(255, 189, 197, 255),
-                          ),
-                          Text(
-                            'Upload file',
-                            style: TextStyle(
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.cloud_upload_outlined,
+                              size: 90,
                               color: isDarkMode
                                   ? AppColors.white
                                   : const Color.fromARGB(255, 189, 197, 255),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
                             ),
-                          ),
-                        ],
+                            Text(
+                              'Upload file',
+                              style: TextStyle(
+                                color: isDarkMode
+                                    ? AppColors.white
+                                    : const Color.fromARGB(255, 189, 197, 255),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SvgPicture.asset(
+                      "assets/images/add-icon.svg",
+                      fit: BoxFit.contain,
+                      color: isDarkMode
+                          ? AppColors.textPrimary
+                          : AppColors.cardBackground,
+                      colorBlendMode: BlendMode.srcIn,
+                    ),
+              const SizedBox(height: 16),
+              // or
+              if (_slideUpPanelValue > slideValueThreshold)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 30,
+                      child: Container(
+                        height: 1,
+                        color: isDarkMode
+                            ? AppColors.white
+                            : const Color.fromARGB(255, 189, 197, 255),
                       ),
                     ),
-                  )
-                : SvgPicture.asset(
-                    "assets/images/add-icon.svg",
-                    fit: BoxFit.contain,
-                    color: isDarkMode
-                        ? AppColors.textPrimary
-                        : AppColors.cardBackground,
-                    colorBlendMode: BlendMode.srcIn,
-                  ),
-            const SizedBox(height: 16),
-            // or
-            if (_slideUpPanelValue > slideValueThreshold)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 30,
-                    child: Container(
-                      height: 1,
-                      color: isDarkMode
-                          ? AppColors.white
-                          : const Color.fromARGB(255, 189, 197, 255),
+                    const SizedBox(width: 8),
+                    Text(
+                      'or',
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? AppColors.white
+                            : const Color.fromARGB(255, 189, 197, 255),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'or',
-                    style: TextStyle(
-                      color: isDarkMode
-                          ? AppColors.white
-                          : const Color.fromARGB(255, 189, 197, 255),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 30,
+                      child: Container(
+                        height: 1,
+                        color: isDarkMode
+                            ? AppColors.white
+                            : const Color.fromARGB(255, 189, 197, 255),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 30,
-                    child: Container(
-                      height: 1,
-                      color: isDarkMode
-                          ? AppColors.white
-                          : const Color.fromARGB(255, 189, 197, 255),
-                    ),
-                  ),
-                ],
-              ),
-          ],
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
-
-
+    );
+  }
 
   Widget _buildOptionIcons() {
     return Stack(
@@ -1395,9 +1387,10 @@ Widget _buildAddGameCard(bool isSelected) {
                         String gameRefToDelete = games[_currentPage].ref;
                         String userEmail =
                             FirebaseAuth.instance.currentUser!.email!;
-                            
+
                         // Create a DocumentReference from the path string
-                        DocumentReference gameDocRef = FirebaseFirestore.instance.doc(gameRefToDelete);
+                        DocumentReference gameDocRef =
+                            FirebaseFirestore.instance.doc(gameRefToDelete);
 
                         int deletedPageIndex = _currentPage;
                         int newPageIndex =
@@ -1413,7 +1406,7 @@ Widget _buildAddGameCard(bool isSelected) {
                           path: gameRefToDelete,
                           email: userEmail,
                         );
-                        
+
                         // Also remove the game from history
                         await historyService.removeGameFromHistory(
                           email: userEmail,
@@ -1598,7 +1591,7 @@ Widget _buildAddGameCard(bool isSelected) {
   }
 
   Widget _buildPlayGameButton() {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -1638,7 +1631,7 @@ Widget _buildAddGameCard(bool isSelected) {
                 colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
               const SizedBox(width: 8),
-               Text(
+              Text(
                 AppLocalizations.of(context)!.playGame,
                 style: TextStyle(
                   color: Colors.white,

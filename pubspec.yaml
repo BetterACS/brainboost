@@ -51,8 +51,9 @@ dependencies:
   google_sign_in: ^6.2.2
   cached_network_image: ^3.4.1
   # cached_network_image_platform_interface: ^4.1.1
-  shared_preferences: ^2.5.3
+  shared_preferences: ^2.2.0
   image_picker: ^1.0.4
+  provider: ^6.1.4
   # intl: ^0.18.1
 
 
