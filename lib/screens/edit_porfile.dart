@@ -2,7 +2,9 @@ import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'profile.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 
 void main() {
   runApp(const EditProfilePage());
@@ -13,7 +15,7 @@ class EditProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -35,7 +37,6 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController nameController = TextEditingController();
-  // final TextEditingController emailController = TextEditingController();
   final TextEditingController personalizeController = TextEditingController();
 
   Future<DocumentSnapshot> fetchUserData() async {
@@ -51,13 +52,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     final userDoc = await UserServices().users.doc(email).get();
     final currentUsername = userDoc['username'] ?? '';
-    // final currentEmail = userDoc['email'] ?? '';
     final currentPersonalize = userDoc.data().toString().contains('personalize')
         ? userDoc['personalize']
         : '';
 
     if (nameController.text == currentUsername &&
-        // emailController.text == currentEmail &&
         personalizeController.text == currentPersonalize) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("No changes made")),
@@ -68,7 +67,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     try {
       await UserServices().users.doc(email).update({
         'username': nameController.text,
-        // 'email': emailController.text,
         'personalize': personalizeController.text,
       });
 
@@ -86,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       backgroundColor:
@@ -147,7 +145,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : '';
 
               nameController.text = username;
-              // emailController.text = email;
               personalizeController.text = personalize;
 
               return Column(
@@ -155,9 +152,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 children: [
                   buildTextField("Username", nameController),
                   const SizedBox(height: 20),
-                  // buildTextField("Email", emailController),
-                  // const SizedBox(height: 20),
-                  buildTextField("Personalize", personalizeController, maxLines: 4),
+                  buildTextField("Personalize", personalizeController,
+                      maxLines: 4),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -187,14 +183,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget buildTextField(String label, TextEditingController controller,
       {bool obscureText = false, int? maxLines}) {
-            final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style:  TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color:   isDarkMode ? AppColors.white : AppColors.buttonText),
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? AppColors.white : AppColors.buttonText),
         ),
         const SizedBox(height: 5),
         TextField(
@@ -208,7 +207,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.grey.shade300),
             ),
-            suffixIcon:  Icon(Icons.edit, color:   isDarkMode ? AppColors.backgroundDarkmode : AppColors.buttonText),
+            suffixIcon: Icon(Icons.edit,
+                color: isDarkMode
+                    ? AppColors.backgroundDarkmode
+                    : AppColors.buttonText),
           ),
         ),
       ],

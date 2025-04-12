@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:brainboost/component/bottom_slider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 
 class YesNoGameScreen extends StatefulWidget {
   final List<GameYesNoContent> content;
@@ -87,7 +89,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     final backgroundColor =
         isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
     final textColor = isDarkMode ? Colors.white : const Color(0xFF1A1F71);
@@ -182,7 +184,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                       TextButton(
                         onPressed: () => _submitAnswerWithButton(false),
                         child: Text(
-                            AppLocalizations.of(context)!.no,
+                          AppLocalizations.of(context)!.no,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -241,7 +243,7 @@ class _YesNoGameScreenState extends State<YesNoGameScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child:  Text(
+                        child: Text(
                           AppLocalizations.of(context)!.next,
                           style: TextStyle(
                             fontSize: 20,

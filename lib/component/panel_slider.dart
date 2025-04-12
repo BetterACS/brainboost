@@ -1,9 +1,11 @@
 import 'package:brainboost/main.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/models/games.dart';
@@ -89,471 +91,441 @@ class _PanelSliderState extends State<PanelSlider> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = context.watch<ThemeProvider>().isDarkMode;
+
     final bool isValidIndex =
         widget.games.isNotEmpty && widget.currentPage < widget.games.length;
 
-    return ValueListenableBuilder<ThemeMode>(
-        valueListenable: themeNotifier,
-        builder: (context, currentTheme, child) {
-          final isDarkMode = currentTheme == ThemeMode.dark;
-          
-          // Define theme colors based on mode
-          final Color panelBackgroundColor = isDarkMode 
-              ? AppColors.accentDarkmode 
-              : AppColors.cardBackground;
-              
-          final Color buttonBackgroundColor = isDarkMode
-              ? Colors.white
-              : Colors.white;
-              
-          final Color buttonForegroundColor = isDarkMode
-              ? const Color.fromARGB(255, 52, 70, 105)
-              : AppColors.buttonText;
-              
-          final Color buttonBorderColor = isDarkMode
-              ? Colors.white
-              : Colors.white;
-              
-          // disabled button for light and dark modes
-          final Color disabledButtonBackgroundColor = isDarkMode
-              ? Colors.grey.shade800  
-              : Colors.grey.shade300; 
-              
-          final Color disabledButtonForegroundColor = isDarkMode
-              ? Colors.grey.shade600 
-              : Colors.grey.shade400; 
-              
-          final Color disabledButtonBorderColor = isDarkMode
-              ? Colors.grey.shade800  
-              : Colors.grey.shade300; 
-          
-          final Color playHistoryBackgroundColor = isDarkMode
-              ? Color(0xFF1E293B) 
-              : Color(0xFFECF5FF); 
-              
-          final Color playHistoryTextColor = isDarkMode
-              ? Colors.white
-              : Color(0xFF05235F);
-              
-          final Color playButtonBackgroundColor = isDarkMode
-              ? Colors.yellow[700]!
-              : AppColors.neutralBackground;
-              
-          final Color indicatorColor = Colors.white54;
-          
-          BorderRadiusGeometry radius = const BorderRadius.only(
-            topLeft: Radius.circular(40.0),
-            topRight: Radius.circular(40.0),
-          );
+    final Color panelBackgroundColor =
+        isDarkMode ? AppColors.accentDarkmode : AppColors.cardBackground;
 
-          if (!isValidIndex) {
-            return SlidingUpPanel(
-              controller: _panelController,
-              header: Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  child: Container(
-                    margin: EdgeInsets.only(top: 8),
-                    height: 4,
-                    width: 160,
-                    decoration: BoxDecoration(
-                      color: indicatorColor,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                  ),
+    final Color buttonBackgroundColor =
+        isDarkMode ? Colors.white : Colors.white;
+
+    final Color buttonForegroundColor = isDarkMode
+        ? const Color.fromARGB(255, 52, 70, 105)
+        : AppColors.buttonText;
+
+    final Color buttonBorderColor = isDarkMode ? Colors.white : Colors.white;
+
+    // disabled button for light and dark modes
+    final Color disabledButtonBackgroundColor =
+        isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300;
+
+    final Color disabledButtonForegroundColor =
+        isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400;
+
+    final Color disabledButtonBorderColor =
+        isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300;
+
+    final Color playHistoryBackgroundColor =
+        isDarkMode ? Color(0xFF1E293B) : Color(0xFFECF5FF);
+
+    final Color playHistoryTextColor =
+        isDarkMode ? Colors.white : Color(0xFF05235F);
+
+    final Color playButtonBackgroundColor =
+        isDarkMode ? Colors.yellow[700]! : AppColors.neutralBackground;
+
+    final Color indicatorColor = Colors.white54;
+
+    BorderRadiusGeometry radius = const BorderRadius.only(
+      topLeft: Radius.circular(40.0),
+      topRight: Radius.circular(40.0),
+    );
+
+    if (!isValidIndex) {
+      return SlidingUpPanel(
+        controller: _panelController,
+        header: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.center,
+            child: Container(
+              margin: EdgeInsets.only(top: 8),
+              height: 4,
+              width: 160,
+              decoration: BoxDecoration(
+                color: indicatorColor,
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+            ),
+          ),
+        ),
+        onPanelSlide: (double value) => widget.slidePanelFunction(value),
+        onPanelOpened: () => widget.slidePanelFunction(1.0),
+        onPanelClosed: () => widget.slidePanelFunction(0.0),
+        minHeight: 240,
+        maxHeight: MediaQuery.of(context).size.height * 0.805,
+        borderRadius: radius,
+        panel: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: panelBackgroundColor,
+            borderRadius: radius,
+          ),
+          child: _buildUploadingPanel(context, isDarkMode),
+        ),
+        collapsed: Container(
+          decoration: BoxDecoration(
+            color: panelBackgroundColor,
+            borderRadius: radius,
+          ),
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 8, bottom: 4),
+                height: 4,
+                width: 160,
+                decoration: BoxDecoration(
+                  color: indicatorColor,
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 ),
               ),
-              onPanelSlide: (double value) => widget.slidePanelFunction(value),
-              onPanelOpened: () => widget.slidePanelFunction(1.0),
-              onPanelClosed: () => widget.slidePanelFunction(0.0),
-              minHeight: 240,
-              maxHeight: MediaQuery.of(context).size.height * 0.805,
-              borderRadius: radius,
-              panel: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: panelBackgroundColor,
-                  borderRadius: radius,
+              SizedBox(height: 40),
+              Text(
+                AppLocalizations.of(context)!.sideuptocreateanewgame,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                child: _buildUploadingPanel(context),
               ),
-              collapsed: Container(
-                decoration: BoxDecoration(
-                  color: panelBackgroundColor,
-                  borderRadius: radius,
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 8, bottom: 4),
-                      height: 4,
-                      width: 160,
-                      decoration: BoxDecoration(
-                        color: indicatorColor,
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SlidingUpPanel(
+      controller: _panelController,
+      header: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          alignment: Alignment.center,
+          child: Container(
+            margin: EdgeInsets.only(top: 8),
+            height: 4,
+            width: 160,
+            decoration: BoxDecoration(
+                color: indicatorColor,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.0),
+                )),
+          ),
+        ),
+      ),
+      onPanelSlide: (double value) => widget.slidePanelFunction(value),
+      onPanelOpened: () => widget.slidePanelFunction(1.0),
+      onPanelClosed: () => widget.slidePanelFunction(0.0),
+      minHeight: isValidIndex &&
+              widget.games[widget.currentPage].played_history.isEmpty
+          ? 172
+          : 240,
+      maxHeight: MediaQuery.of(context).size.height * 0.805,
+      borderRadius: radius,
+      panel: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: panelBackgroundColor,
+            borderRadius: radius,
+          ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 390,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  OutlinedButton(
+                    onPressed: widget.isCurrentUserAuthor
+                        ? widget.onReVersionPressed
+                        : null,
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: widget.isCurrentUserAuthor
+                          ? buttonBackgroundColor
+                          : disabledButtonBackgroundColor,
+                      foregroundColor: widget.isCurrentUserAuthor
+                          ? buttonForegroundColor
+                          : disabledButtonForegroundColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
+                      side: BorderSide(
+                          color: widget.isCurrentUserAuthor
+                              ? buttonBorderColor
+                              : disabledButtonBorderColor,
+                          width: 2),
+                      minimumSize: const Size(160, 40),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
                     ),
-                    SizedBox(height: 40),
-                    Text(
-                      AppLocalizations.of(context)!.sideuptocreateanewgame,
+                    child: Text(
+                      AppLocalizations.of(context)!.reversion,
                       style: TextStyle(
-                        color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          return SlidingUpPanel(
-            controller: _panelController,
-            header: Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.center,
-                child: Container(
-                  margin: EdgeInsets.only(top: 8),
-                  height: 4,
-                  width: 160,
-                  decoration: BoxDecoration(
-                    color: indicatorColor,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    )
                   ),
-                ),
+                  OutlinedButton(
+                    onPressed: widget.isCurrentUserAuthor
+                        ? widget.onAddLecturePressed
+                        : null,
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: widget.isCurrentUserAuthor
+                          ? buttonBackgroundColor
+                          : disabledButtonBackgroundColor,
+                      foregroundColor: widget.isCurrentUserAuthor
+                          ? buttonForegroundColor
+                          : disabledButtonForegroundColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      side: BorderSide(
+                          color: widget.isCurrentUserAuthor
+                              ? buttonBorderColor
+                              : disabledButtonBorderColor,
+                          width: 2),
+                      minimumSize: const Size(160, 40),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.addLecture,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            onPanelSlide: (double value) => widget.slidePanelFunction(value),
-            onPanelOpened: () => widget.slidePanelFunction(1.0),
-            onPanelClosed: () => widget.slidePanelFunction(0.0),
-            minHeight: isValidIndex &&
-                    widget.games[widget.currentPage].played_history.isEmpty
-                ? 172
-                : 240,
-            maxHeight: MediaQuery.of(context).size.height * 0.805,
-            borderRadius: radius,
-            panel: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: panelBackgroundColor,
-                  borderRadius: radius,
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 390,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        OutlinedButton(
-                          onPressed: widget.isCurrentUserAuthor
-                              ? widget.onReVersionPressed
-                              : null,
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: widget.isCurrentUserAuthor
-                                ? buttonBackgroundColor
-                                : disabledButtonBackgroundColor,
-                            foregroundColor: widget.isCurrentUserAuthor
-                                ? buttonForegroundColor
-                                : disabledButtonForegroundColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            side: BorderSide(
-                                color: widget.isCurrentUserAuthor
-                                    ? buttonBorderColor
-                                    : disabledButtonBorderColor,
-                                width: 2),
-                            minimumSize: const Size(160, 40),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.reversion,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        OutlinedButton(
-                          onPressed: widget.isCurrentUserAuthor
-                              ? widget.onAddLecturePressed
-                              : null,
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: widget.isCurrentUserAuthor
-                                ? buttonBackgroundColor
-                                : disabledButtonBackgroundColor,
-                            foregroundColor: widget.isCurrentUserAuthor
-                                ? buttonForegroundColor
-                                : disabledButtonForegroundColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            side: BorderSide(
-                                color: widget.isCurrentUserAuthor
-                                    ? buttonBorderColor
-                                    : disabledButtonBorderColor,
-                                width: 2),
-                            minimumSize: const Size(160, 40),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.addLecture,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Center(
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 2, vertical: 14),
-                        width: 340,
-                        height: 110,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: playHistoryBackgroundColor,
-                        ),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: widget.games[widget.currentPage]
-                                    .played_history.isEmpty
-                                ? [
+              const SizedBox(height: 12),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 14),
+                  width: 340,
+                  height: 110,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: playHistoryBackgroundColor,
+                  ),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: widget
+                              .games[widget.currentPage].played_history.isEmpty
+                          ? [
+                              Text(
+                                AppLocalizations.of(context)!.noplayhistoryyet,
+                                style: TextStyle(
+                                  color: playHistoryTextColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ]
+                          : List.generate(
+                              widget.games[widget.currentPage].played_history
+                                  .length, (index) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 4),
+                                child: Column(
+                                  children: [
+                                    FutureBuilder<Widget>(
+                                      future: buildUserIconForPanel(
+                                          widget.games[widget.currentPage]
+                                              .played_history[index]['player'],
+                                          40),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return SizedBox(
+                                            width: 40,
+                                            height: 40,
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Icon(Icons.error,
+                                              size: 40, color: Colors.red);
+                                        } else {
+                                          return snapshot.data!;
+                                        }
+                                      },
+                                    ),
+                                    SizedBox(height: 2),
                                     Text(
-                                      AppLocalizations.of(context)!
-                                          .noplayhistoryyet,
+                                      widget.games[widget.currentPage]
+                                          .played_history[index]['score']
+                                          .toString(),
                                       style: TextStyle(
                                         color: playHistoryTextColor,
                                         fontSize: 18,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ]
-                                : List.generate(
-                                    widget.games[widget.currentPage]
-                                        .played_history.length, (index) {
-                                    return Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 4),
-                                      child: Column(
-                                        children: [
-                                          FutureBuilder<Widget>(
-                                            future: buildUserIconForPanel(
-                                                widget.games[widget.currentPage]
-                                                        .played_history[index]
-                                                    ['player'],
-                                                40),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return SizedBox(
-                                                  width: 40,
-                                                  height: 40,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                          strokeWidth: 2),
-                                                );
-                                              } else if (snapshot.hasError) {
-                                                return Icon(Icons.error,
-                                                    size: 40,
-                                                    color: Colors.red);
-                                              } else {
-                                                return snapshot.data!;
-                                              }
-                                            },
-                                          ),
-                                          SizedBox(height: 2),
-                                          Text(
-                                            widget.games[widget.currentPage]
-                                                .played_history[index]['score']
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: playHistoryTextColor,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                          ),
-                        ),
-                      ),
+                                  ],
+                                ),
+                              );
+                            }),
                     ),
-                    Center(
-                        child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 2, vertical: 14),
-                      width: 340,
-                      height: 86,
-                      child: ElevatedButton(
-                        onPressed: () =>
-                            context.push(Routes.playGamePage, extra: {
-                          'games': widget.games[widget.currentPage].gameList,
-                          'reference': widget.games[widget.currentPage].ref
-                        }),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: playButtonBackgroundColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 22,
-                            vertical: 14,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/game.svg',
-                              width: 24,
-                              height: 24,
-                              colorFilter: ColorFilter.mode(
-                                  Colors.white, BlendMode.srcIn),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              AppLocalizations.of(context)!.playgames,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ))
-                  ],
-                )),
-            collapsed: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 8, bottom: 4),
-                  height: 4,
-                  width: 160,
-                  decoration: BoxDecoration(
-                    color: indicatorColor,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10.0),
-                    )
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: panelBackgroundColor,
-                    borderRadius: radius,
+              ),
+              Center(
+                  child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 2, vertical: 14),
+                width: 340,
+                height: 86,
+                child: ElevatedButton(
+                  onPressed: () => context.push(Routes.playGamePage, extra: {
+                    'games': widget.games[widget.currentPage].gameList,
+                    'reference': widget.games[widget.currentPage].ref
+                  }),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: playButtonBackgroundColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 22,
+                      vertical: 14,
+                    ),
                   ),
-                  child: Column(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(height: 10),
+                      SvgPicture.asset(
+                        'assets/images/game.svg',
+                        width: 24,
+                        height: 24,
+                        colorFilter:
+                            ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                      ),
+                      const SizedBox(width: 8),
                       Text(
-                        widget.games[widget.currentPage].played_history.isEmpty
-                            ? AppLocalizations.of(context)!.noPlayHistory
-                            : AppLocalizations.of(context)!.playedhistory,
+                        AppLocalizations.of(context)!.playgames,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(
-                          height: widget.games[widget.currentPage]
-                                  .played_history.isEmpty
-                              ? 0
-                              : 20),
-                      SizedBox(
-                        height: 120,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                widget.games[widget.currentPage].played_history
-                                    .length,
-                                (index) {
-                                  return Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8),
-                                    child: Column(
-                                      children: [
-                                        FutureBuilder<Widget>(
-                                          future: buildUserIconForPanel(
-                                              widget.games[widget.currentPage]
-                                                      .played_history[index]
-                                                  ['player'],
-                                              40),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return SizedBox(
-                                                width: 40,
-                                                height: 40,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                        strokeWidth: 2),
-                                              );
-                                            } else if (snapshot.hasError) {
-                                              return Icon(Icons.error,
-                                                  size: 40, color: Colors.red);
-                                            } else {
-                                              return snapshot.data!;
-                                            }
-                                          },
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          widget.games[widget.currentPage]
-                                              .played_history[index]['score']
-                                              .toString(),
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                )
+                ),
+              ))
+            ],
+          )),
+      collapsed: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 8, bottom: 4),
+            height: 4,
+            width: 160,
+            decoration: BoxDecoration(
+                color: indicatorColor,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.0),
+                )),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: panelBackgroundColor,
+              borderRadius: radius,
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                Text(
+                  widget.games[widget.currentPage].played_history.isEmpty
+                      ? AppLocalizations.of(context)!.noPlayHistory
+                      : AppLocalizations.of(context)!.playedhistory,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                    height:
+                        widget.games[widget.currentPage].played_history.isEmpty
+                            ? 0
+                            : 20),
+                SizedBox(
+                  height: 120,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          widget
+                              .games[widget.currentPage].played_history.length,
+                          (index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                children: [
+                                  FutureBuilder<Widget>(
+                                    future: buildUserIconForPanel(
+                                        widget.games[widget.currentPage]
+                                            .played_history[index]['player'],
+                                        40),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return Icon(Icons.error,
+                                            size: 40, color: Colors.red);
+                                      } else {
+                                        return snapshot.data!;
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    widget.games[widget.currentPage]
+                                        .played_history[index]['score']
+                                        .toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-          );
-        });
+          )
+        ],
+      ),
+    );
+    // });
   }
 
-  Widget _buildUploadingPanel(BuildContext context) {
+  Widget _buildUploadingPanel(BuildContext context, bool isDarkMode) {
     final bool isButtonEnabled = widget.uploadSuccess &&
         widget.gameName != null &&
         widget.gameName!.isNotEmpty;
-
-    final currentTheme = Theme.of(context).brightness;
-    final bool isDarkMode = currentTheme == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -564,45 +536,41 @@ class _PanelSliderState extends State<PanelSlider> {
           children: [
             GestureDetector(
               onTap: () => _showImportDialog(context),
-              child: 
-              Container(
+              child: Container(
                 height: 36,
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: isDarkMode ? Colors.blue : Colors.blue,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: 
-              
-              
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.accentDarkmode
-                          : Colors.blue.shade700,
-                      shape: BoxShape.circle,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? AppColors.accentDarkmode
+                            : Colors.blue.shade700,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.file_download_outlined,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.file_download_outlined,
-                      color: Colors.white,
-                      size: 20,
+                    SizedBox(width: 6),
+                    Text(
+                      AppLocalizations.of(context)!.importGame,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 6),
-                  Text(
-                    AppLocalizations.of(context)!.importGame,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -612,7 +580,9 @@ class _PanelSliderState extends State<PanelSlider> {
             widget.uploadProgress <= 0 &&
             !widget.uploadSuccess)
           Container(
-            margin: EdgeInsets.symmetric(vertical: 24,),
+            margin: EdgeInsets.symmetric(
+              vertical: 24,
+            ),
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: isDarkMode ? AppColors.accentDarkmode2 : Color(0xFF152A56),

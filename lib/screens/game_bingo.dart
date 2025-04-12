@@ -5,6 +5,8 @@ import 'package:brainboost/component/bottom_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 
 class BingoScreen extends StatefulWidget {
   final BingoContent content;
@@ -150,8 +152,7 @@ class _BingoScreenState extends State<BingoScreen> {
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        final currentTheme = Theme.of(context).brightness;
-        final bool isDarkMode = currentTheme == Brightness.dark;
+        final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
         final backgroundColor =
             isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
         final textColor = isDarkMode ? Colors.white : Colors.black;
@@ -367,7 +368,7 @@ class _BingoScreenState extends State<BingoScreen> {
   Widget build(BuildContext context) {
     final bingoList = widget.content.bingo_list;
 
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     final backgroundColor =
         isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
     final textColor = isDarkMode ? Colors.white : Colors.black;
