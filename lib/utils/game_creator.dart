@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:brainboost/core/language/notifier.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:brainboost/services/games.dart';
 import 'package:brainboost/services/user.dart';
@@ -12,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:brainboost/main.dart'; // Import main.dart to access localeNotifier
 
 enum CreationStage { extracting, personalizing, crafting, completed }
+
 ValueNotifier<String> dialogMessage = ValueNotifier<String>("");
 ValueNotifier<double> creationProgress = ValueNotifier<double>(0.0);
 ValueNotifier<CreationStage> currentStage =
@@ -34,7 +37,8 @@ Future<void> createGameFunction(
   required String uploadLink,
   required String gameName,
   VoidCallback? onSuccess,
-  bool showInternalDialogs = true, // Add parameter to control internal dialog behavior
+  bool showInternalDialogs =
+      true, // Add parameter to control internal dialog behavior
 }) async {
   if (uploadLink.isEmpty || gameName.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -72,7 +76,9 @@ Future<void> createGameFunction(
 
     String? email = FirebaseAuth.instance.currentUser!.email;
     if (email == null) {
-      if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+      if (dialogContext != null &&
+          Navigator.canPop(dialogContext!) &&
+          showInternalDialogs) {
         Navigator.pop(dialogContext!);
       }
       showDialog(
@@ -89,10 +95,12 @@ Future<void> createGameFunction(
 
     currentStage.value = CreationStage.crafting;
     dialogMessage.value = "Crafting your game";
-    
+
     // Get current language from localeNotifier
-    String currentLanguage = getLanguageName(localeNotifier.value.languageCode);
-    
+    // String currentLanguage = getLanguageName(localeNotifier.value.languageCode);
+    String currentLanguage =
+        GetIt.instance<LanguageNotifier>().locale.languageCode;
+
     Map<String, String> params = {
       // "game_types": "( 'quiz', 'yesno', 'bingo' )",
       "request_type": 'full',
@@ -111,9 +119,8 @@ Future<void> createGameFunction(
 
     creationProgress.value = 0.80;
 
-
     var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
-    
+
     print("Game dict: $gameDict");
     GameServices gamesServices = GameServices();
 
@@ -124,7 +131,9 @@ Future<void> createGameFunction(
         media: uploadLink);
 
     if (gameID == null) {
-      if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+      if (dialogContext != null &&
+          Navigator.canPop(dialogContext!) &&
+          showInternalDialogs) {
         Navigator.pop(dialogContext!);
       }
       showDialog(
@@ -149,7 +158,9 @@ Future<void> createGameFunction(
     await Future.delayed(Duration(seconds: 1));
 
     // Close the dialog safely, only if we're showing internal dialogs
-    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+    if (dialogContext != null &&
+        Navigator.canPop(dialogContext!) &&
+        showInternalDialogs) {
       Navigator.pop(dialogContext!);
     }
 
@@ -167,12 +178,14 @@ Future<void> createGameFunction(
     }
   } catch (e) {
     print("Error during game creation: $e");
-    
+
     // Make sure to close the dialog if there's an error, only if using internal dialogs
-    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+    if (dialogContext != null &&
+        Navigator.canPop(dialogContext!) &&
+        showInternalDialogs) {
       Navigator.pop(dialogContext!);
     }
-    
+
     // Show error dialog only if using internal dialogs
     if (showInternalDialogs) {
       showDialog(
@@ -192,11 +205,13 @@ Future<void> addLectureToGame(
   required String gamePath,
   required List<dynamic> existingGameData,
   VoidCallback? onSuccess,
-  bool showInternalDialogs = true, // Add parameter to control internal dialog behavior
+  bool showInternalDialogs =
+      true, // Add parameter to control internal dialog behavior
 }) async {
   if (uploadLink.isEmpty || gamePath.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Cannot add lecture: missing required information')),
+      SnackBar(
+          content: Text('Cannot add lecture: missing required information')),
     );
     return;
   }
@@ -229,7 +244,9 @@ Future<void> addLectureToGame(
     creationProgress.value = 0.32;
     String? email = FirebaseAuth.instance.currentUser!.email;
     if (email == null) {
-      if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+      if (dialogContext != null &&
+          Navigator.canPop(dialogContext!) &&
+          showInternalDialogs) {
         Navigator.pop(dialogContext!);
       }
       showDialog(
@@ -247,10 +264,12 @@ Future<void> addLectureToGame(
 
     currentStage.value = CreationStage.crafting;
     dialogMessage.value = "Crafting additional content";
-    
+
     // Get current language from localeNotifier
-    String currentLanguage = getLanguageName(localeNotifier.value.languageCode);
-    
+    // String currentLanguage = getLanguageName(localeNotifier.value.languageCode);
+    String currentLanguage =
+        GetIt.instance<LanguageNotifier>().locale.languageCode;
+
     Map<String, String> params = {
       // "game_types": "( 'quiz', 'yesno', 'bingo' )",
       "request_type": 'partial', // Using partial for adding to existing game
@@ -269,11 +288,10 @@ Future<void> addLectureToGame(
 
     creationProgress.value = 0.80;
     var gameDict = jsonDecode(utf8.decode(createGameResponse.bodyBytes));
-    
 
     // Get the new content to append
     List<dynamic> newGameData = gameDict['data'] as List<dynamic>;
-    
+
     // Merge existing game data with new game data
     List<dynamic> combinedGameData = [...existingGameData, ...newGameData];
 
@@ -293,7 +311,9 @@ Future<void> addLectureToGame(
     await Future.delayed(Duration(seconds: 1));
 
     // Close the dialog safely, only if we're showing internal dialogs
-    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+    if (dialogContext != null &&
+        Navigator.canPop(dialogContext!) &&
+        showInternalDialogs) {
       Navigator.pop(dialogContext!);
     }
 
@@ -311,12 +331,14 @@ Future<void> addLectureToGame(
     }
   } catch (e) {
     print("Error during lecture addition: $e");
-    
+
     // Make sure to close the dialog if there's an error, only if using internal dialogs
-    if (dialogContext != null && Navigator.canPop(dialogContext!) && showInternalDialogs) {
+    if (dialogContext != null &&
+        Navigator.canPop(dialogContext!) &&
+        showInternalDialogs) {
       Navigator.pop(dialogContext!);
     }
-    
+
     // Show error dialog only if using internal dialogs
     if (showInternalDialogs) {
       showDialog(

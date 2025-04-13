@@ -1,25 +1,20 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:brainboost/main.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 import 'package:brainboost/router/routes.dart';
-import 'package:brainboost/screens/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/services/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
 import 'package:brainboost/component/cards/profile_header.dart';
-// import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/component/history_item.dart';
 import 'package:brainboost/component/circular_page_chart.dart';
-import 'package:brainboost/screens/game_bingo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-
+import 'package:provider/provider.dart';
 
 class CloudPainter extends CustomPainter {
   @override
@@ -64,35 +59,32 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier, 
-      builder: (context, currentTheme, child) {
-        return Scaffold(
-          backgroundColor: currentTheme == ThemeMode.dark
-              ? AppColors.backgroundDarkmode 
-              : AppColors.mainColor,
-          body: ScrollConfiguration(
-            behavior: _MouseScrollBehavior(),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 50),
-                  const ProfileContainer(),
-                  const SizedBox(height: 20),
-                  _buildPageView(),
-                  const SizedBox(height: 10),
-                  _buildPageIndicator(),
-                  const SizedBox(height: 20),
-                  _buildCreateSection(),
-                  _buildCreateButtons(context),
-                  _buildHistorySection(),
-                ],
-              ),
-            ),
+    final ThemeData currentTheme = context.watch<ThemeProvider>().theme;
+
+    return Scaffold(
+      backgroundColor: currentTheme == ThemeData.dark()
+          ? AppColors.backgroundDarkmode
+          : AppColors.mainColor,
+      body: ScrollConfiguration(
+        behavior: _MouseScrollBehavior(),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 50),
+              const ProfileContainer(),
+              const SizedBox(height: 20),
+              _buildPageView(),
+              const SizedBox(height: 10),
+              _buildPageIndicator(),
+              const SizedBox(height: 20),
+              _buildCreateSection(),
+              _buildCreateButtons(context),
+              _buildHistorySection(),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -166,7 +158,7 @@ class _HomeState extends State<Home> {
     return FutureBuilder<void>(
       future: fetchGamePerformance(),
       builder: (context, snapshot) {
-        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+        final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
         if (!isLoadCircle) {
           return Center(
@@ -282,7 +274,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildCreateSection() {
-          final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
@@ -291,9 +283,7 @@ class _HomeState extends State<Home> {
         child: Text(
           AppLocalizations.of(context)!.start,
           style: TextStyle(
-            color:  isDarkMode
-                            ? AppColors.textPrimary 
-                            : AppColors.gradient1,
+            color: isDarkMode ? AppColors.textPrimary : AppColors.gradient1,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -301,111 +291,114 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-Widget _buildCreateButtons(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-    child: Container(
-      height: 200,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        gradient: AppColors.buttonGradient,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
-              child: SizedBox(
-                child: CustomPaint(
-                  size: const Size(double.infinity, 100),
-                  painter: CloudPainter(),
-                ),
-              ), 
+
+  Widget _buildCreateButtons(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Container(
+        height: 200,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: AppColors.buttonGradient,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.expianedmaincreategame,
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+                child: SizedBox(
+                  child: CustomPaint(
+                    size: const Size(double.infinity, 100),
+                    painter: CloudPainter(),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .expianedmaincreategame,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            // SizedBox(height: 10),
+                          ],
+                        ),
+                        const Spacer(),
+                        // SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Navigate to the games page and show the "Add Game" card
+                            GoRouter.of(context).go(Routes.gamePage,
+                                extra: {'showAddGame': true});
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.yellow[700],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.createGame,
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              color: Color(0xFF002654),
                             ),
                           ),
-                          // SizedBox(height: 10),
-                        ],
-                      ),
-                      const Spacer(),
-                      // SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Navigate to the games page and show the "Add Game" card
-                          GoRouter.of(context).go(Routes.gamePage, extra: {'showAddGame': true});
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow[700],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
                         ),
-                        child: Text(
-                          AppLocalizations.of(context)!.createGame,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF002654),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: Image.asset(
-                      'assets/images/rockety.png',
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Image.asset(
+                        'assets/images/rockety.png',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildHistorySection() {
     final String? email = FirebaseAuth.instance.currentUser?.email;
-      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -418,9 +411,8 @@ Widget _buildCreateButtons(BuildContext context) {
               Text(
                 AppLocalizations.of(context)!.history,
                 style: TextStyle(
-                  color: isDarkMode
-                            ? AppColors.textPrimary 
-                            : AppColors.buttonText, 
+                  color:
+                      isDarkMode ? AppColors.textPrimary : AppColors.buttonText,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -466,9 +458,12 @@ Widget _buildCreateButtons(BuildContext context) {
               if (numberGames == 0) {
                 return Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.backgroundDarkmode : AppColors.white,
+                    color: isDarkMode
+                        ? AppColors.backgroundDarkmode
+                        : AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -485,7 +480,8 @@ Widget _buildCreateButtons(BuildContext context) {
                         AppLocalizations.of(context)!.historyWillAppearHere,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: isDarkMode ? Colors.white : AppColors.buttonText,
+                          color:
+                              isDarkMode ? Colors.white : AppColors.buttonText,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -495,7 +491,9 @@ Widget _buildCreateButtons(BuildContext context) {
                         AppLocalizations.of(context)!.completeGameToSeeHistory,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: isDarkMode ? Colors.white70 : AppColors.buttonText,
+                          color: isDarkMode
+                              ? Colors.white70
+                              : AppColors.buttonText,
                           fontSize: 14,
                         ),
                       ),
@@ -514,7 +512,9 @@ Widget _buildCreateButtons(BuildContext context) {
                     }
 
                     if (!snapshot.hasData || !snapshot.data!.exists) {
-                      return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+                      return Center(
+                          child: Text(
+                              AppLocalizations.of(context)!.noHistoryFound));
                     }
 
                     var docData =
@@ -526,7 +526,9 @@ Widget _buildCreateButtons(BuildContext context) {
                             [];
 
                     if (allGames.isEmpty) {
-                      return Center(child: Text(AppLocalizations.of(context)!.noHistoryFound));
+                      return Center(
+                          child: Text(
+                              AppLocalizations.of(context)!.noHistoryFound));
                     }
 
                     final gamesToShow = allGames.take(2).toList();
@@ -535,8 +537,9 @@ Widget _buildCreateButtons(BuildContext context) {
                       children: gamesToShow
                           .map((game) => HistoryItem(
                                 title: game['game_name'] ?? 'Unknown',
-                                date: DateFormat('dd MMM yyyy').format((game['played_at'] as Timestamp).toDate()),
-                                imagePath: "assets/${game['icon']}", 
+                                date: DateFormat('dd MMM yyyy').format(
+                                    (game['played_at'] as Timestamp).toDate()),
+                                imagePath: "assets/${game['icon']}",
                                 bestScore: game['best_score'] ?? 0,
                                 // gameId: game['game_id'],
                                 documentReference: game['game_id'],

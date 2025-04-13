@@ -1,7 +1,12 @@
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/core/language/notifier.dart';
 import 'package:brainboost/main.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -14,7 +19,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       backgroundColor:
@@ -90,7 +95,6 @@ class SettingsPage extends StatelessWidget {
               );
             },
           ),
-          const Divider(),
         ],
       ),
     );
@@ -105,11 +109,21 @@ class LanguageSelectionPage extends StatefulWidget {
 }
 
 class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
-  String _selectedLanguage = 'English';
+  late LanguageNotifier _languageNotifier;
+  late String _selectedLanguage;
+
+  @override
+  void initState() {
+    super.initState();
+    _languageNotifier = GetIt.instance<LanguageNotifier>();
+    // Set the initial selected language based on the current locale
+    _selectedLanguage =
+        _languageNotifier.locale.languageCode == 'en' ? 'English' : 'Thai';
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       backgroundColor:
@@ -158,11 +172,11 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
             ),
             value: 'English',
             groupValue: _selectedLanguage,
-            onChanged: (value) async {
+            onChanged: (value) {
               setState(() {
                 _selectedLanguage = value!;
               });
-              await switchLanguage('en');
+              _languageNotifier.setLocale = const Locale('en');
             },
             activeColor: isDarkMode ? AppColors.white : AppColors.buttonText,
           ),
@@ -176,11 +190,11 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
             ),
             value: 'Thai',
             groupValue: _selectedLanguage,
-            onChanged: (value) async {
+            onChanged: (value) {
               setState(() {
                 _selectedLanguage = value!;
               });
-              await switchLanguage('th');
+              _languageNotifier.setLocale = const Locale('th');
             },
             activeColor: isDarkMode ? AppColors.white : AppColors.buttonText,
           ),
@@ -195,7 +209,7 @@ class AboutAppPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       backgroundColor:
@@ -224,7 +238,8 @@ class AboutAppPage extends StatelessWidget {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(
-              color: isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
+              color:
+                  isDarkMode ? AppColors.accentDarkmode : AppColors.buttonText,
               height: 1,
             ),
           ),
@@ -233,7 +248,8 @@ class AboutAppPage extends StatelessWidget {
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Text(
               'Version 3.3.1',
               style: TextStyle(
@@ -245,7 +261,8 @@ class AboutAppPage extends StatelessWidget {
           ),
           const Divider(),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
               'Terms of Use',
               style: TextStyle(
@@ -256,7 +273,8 @@ class AboutAppPage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
               'Play to learn application make you\nmemorize class lecture more efficiently',
               style: TextStyle(
