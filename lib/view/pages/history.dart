@@ -1,10 +1,10 @@
-import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/view/widgets/colors.dart';
+import 'package:brainboost/core/routes/routes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/history_item.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/history_item.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';

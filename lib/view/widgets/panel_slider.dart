@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:brainboost/services/user.dart';
-import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/core/routes/routes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:brainboost/component/avatar.dart';
+import 'package:brainboost/view/widgets/avatar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PanelSlider extends StatefulWidget {

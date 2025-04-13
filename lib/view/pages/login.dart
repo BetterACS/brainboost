@@ -1,11 +1,11 @@
 // import 'package:brainboost/screens/register.dart';
-import 'package:brainboost/screens/signup.dart';
+import 'package:brainboost/view/pages/signup.dart';
 import 'package:brainboost/services/auth_services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:brainboost/screens/welcomepage.dart';
+import 'package:brainboost/view/pages/welcomepage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Login extends StatelessWidget {
@@ -24,7 +24,8 @@ class Login extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 100,
-        automaticallyImplyLeading: false, // Add this line to hide the back button
+        automaticallyImplyLeading:
+            false, // Add this line to hide the back button
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);

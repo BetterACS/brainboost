@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 import 'package:go_router/go_router.dart';
-import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/core/routes/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:brainboost/provider/theme_provider.dart';
 
@@ -26,8 +26,8 @@ class HistoryItem extends StatelessWidget {
     this.onPressed,
     this.gameData,
     this.bestScore,
-  }) : assert(documentReference != null || gameId != null, 
-         'Either documentReference or gameId must be provided');
+  }) : assert(documentReference != null || gameId != null,
+            'Either documentReference or gameId must be provided');
 
   @override
   Widget build(BuildContext context) {
@@ -128,43 +128,42 @@ class HistoryItem extends StatelessWidget {
         .doc(documentReference.toString())
         .get()
         .then((gameDoc) {
-          // Hide loading indicator
-          loadingOverlay?.remove();
-          
-          print(gameDoc);
-          if (gameDoc.exists) {
-            var gameData = gameDoc.data();
-            if (gameData != null && gameData.containsKey('game_list')) {
-              context.push(Routes.playGamePage, extra: {
-                'games': gameData['game_list'],
-                'reference': documentReference,
-                'gameName': title,
-              });
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Game data format is invalid')),
-              );
-            }
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Game data not found')),
-            );
-          }
-        })
-        .catchError((error) {
-          // Hide loading indicator
-          loadingOverlay?.remove();
-          
+      // Hide loading indicator
+      loadingOverlay?.remove();
+
+      print(gameDoc);
+      if (gameDoc.exists) {
+        var gameData = gameDoc.data();
+        if (gameData != null && gameData.containsKey('game_list')) {
+          context.push(Routes.playGamePage, extra: {
+            'games': gameData['game_list'],
+            'reference': documentReference,
+            'gameName': title,
+          });
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error loading game: $error')),
+            SnackBar(content: Text('Game data format is invalid')),
           );
-        });
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Game data not found')),
+        );
+      }
+    }).catchError((error) {
+      // Hide loading indicator
+      loadingOverlay?.remove();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading game: $error')),
+      );
+    });
   }
 
   // Helper method to show a loading overlay
   OverlayEntry? _showLoadingOverlay(BuildContext context) {
     final overlayState = Overlay.of(context);
-    
+
     final overlay = OverlayEntry(
       builder: (context) => Container(
         color: Colors.black.withOpacity(0.4),
@@ -187,7 +186,7 @@ class HistoryItem extends StatelessWidget {
         ),
       ),
     );
-    
+
     overlayState.insert(overlay);
     return overlay;
   }

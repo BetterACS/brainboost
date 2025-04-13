@@ -1,9 +1,9 @@
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/buttons/quiz_buttons.dart';
+import 'package:brainboost/view/widgets/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
 // import 'package:audioplayers/audioplayers.dart';
-import 'package:brainboost/component/bottom_slider.dart';
+import 'package:brainboost/view/widgets/bottom_slider.dart';
 import 'package:brainboost/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 

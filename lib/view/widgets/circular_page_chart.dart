@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 
 class CircularChartPainter extends CustomPainter {
   final double percentage;

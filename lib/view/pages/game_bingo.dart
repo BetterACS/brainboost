@@ -1,7 +1,7 @@
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
-import 'package:brainboost/component/bottom_slider.dart';
+import 'package:brainboost/view/widgets/bottom_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -54,8 +54,6 @@ class _BingoScreenState extends State<BingoScreen> {
             {'context1': userAnswer.trim(), 'context2': correctAnswer}),
       );
 
-
-
       final jsonResponse = jsonDecode(extractResponse.body);
       print(jsonResponse);
       print("Status: ${extractResponse.statusCode}");
@@ -85,7 +83,6 @@ class _BingoScreenState extends State<BingoScreen> {
       return Colors.grey[300];
     }
   }
-
 
   void _checkAnswer(int index) {
     setState(() {
@@ -248,7 +245,8 @@ class _BingoScreenState extends State<BingoScreen> {
                                         _isCheckingAnswer = true;
                                       });
 
-                                      final isCorrect = await checkAnswerSimilarity(
+                                      final isCorrect =
+                                          await checkAnswerSimilarity(
                                         _answerController.text,
                                         widget.content.bingo_list[index].answer,
                                       );
@@ -297,12 +295,13 @@ class _BingoScreenState extends State<BingoScreen> {
                           ),
                         ],
                       ),
-                      if (isAnswerChecked[index] == true && isAnswerCorrect[index] == false)
+                      if (isAnswerChecked[index] == true &&
+                          isAnswerCorrect[index] == false)
                         Container(
                           margin: EdgeInsets.only(top: 16),
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: isDarkMode 
+                            color: isDarkMode
                                 ? Colors.red[900]!.withOpacity(0.3)
                                 : Colors.red[50],
                             borderRadius: BorderRadius.circular(8),
@@ -317,7 +316,9 @@ class _BingoScreenState extends State<BingoScreen> {
                                 "Correct Answer:",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: isDarkMode ? Colors.red[200] : Colors.red[800],
+                                  color: isDarkMode
+                                      ? Colors.red[200]
+                                      : Colors.red[800],
                                 ),
                               ),
                               SizedBox(height: 4),
@@ -335,9 +336,13 @@ class _BingoScreenState extends State<BingoScreen> {
                                     Navigator.of(context).pop();
                                   },
                                   style: TextButton.styleFrom(
-                                    foregroundColor: isDarkMode ? Colors.blue[300] : Colors.blue[800],
+                                    foregroundColor: isDarkMode
+                                        ? Colors.blue[300]
+                                        : Colors.blue[800],
                                   ),
-                                  child: Text(AppLocalizations.of(context)?.close ?? "Close"),
+                                  child: Text(
+                                      AppLocalizations.of(context)?.close ??
+                                          "Close"),
                                 ),
                               ),
                             ],
@@ -424,7 +429,8 @@ class _BingoScreenState extends State<BingoScreen> {
                                 crossAxisCount: 3,
                                 crossAxisSpacing: 8,
                                 mainAxisSpacing: 8,
-                                childAspectRatio: 1, // This ensures square shape
+                                childAspectRatio:
+                                    1, // This ensures square shape
                               ),
                               itemCount: bingoList.length,
                               itemBuilder: (context, index) {
@@ -449,13 +455,18 @@ class _BingoScreenState extends State<BingoScreen> {
                                               ? correctColor?.withOpacity(0.9)
                                               : isAnswerChecked[index] == true
                                                   ? wrongColor?.withOpacity(0.9)
-                                                  : cardColor?.withOpacity(0.85),
-                                          borderRadius: BorderRadius.circular(12),
+                                                  : cardColor
+                                                      ?.withOpacity(0.85),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: (isAnswerCorrect[index] == true
+                                              color: (isAnswerCorrect[index] ==
+                                                          true
                                                       ? Colors.blue
-                                                      : isAnswerChecked[index] == true
+                                                      : isAnswerChecked[
+                                                                  index] ==
+                                                              true
                                                           ? Colors.red
                                                           : Colors.black)
                                                   .withOpacity(0.2),
@@ -465,7 +476,8 @@ class _BingoScreenState extends State<BingoScreen> {
                                             ),
                                           ],
                                           border: Border.all(
-                                            color: isAnswerCorrect[index] == true
+                                            color: isAnswerCorrect[index] ==
+                                                    true
                                                 ? Colors.blue[300]!
                                                 : isAnswerChecked[index] == true
                                                     ? Colors.red[300]!
@@ -475,13 +487,26 @@ class _BingoScreenState extends State<BingoScreen> {
                                           gradient: LinearGradient(
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
-                                            colors: isAnswerCorrect[index] == true
-                                                ? [Colors.blue[800]!, Colors.blue[600]!]
+                                            colors: isAnswerCorrect[index] ==
+                                                    true
+                                                ? [
+                                                    Colors.blue[800]!,
+                                                    Colors.blue[600]!
+                                                  ]
                                                 : isAnswerChecked[index] == true
-                                                    ? [Colors.red[700]!, Colors.red[500]!]
+                                                    ? [
+                                                        Colors.red[700]!,
+                                                        Colors.red[500]!
+                                                      ]
                                                     : isDarkMode
-                                                        ? [Color(0xFF1A3268), Color(0xFF0C1E40)]
-                                                        : [Color(0xFF1E40AF), Color(0xFF1E3A8A)],
+                                                        ? [
+                                                            Color(0xFF1A3268),
+                                                            Color(0xFF0C1E40)
+                                                          ]
+                                                        : [
+                                                            Color(0xFF1E40AF),
+                                                            Color(0xFF1E3A8A)
+                                                          ],
                                           ),
                                         ),
                                         child: Stack(
@@ -489,22 +514,30 @@ class _BingoScreenState extends State<BingoScreen> {
                                           children: [
                                             if (isAnswerChecked[index] != true)
                                               TweenAnimationBuilder(
-                                                duration: Duration(milliseconds: 300),
-                                                tween: Tween<double>(begin: 0.8, end: 1.0),
-                                                builder: (context, double value, child) {
+                                                duration:
+                                                    Duration(milliseconds: 300),
+                                                tween: Tween<double>(
+                                                    begin: 0.8, end: 1.0),
+                                                builder: (context, double value,
+                                                    child) {
                                                   return Transform.scale(
                                                     scale: value,
                                                     child: Text(
                                                       "${index + 1}",
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: itemSize * 0.35,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize:
+                                                            itemSize * 0.35,
                                                         shadows: [
                                                           Shadow(
-                                                            offset: Offset(0, 2),
+                                                            offset:
+                                                                Offset(0, 2),
                                                             blurRadius: 3.0,
-                                                            color: Colors.black.withOpacity(0.3),
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.3),
                                                           ),
                                                         ],
                                                       ),
@@ -514,25 +547,35 @@ class _BingoScreenState extends State<BingoScreen> {
                                               ),
                                             if (isAnswerChecked[index] == true)
                                               TweenAnimationBuilder(
-                                                duration: Duration(milliseconds: 600),
-                                                tween: Tween<double>(begin: 0.0, end: 1.0),
+                                                duration:
+                                                    Duration(milliseconds: 600),
+                                                tween: Tween<double>(
+                                                    begin: 0.0, end: 1.0),
                                                 curve: Curves.elasticOut,
-                                                builder: (context, double value, child) {
+                                                builder: (context, double value,
+                                                    child) {
                                                   return Opacity(
                                                     opacity: value,
                                                     child: Transform.scale(
                                                       scale: value,
                                                       child: Icon(
-                                                        isAnswerCorrect[index] == true
-                                                            ? Icons.check_circle_rounded
-                                                            : Icons.cancel_rounded,
+                                                        isAnswerCorrect[
+                                                                    index] ==
+                                                                true
+                                                            ? Icons
+                                                                .check_circle_rounded
+                                                            : Icons
+                                                                .cancel_rounded,
                                                         color: Colors.white,
                                                         size: itemSize * 0.5,
                                                         shadows: [
                                                           Shadow(
-                                                            offset: Offset(0, 2),
+                                                            offset:
+                                                                Offset(0, 2),
                                                             blurRadius: 3.0,
-                                                            color: Colors.black.withOpacity(0.3),
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.3),
                                                           ),
                                                         ],
                                                       ),
@@ -551,14 +594,17 @@ class _BingoScreenState extends State<BingoScreen> {
                             SizedBox(height: 32),
                             Container(
                               width: 340,
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
-                                color: isDarkMode 
+                                color: isDarkMode
                                     ? Colors.blueGrey[800]!.withOpacity(0.6)
                                     : Colors.blue[50]!.withOpacity(0.8),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: isDarkMode ? Colors.blueGrey[600]! : Colors.blue[200]!,
+                                  color: isDarkMode
+                                      ? Colors.blueGrey[600]!
+                                      : Colors.blue[200]!,
                                   width: 1.5,
                                 ),
                               ),
@@ -576,7 +622,9 @@ class _BingoScreenState extends State<BingoScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 72),  // Extra space for the bottom button
+                            SizedBox(
+                                height:
+                                    72), // Extra space for the bottom button
                           ],
                         ),
                       ],
@@ -610,11 +658,8 @@ class _BingoScreenState extends State<BingoScreen> {
             bottom: 24,
             child: AnimatedContainer(
               duration: Duration(milliseconds: 300),
-              transform: Matrix4.translationValues(
-                0, 
-                _showBottomSlider ? 0 : 20, 
-                0
-              ),
+              transform:
+                  Matrix4.translationValues(0, _showBottomSlider ? 0 : 20, 0),
               child: ElevatedButton(
                 onPressed: goToNextQuestion,
                 style: ElevatedButton.styleFrom(
@@ -624,8 +669,11 @@ class _BingoScreenState extends State<BingoScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: isBingoWin || _areAllQuestionsAnswered() ? 4 : 1,
-                  shadowColor: isBingoWin ? Colors.blue.withOpacity(0.5) : 
-                              _areAllQuestionsAnswered() ? Colors.red.withOpacity(0.5) : Colors.transparent,
+                  shadowColor: isBingoWin
+                      ? Colors.blue.withOpacity(0.5)
+                      : _areAllQuestionsAnswered()
+                          ? Colors.red.withOpacity(0.5)
+                          : Colors.transparent,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -660,14 +708,22 @@ class _BingoScreenState extends State<BingoScreen> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isBingoWin ? Colors.green[700] : 
-                        score >= 75 ? Colors.blue[700] : 
-                        isDarkMode ? Colors.blueGrey[800] : Colors.blue[50],
+                  color: isBingoWin
+                      ? Colors.green[700]
+                      : score >= 75
+                          ? Colors.blue[700]
+                          : isDarkMode
+                              ? Colors.blueGrey[800]
+                              : Colors.blue[50],
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isBingoWin ? Colors.green[400]! : 
-                           score >= 75 ? Colors.blue[400]! : 
-                           isDarkMode ? Colors.blueGrey[600]! : Colors.blue[200]!,
+                    color: isBingoWin
+                        ? Colors.green[400]!
+                        : score >= 75
+                            ? Colors.blue[400]!
+                            : isDarkMode
+                                ? Colors.blueGrey[600]!
+                                : Colors.blue[200]!,
                     width: 1.5,
                   ),
                   boxShadow: [
@@ -683,16 +739,22 @@ class _BingoScreenState extends State<BingoScreen> {
                   children: [
                     Icon(
                       isBingoWin ? Icons.emoji_events : Icons.star,
-                      color: isBingoWin || score >= 75 ? Colors.white : 
-                             isDarkMode ? Colors.white70 : Colors.blue[900],
+                      color: isBingoWin || score >= 75
+                          ? Colors.white
+                          : isDarkMode
+                              ? Colors.white70
+                              : Colors.blue[900],
                       size: 16,
                     ),
                     SizedBox(width: 4),
                     Text(
                       "$score pts",
                       style: TextStyle(
-                        color: isBingoWin || score >= 75 ? Colors.white : 
-                               isDarkMode ? Colors.white70 : Colors.blue[900],
+                        color: isBingoWin || score >= 75
+                            ? Colors.white
+                            : isDarkMode
+                                ? Colors.white70
+                                : Colors.blue[900],
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),

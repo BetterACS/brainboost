@@ -7,8 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/component/avatar.dart';
+import 'package:brainboost/view/widgets/colors.dart';
+import 'package:brainboost/view/widgets/avatar.dart';
 import 'package:brainboost/main.dart';
 import 'package:provider/provider.dart';
 

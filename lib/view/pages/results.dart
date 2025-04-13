@@ -1,9 +1,9 @@
-import 'package:brainboost/component/cards/info_card.dart';
-import 'package:brainboost/component/buttons/dropshadow_button.dart';
+import 'package:brainboost/view/widgets/cards/info_card.dart';
+import 'package:brainboost/view/widgets/buttons/dropshadow_button.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/core/routes/routes.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:brainboost/services/history.dart';
@@ -12,7 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:brainboost/provider/theme_provider.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 
 int _currentPage = 0;
 List<GamesType> games = [];

@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:brainboost/models/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/layout/layout_scaffold.dart';
-import 'package:brainboost/screens/all.dart';
-import 'package:brainboost/router/routes.dart';
+import 'package:brainboost/core/layout/layout_scaffold.dart';
+import 'package:brainboost/view/pages/all.dart';
+import 'package:brainboost/core/routes/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -130,7 +130,6 @@ final router = GoRouter(
             ),
           ],
         ),
-        
       ],
     ),
   ],

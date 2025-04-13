@@ -1,10 +1,10 @@
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:tcard/tcard.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:go_router/go_router.dart';
-import 'package:brainboost/router/routes.dart';
-import 'package:brainboost/component/bottom_slider.dart';
+import 'package:brainboost/core/routes/routes.dart';
+import 'package:brainboost/view/widgets/bottom_slider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:brainboost/provider/theme_provider.dart';

@@ -1,4 +1,4 @@
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 import 'package:brainboost/core/language/notifier.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/provider/theme_provider.dart';

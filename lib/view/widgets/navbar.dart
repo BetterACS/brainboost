@@ -1,11 +1,11 @@
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/view/widgets/colors.dart';
 import 'package:brainboost/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/theme_provider.dart';
+import '../../provider/theme_provider.dart';
 
 class Navbar extends StatelessWidget {
   const Navbar({
