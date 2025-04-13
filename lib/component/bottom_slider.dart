@@ -1,8 +1,9 @@
+import 'package:brainboost/core/language/notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Add this import
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:brainboost/main.dart'; // Import for localeNotifier
+// import 'package:brainboost/main.dart'; // Import for localeNotifier
 
 class BottomSlider extends StatefulWidget {
   // final Widget child;
@@ -95,15 +96,17 @@ class _BottomSliderState extends State<BottomSlider>
 
     try {
       // Check current locale and use appropriate language for the prompt
-      final currentLocale = localeNotifier.value.languageCode;
+      // final currentLocale = localeNotifier.value.languageCode;
       String prompt;
-      
-      if (currentLocale == 'th') {
+
+      if (LanguageNotifier().locale.languageCode == 'th') {
         // Thai prompt
-        prompt = "ทำไม '${widget.data['correctAnswer']}' จึงเป็นคำตอบที่ถูกต้องของคำถาม '${widget.data['question']}' กรุณาอธิบายสั้นๆ ไม่ต้องใช้ Latex";
+        prompt =
+            "ทำไม '${widget.data['correctAnswer']}' จึงเป็นคำตอบที่ถูกต้องของคำถาม '${widget.data['question']}' กรุณาอธิบายสั้นๆ ไม่ต้องใช้ Latex";
       } else {
         // English prompt (default)
-        prompt = "Why this '${widget.data['correctAnswer']}' is a correct answer of this question '${widget.data['question']}' please do a SHORT explanation. No Latex.";
+        prompt =
+            "Why this '${widget.data['correctAnswer']}' is a correct answer of this question '${widget.data['question']}' please do a SHORT explanation. No Latex.";
       }
 
       final httpClient = http.Client();
@@ -114,7 +117,8 @@ class _BottomSliderState extends State<BottomSlider>
       final decodedResponse = json.decode(utf8.decode(response.bodyBytes));
 
       setState(() {
-        _explanation = decodedResponse['data'] ?? AppLocalizations.of(context)!.noExplanationAvailable;
+        _explanation = decodedResponse['data'] ??
+            AppLocalizations.of(context)!.noExplanationAvailable;
         _isLoading = false;
       });
     } catch (e) {
@@ -135,7 +139,6 @@ class _BottomSliderState extends State<BottomSlider>
         _isCorrect = widget.data['isCorrect'];
       });
     }
-
 
     // Don't animate during transitions
     if (!widget.isTransitioning) {
@@ -216,7 +219,9 @@ class _BottomSliderState extends State<BottomSlider>
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    _isCorrect ? AppLocalizations.of(context)!.correct : AppLocalizations.of(context)!.wrong,
+                                    _isCorrect
+                                        ? AppLocalizations.of(context)!.correct
+                                        : AppLocalizations.of(context)!.wrong,
                                     style: TextStyle(
                                       color:
                                           _isCorrect ? Colors.blue : Colors.red,
@@ -226,7 +231,6 @@ class _BottomSliderState extends State<BottomSlider>
                                   ),
                                 ],
                               ),
-
                               if (widget.data['gameType'] != "bingo")
                                 IconButton(
                                   icon: Icon(
@@ -275,7 +279,8 @@ class _BottomSliderState extends State<BottomSlider>
                                         padding: const EdgeInsets.all(16),
                                         child: Text(
                                           _explanation ??
-                                               AppLocalizations.of(context)!.noExplanationAvailable,
+                                              AppLocalizations.of(context)!
+                                                  .noExplanationAvailable,
                                           style: TextStyle(
                                             // Bolded the text
                                             fontWeight: FontWeight.w500,

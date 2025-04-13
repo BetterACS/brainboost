@@ -1,9 +1,12 @@
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/core/language/notifier.dart';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -106,7 +109,17 @@ class LanguageSelectionPage extends StatefulWidget {
 }
 
 class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
-  String _selectedLanguage = 'English';
+  late LanguageNotifier _languageNotifier;
+  late String _selectedLanguage;
+
+  @override
+  void initState() {
+    super.initState();
+    _languageNotifier = GetIt.instance<LanguageNotifier>();
+    // Set the initial selected language based on the current locale
+    _selectedLanguage =
+        _languageNotifier.locale.languageCode == 'en' ? 'English' : 'Thai';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,11 +172,11 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
             ),
             value: 'English',
             groupValue: _selectedLanguage,
-            onChanged: (value) async {
+            onChanged: (value) {
               setState(() {
                 _selectedLanguage = value!;
               });
-              await switchLanguage('en');
+              _languageNotifier.setLocale = const Locale('en');
             },
             activeColor: isDarkMode ? AppColors.white : AppColors.buttonText,
           ),
@@ -177,11 +190,11 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
             ),
             value: 'Thai',
             groupValue: _selectedLanguage,
-            onChanged: (value) async {
+            onChanged: (value) {
               setState(() {
                 _selectedLanguage = value!;
               });
-              await switchLanguage('th');
+              _languageNotifier.setLocale = const Locale('th');
             },
             activeColor: isDarkMode ? AppColors.white : AppColors.buttonText,
           ),
