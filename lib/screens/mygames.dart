@@ -224,42 +224,58 @@ class _MyGamesState extends State<MyGames> {
   }
 
   Future<void> uploadFile() async {
-    if (pickedFile == null) {
-      print("No file selected for upload.");
-      return;
-    }
-
-    final path = 'files/${pickedFile!.name}';
-
-    try {
-      final ref = FirebaseStorage.instance.ref().child(path);
-      
-      // For web
-      // final uploadTask = ref.putData(pickedFile!.bytes!);
-      // For mobile
-      final uploadTask = ref.putFile(io.File(pickedFile!.path!));
-      uploadTask.snapshotEvents.listen((event) {
-        setState(() {
-          progress = event.bytesTransferred / event.totalBytes;
-        });
-        print("Upload Progress: $progress");
-      });
-
-      await uploadTask;
-      final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
-      print("Download-Link: $urlDownload");
-      setState(() {
-        uploadLink = urlDownload;
-        uploadSuccess = true;
-        isUploading = false;
-      });
-    } catch (e) {
-      print('Error while loading ${e}');
-      setState(() {
-        isUploading = false;
-      });
-    }
+  if (pickedFile == null) {
+    print("No file selected for upload.");
+    return;
   }
+
+  final path = 'files/${pickedFile!.name}';
+
+  try {
+    final ref = FirebaseStorage.instance.ref().child(path);
+
+    UploadTask uploadTask;
+    if (kIsWeb) {
+      // สำหรับเว็บ ใช้ putData
+      if (pickedFile!.bytes == null) {
+        print("No file bytes available for upload.");
+        return;
+      }
+      uploadTask = ref.putData(pickedFile!.bytes!);
+    } else {
+      // สำหรับแพลตฟอร์มอื่น (มือถือ/เดสก์ท็อป) ใช้ putFile
+      if (pickedFile!.path == null) {
+        print("No file path available for upload.");
+        return;
+      }
+      uploadTask = ref.putFile(io.File(pickedFile!.path!));
+    }
+
+    // ติดตามความคืบหน้าของการอัปโหลด
+    uploadTask.snapshotEvents.listen((event) {
+      setState(() {
+        progress = event.bytesTransferred / event.totalBytes;
+      });
+      print("Upload Progress: ${(progress * 100).toStringAsFixed(2)}%");
+    });
+
+    // รอให้อัปโหลดเสร็จสิ้น
+    await uploadTask;
+    final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
+    print("Download-Link: $urlDownload");
+
+    setState(() {
+      uploadLink = urlDownload;
+      uploadSuccess = true;
+      isUploading = false;
+    });
+  } catch (e) {
+    print("Error uploading file: $e");
+    setState(() {
+      isUploading = false;
+    });
+  }
+}
 
     void onCreateGamePressed() async {
     if (!uploadSuccess || uploadLink == null) {
@@ -597,39 +613,59 @@ class _MyGamesState extends State<MyGames> {
 
   // Method to handle uploading the lecture PDF file
   Future<void> uploadLectureFile() async {
-    final path = 'files/lectures/${pickedFile!.name}';
-
-    try {
-      final ref = FirebaseStorage.instance.ref().child(path);
-
-      final uploadTask = ref.putFile(io.File(pickedFile!.path!));
-
-
-      uploadTask.snapshotEvents.listen((event) {
-        setState(() {
-          lectureUploadProgress = event.bytesTransferred / event.totalBytes;
-        });
-        print("Lecture Upload Progress: $lectureUploadProgress");
-      });
-
-      await uploadTask;
-      final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
-      print("Lecture Download-Link: $urlDownload");
-      setState(() {
-        lectureUploadLink = urlDownload;
-        lectureUploadSuccess = true;
-        isLectureUploading = false;
-      });
-
-      // After upload is complete, initiate the add lecture process
-      await addLectureToExistingGame();
-    } catch (e) {
-      print("Error uploading lecture file: $e");
-      setState(() {
-        isLectureUploading = false;
-      });
-    }
+  if (pickedFile == null) {
+    print("No file selected for upload.");
+    return;
   }
+
+  final path = 'files/lectures/${pickedFile!.name}';
+
+  try {
+    final ref = FirebaseStorage.instance.ref().child(path);
+
+    // ตรวจสอบว่าเป็น Web หรือ Mobile
+    UploadTask uploadTask;
+    if (kIsWeb) {
+      // สำหรับ Web ใช้ putData
+      if (pickedFile!.bytes == null) {
+        print("No file bytes available for upload.");
+        return;
+      }
+      uploadTask = ref.putData(pickedFile!.bytes!);
+    } else {
+      // สำหรับ Mobile ใช้ putFile
+      if (pickedFile!.path == null) {
+        print("No file path available for upload.");
+        return;
+      }
+      uploadTask = ref.putFile(io.File(pickedFile!.path!));
+    }
+
+    // ติดตามความคืบหน้าของการอัปโหลด
+    uploadTask.snapshotEvents.listen((event) {
+      setState(() {
+        lectureUploadProgress = event.bytesTransferred / event.totalBytes;
+      });
+      print("Lecture Upload Progress: ${(lectureUploadProgress * 100).toStringAsFixed(2)}%");
+    });
+
+    // รอให้อัปโหลดเสร็จสิ้น
+    await uploadTask;
+    final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
+    print("Lecture Download-Link: $urlDownload");
+
+    setState(() {
+      lectureUploadLink = urlDownload;
+      lectureUploadSuccess = true;
+      isLectureUploading = false;
+    });
+  } catch (e) {
+    print("Error uploading lecture file: $e");
+    setState(() {
+      isLectureUploading = false;
+    });
+  }
+}
 
   // Method to add the lecture to the existing game
   Future<void> addLectureToExistingGame() async {
