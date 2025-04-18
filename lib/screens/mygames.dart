@@ -243,7 +243,6 @@ class _MyGamesState extends State<MyGames> {
       }
       uploadTask = ref.putData(pickedFile!.bytes!);
     } else {
-      // สำหรับแพลตฟอร์มอื่น (มือถือ/เดสก์ท็อป) ใช้ putFile
       if (pickedFile!.path == null) {
         print("No file path available for upload.");
         return;
@@ -251,7 +250,6 @@ class _MyGamesState extends State<MyGames> {
       uploadTask = ref.putFile(io.File(pickedFile!.path!));
     }
 
-    // ติดตามความคืบหน้าของการอัปโหลด
     uploadTask.snapshotEvents.listen((event) {
       setState(() {
         progress = event.bytesTransferred / event.totalBytes;
@@ -259,7 +257,6 @@ class _MyGamesState extends State<MyGames> {
       print("Upload Progress: ${(progress * 100).toStringAsFixed(2)}%");
     });
 
-    // รอให้อัปโหลดเสร็จสิ้น
     await uploadTask;
     final urlDownload = await uploadTask.snapshot.ref.getDownloadURL();
     print("Download-Link: $urlDownload");

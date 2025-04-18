@@ -171,8 +171,8 @@ class _HomeState extends State<Home> {
         if (!isLoadCircle) {
           return Center(
             child: SizedBox(
-              height: 300,
-              width: 300,
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: MediaQuery.of(context).size.width * 0.8,
             ),
           );
         }
@@ -180,13 +180,16 @@ class _HomeState extends State<Home> {
         if (numberGames == 0) {
           return Center(
             child: SizedBox(
-              height: 300,
-              width: 300,
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: MediaQuery.of(context).size.width * 0.8,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   CustomPaint(
-                    size: const Size(285, 285),
+                    size: Size(
+                      MediaQuery.of(context).size.width * 0.7,
+                      MediaQuery.of(context).size.height * 0.3,
+                    ),
                     painter: CircularChartPainter(0, isDarkMode),
                   ),
                   Column(
@@ -222,13 +225,16 @@ class _HomeState extends State<Home> {
 
         return Center(
           child: SizedBox(
-            height: 300,
-            width: 300,
+            height: MediaQuery.of(context).size.height * 0.3,
+            width: MediaQuery.of(context).size.width * 0.8,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 CustomPaint(
-                  size: const Size(285, 285),
+                  size: Size(
+                    MediaQuery.of(context).size.width * 0.7,
+                    MediaQuery.of(context).size.height * 0.3,
+                  ),
                   painter: CircularChartPainter(
                     (correctQuestion / numberGames) * 100,
                     isDarkMode,
