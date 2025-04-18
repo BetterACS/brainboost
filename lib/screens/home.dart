@@ -163,15 +163,16 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildCircularChartPage() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
+    return FutureBuilder<void>(
+      future: fetchGamePerformance(),
+      builder: (context, snapshot) {
         final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
         if (!isLoadCircle) {
           return Center(
             child: SizedBox(
-              height: constraints.maxHeight * 0.3,
-              width: constraints.maxWidth * 0.8,
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: MediaQuery.of(context).size.width * 0.8,
             ),
           );
         }
@@ -179,15 +180,15 @@ class _HomeState extends State<Home> {
         if (numberGames == 0) {
           return Center(
             child: SizedBox(
-              height: constraints.maxHeight * 0.3,
-              width: constraints.maxWidth * 0.8,
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: MediaQuery.of(context).size.width * 0.8,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   CustomPaint(
                     size: Size(
-                      constraints.maxWidth * 0.7,
-                      constraints.maxHeight * 0.3,
+                      MediaQuery.of(context).size.width * 0.7,
+                      MediaQuery.of(context).size.height * 0.3,
                     ),
                     painter: CircularChartPainter(0, isDarkMode),
                   ),
@@ -224,15 +225,15 @@ class _HomeState extends State<Home> {
 
         return Center(
           child: SizedBox(
-            height: constraints.maxHeight * 0.3,
-            width: constraints.maxWidth * 0.8,
+            height: MediaQuery.of(context).size.height * 0.3,
+            width: MediaQuery.of(context).size.width * 0.8,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 CustomPaint(
                   size: Size(
-                    constraints.maxWidth * 0.7,
-                    constraints.maxHeight * 0.3,
+                    MediaQuery.of(context).size.width * 0.7,
+                    MediaQuery.of(context).size.height * 0.3,
                   ),
                   painter: CircularChartPainter(
                     (correctQuestion / numberGames) * 100,
