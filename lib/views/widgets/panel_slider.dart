@@ -5,12 +5,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/views/widgets/colors.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/router/routes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:brainboost/component/avatar.dart';
+import 'package:brainboost/views/widgets/avatar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PanelSlider extends StatefulWidget {

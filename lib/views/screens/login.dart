@@ -1,11 +1,12 @@
 // import 'package:brainboost/screens/register.dart';
-import 'package:brainboost/screens/signup.dart';
-import 'package:brainboost/services/auth_services.dart';
+import 'package:brainboost/views/screens/signup.dart';
+import 'package:brainboost/controllers/auth_controller.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:brainboost/screens/welcomepage.dart';
+import 'package:brainboost/views/screens/welcomepage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Login extends StatelessWidget {
@@ -148,6 +149,7 @@ class Login extends StatelessWidget {
   }
 
   Widget _signin(BuildContext context) {
+    final authController = Provider.of<AuthController>(context, listen: false);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xff0D6EFD),
@@ -158,7 +160,7 @@ class Login extends StatelessWidget {
         elevation: 0,
       ),
       onPressed: () async {
-        await AuthService().signin(
+        await authController.signin(
             email: _emailController.text,
             password: _passwordController.text,
             context: context);
@@ -209,8 +211,9 @@ class Login extends StatelessWidget {
         elevation: 0,
       ),
       onPressed: () async {
+      final authController = Provider.of<AuthController>(context, listen: false);
         try {
-          await AuthService().signInWithGoogle(context: context);
+        await authController.signInWithGoogle(context: context);
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error signing in with Google: $e')),

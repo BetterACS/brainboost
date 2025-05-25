@@ -1,4 +1,4 @@
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/views/widgets/colors.dart';
 import 'package:brainboost/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

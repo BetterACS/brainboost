@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:brainboost/services/games.dart';
 import 'package:brainboost/services/user.dart';
 import 'package:brainboost/services/history.dart';
-import 'package:brainboost/component/dialogs/error_dialog.dart';
-import 'package:brainboost/component/dialogs/success_dialog.dart';
+import 'package:brainboost/views/widgets/dialogs/error_dialog.dart';
+import 'package:brainboost/views/widgets/dialogs/success_dialog.dart';
 // import 'package:brainboost/component/dialogs/creating_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:brainboost/main.dart'; // Import main.dart to access localeNotifier

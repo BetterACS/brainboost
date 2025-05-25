@@ -1,5 +1,5 @@
-import 'package:brainboost/component/cards/info_card.dart';
-import 'package:brainboost/component/buttons/dropshadow_button.dart';
+import 'package:brainboost/views/widgets/cards/info_card.dart';
+import 'package:brainboost/views/widgets/buttons/dropshadow_button.dart';
 import 'package:brainboost/models/games.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

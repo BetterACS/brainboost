@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:brainboost/component/navbar.dart';
+import 'package:brainboost/views/widgets/navbar.dart';
 
 class LayoutScaffold extends StatelessWidget {
   const LayoutScaffold({

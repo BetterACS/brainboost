@@ -1,14 +1,15 @@
-import 'package:brainboost/component/avatar.dart';
-import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/screens/welcomepage.dart';
+import 'package:brainboost/views/widgets/avatar.dart';
+import 'package:brainboost/views/widgets/colors.dart';
+import 'package:brainboost/views/screens/welcomepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainboost/main.dart';
-import 'package:brainboost/services/auth_services.dart';
+import 'package:brainboost/controllers/auth_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/router/routes.dart';
-import 'package:brainboost/screens/edit_porfile.dart';
+import 'package:brainboost/views/screens/edit_profile.dart';
 // import 'package:brainboost/screens/support.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:brainboost/services/user.dart';
@@ -389,8 +390,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             onPressed: () async {
+                              final authController = Provider.of<AuthController>(context, listen: false);
                               try {
-                                await AuthService().signout(context: context);
+                                await authController.signout(context: context);
 
                                 if (context.mounted) {
                                   Navigator.of(context)

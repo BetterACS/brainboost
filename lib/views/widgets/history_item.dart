@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/views/widgets/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
 

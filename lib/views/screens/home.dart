@@ -2,23 +2,25 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:brainboost/main.dart';
 import 'package:brainboost/router/routes.dart';
-import 'package:brainboost/screens/history.dart';
+import 'package:brainboost/views/screens/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/views/widgets/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/services/games.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/component/cards/profile_header.dart';
+import 'package:brainboost/views/widgets/colors.dart';
+import 'package:brainboost/views/widgets/cards/profile_header.dart';
 // import 'package:brainboost/screens/creategame.dart';
 import 'package:brainboost/services/user.dart';
-import 'package:brainboost/component/history_item.dart';
-import 'package:brainboost/component/circular_page_chart.dart';
-import 'package:brainboost/screens/game_bingo.dart';
+import 'package:brainboost/views/widgets/history_item.dart';
+import 'package:brainboost/views/widgets/circular_page_chart.dart';
+import 'package:brainboost/views/screens/game_bingo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:brainboost/controllers/home_controller.dart';
 
 
 class CloudPainter extends CustomPainter {
@@ -58,222 +60,174 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  bool isProfileLoaded = false;
+  // final PageController _pageController = PageController(); // Kept for potential future use if local page view control is needed
+  // int _currentPage = 0; // Kept for potential future use
+
+  late HomeController _homeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeController = Provider.of<HomeController>(context, listen: false);
+    // Fetch initial data
+    _homeController.fetchUsername();
+    _homeController.fetchGamePerformance();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier, 
-      builder: (context, currentTheme, child) {
-        return Scaffold(
-          backgroundColor: currentTheme == ThemeMode.dark
-              ? AppColors.backgroundDarkmode 
-              : AppColors.mainColor,
-          body: ScrollConfiguration(
-            behavior: _MouseScrollBehavior(),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 50),
-                  const ProfileContainer(),
-                  const SizedBox(height: 20),
-                  _buildPageView(),
-                  const SizedBox(height: 10),
-                  _buildPageIndicator(),
-                  const SizedBox(height: 20),
-                  _buildCreateSection(),
-                  _buildCreateButtons(context),
-                  _buildHistorySection(),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<DocumentSnapshot> fetchUsername() async {
-    final String? email = UserServices().getCurrentUserEmail();
-    final DocumentSnapshot userDoc =
-        await UserServices().users.doc(email).get();
-
-    setState(() {
-      isProfileLoaded = true;
-    });
-    return userDoc;
-  }
-
-  Widget _buildPageView() {
-    return FutureBuilder<void>(
-      future: fetchGamePerformance(),
-      builder: (context, snapshot) {
-        return SizedBox(
-          height: 330,
-          width: 300,
-          child: _buildCircularChartPage(),
-        );
-      },
-    );
-  }
-
-  bool isLoadCircle = false;
-  int numberGames = 0;
-  int correctQuestion = 0;
-
-  Future<void> fetchGamePerformance() async {
-    String? email = FirebaseAuth.instance.currentUser?.email;
-    if (email == null || isLoadCircle == true) return;
-
-    List<String> gamesPath =
-        await UserServices().getGames(email: email as String);
-    int _games = 0;
-    int _score = 0;
-    for (String gamePath in gamesPath) {
-      Map<String, dynamic> game =
-          await GameServices().getGame(path: gamePath) as Map<String, dynamic>;
-
-      if (game['played_history'] == null) continue;
-
-      int currentScore = 0;
-      for (Map<String, dynamic> playedHistory in game['played_history']) {
-        DocumentReference userPath = playedHistory['player'];
-        String player = userPath.path.split("/")[1];
-
-        if (player == email) {
-          if (playedHistory['score'] > currentScore) {
-            currentScore = playedHistory['score'];
-          }
-        }
-      }
-
-      _games += game['game_list'].length as int;
-      _score += currentScore;
-    }
-
-    print(_score);
-    setState(() {
-      isLoadCircle = true;
-      numberGames = _games;
-      correctQuestion = _score;
-    });
-  }
-
-  Widget _buildCircularChartPage() {
-    return FutureBuilder<void>(
-      future: fetchGamePerformance(),
-      builder: (context, snapshot) {
-        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-        if (!isLoadCircle) {
-          return Center(
-            child: SizedBox(
-              height: 300,
-              width: 300,
-            ),
-          );
-        }
-
-        if (numberGames == 0) {
-          return Center(
-            child: SizedBox(
-              height: 300,
-              width: 300,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CustomPaint(
-                    size: const Size(285, 285),
-                    painter: CircularChartPainter(0, isDarkMode),
-                  ),
-                  Column(
+    return Consumer<HomeController>(
+      builder: (context, homeController, child) {
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: themeNotifier,
+          builder: (context, currentTheme, child) {
+            return Scaffold(
+              backgroundColor: currentTheme == ThemeMode.dark
+                  ? AppColors.backgroundDarkmode
+                  : AppColors.mainColor,
+              body: ScrollConfiguration(
+                behavior: _MouseScrollBehavior(),
+                child: SingleChildScrollView(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.completeGame,
-                        style: TextStyle(
-                          color: isDarkMode
-                              ? AppColors.textPrimary
-                              : AppColors.buttonText,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        AppLocalizations.of(context)!.seeProgress,
-                        style: TextStyle(
-                          color: isDarkMode
-                              ? AppColors.textPrimary
-                              : AppColors.buttonText,
-                          fontSize: 17.59,
-                        ),
-                      ),
+                      const SizedBox(height: 50),
+                      const ProfileContainer(), // ProfileContainer might need its own controller or consume HomeController
+                      const SizedBox(height: 20),
+                      _buildPageView(homeController),
+                      const SizedBox(height: 10),
+                      _buildPageIndicator(),
+                      const SizedBox(height: 20),
+                      _buildCreateSection(),
+                      _buildCreateButtons(context),
+                      _buildHistorySection(homeController),
                     ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildPageView(HomeController homeController) {
+    // No need for FutureBuilder here if data is fetched in initState and consumed via Consumer
+    return SizedBox(
+      height: 330,
+      width: 300,
+      child: _buildCircularChartPage(homeController),
+    );
+  }
+
+  Widget _buildCircularChartPage(HomeController homeController) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    if (!homeController.isLoadCircle) {
+      return Center(
+        child: SizedBox(
+          height: 300,
+          width: 300,
+        ),
+      );
+    }
+
+    if (homeController.numberGames == 0) {
+      return Center(
+        child: SizedBox(
+          height: 300,
+          width: 300,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              CustomPaint(
+                size: const Size(285, 285),
+                painter: CircularChartPainter(0, isDarkMode),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.completeGame,
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? AppColors.textPrimary
+                          : AppColors.buttonText,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    AppLocalizations.of(context)!.seeProgress,
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? AppColors.textPrimary
+                          : AppColors.buttonText,
+                      fontSize: 17.59,
+                    ),
                   ),
                 ],
               ),
-            ),
-          );
-        }
+            ],
+          ),
+        ),
+      );
+    }
 
-        return Center(
-          child: SizedBox(
-            height: 300,
-            width: 300,
-            child: Stack(
-              alignment: Alignment.center,
+    return Center(
+      child: SizedBox(
+        height: 300,
+        width: 300,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            CustomPaint(
+              size: const Size(285, 285),
+              painter: CircularChartPainter(
+                (homeController.correctQuestion / homeController.numberGames) * 100,
+                isDarkMode,
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CustomPaint(
-                  size: const Size(285, 285),
-                  painter: CircularChartPainter(
-                    (correctQuestion / numberGames) * 100,
-                    isDarkMode,
+                Text(
+                  AppLocalizations.of(context)!.successRate,
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? AppColors.textPrimary
+                        : AppColors.buttonText,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.successRate,
-                      style: TextStyle(
-                        color: isDarkMode
-                            ? AppColors.textPrimary
-                            : AppColors.buttonText,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      "${((correctQuestion / numberGames) * 100).toStringAsFixed(2)}%",
-                      style: TextStyle(
-                        color: isDarkMode
-                            ? AppColors.textPrimary
-                            : AppColors.buttonText,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      AppLocalizations.of(context)!.outOfQuestions(numberGames),
-                      style: TextStyle(
-                        color: isDarkMode
-                            ? AppColors.textPrimary
-                            : AppColors.buttonText,
-                        fontSize: 17.59,
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 6),
+                Text(
+                  "${((homeController.correctQuestion / homeController.numberGames) * 100).toStringAsFixed(2)}%",
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? AppColors.textPrimary
+                        : AppColors.buttonText,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  AppLocalizations.of(context)!.outOfQuestions(homeController.numberGames),
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? AppColors.textPrimary
+                        : AppColors.buttonText,
+                    fontSize: 17.59,
+                  ),
                 ),
               ],
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
@@ -282,8 +236,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildCreateSection() {
-          final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
       child: Align(
@@ -301,9 +254,9 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-Widget _buildCreateButtons(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+  Widget _buildCreateButtons(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
     child: Container(
       height: 200,
       width: double.infinity,
@@ -403,10 +356,9 @@ Widget _buildCreateButtons(BuildContext context) {
   );
 }
 
-  Widget _buildHistorySection() {
+  Widget _buildHistorySection(HomeController homeController) {
     final String? email = FirebaseAuth.instance.currentUser?.email;
-      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
@@ -425,7 +377,7 @@ Widget _buildCreateButtons(BuildContext context) {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (isLoadCircle && numberGames > 0)
+              if (homeController.isLoadCircle && homeController.numberGames > 0)
                 GestureDetector(
                   onTap: () {
                     context.push(Routes.historyPage, extra: email);
@@ -451,10 +403,11 @@ Widget _buildCreateButtons(BuildContext context) {
             ],
           ),
           const SizedBox(height: 10),
-          FutureBuilder<void>(
-            future: fetchGamePerformance(),
-            builder: (context, snapshot) {
-              if (!isLoadCircle) {
+          // No need for FutureBuilder here if data is consumed via Consumer
+          Builder( // Using Builder to get a new context for Theme.of
+            builder: (context) {
+              final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+              if (!homeController.isLoadCircle) {
                 return const Center(
                   child: SizedBox(
                     height: 50,
@@ -463,7 +416,7 @@ Widget _buildCreateButtons(BuildContext context) {
                 );
               }
 
-              if (numberGames == 0) {
+              if (homeController.numberGames == 0) {
                 return Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
@@ -536,9 +489,8 @@ Widget _buildCreateButtons(BuildContext context) {
                           .map((game) => HistoryItem(
                                 title: game['game_name'] ?? 'Unknown',
                                 date: DateFormat('dd MMM yyyy').format((game['played_at'] as Timestamp).toDate()),
-                                imagePath: "assets/${game['icon']}", 
+                                imagePath: "assets/${game['icon']}",
                                 bestScore: game['best_score'] ?? 0,
-                                // gameId: game['game_id'],
                                 documentReference: game['game_id'],
                               ))
                           .toList(),
@@ -547,7 +499,7 @@ Widget _buildCreateButtons(BuildContext context) {
                 );
               }
             },
-          ),
+          )
         ],
       ),
     );

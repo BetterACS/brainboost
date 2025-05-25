@@ -8,7 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 import 'package:brainboost/services/history.dart';
 
-class AuthService {
+class AuthController {
   final UserServices userServices = UserServices();
   final GameHistoryService historyService = GameHistoryService();
 

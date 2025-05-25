@@ -2,19 +2,19 @@ import 'dart:math';
 import 'dart:async';
 
 import 'package:brainboost/main.dart';
-import 'package:brainboost/screens/game_bingo.dart';
+import 'package:brainboost/views/screens/game_bingo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
-import 'package:brainboost/screens/game_quiz.dart';
-import 'package:brainboost/screens/game_yesno.dart';
+import 'package:brainboost/views/screens/game_quiz.dart';
+import 'package:brainboost/views/screens/game_yesno.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brainboost/router/routes.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/views/widgets/colors.dart';
 import 'package:brainboost/services/games.dart';
 // import 'package:audioplayers/audioplayers.dart';
-import 'package:brainboost/screens/game_bingo.dart';
+import 'package:brainboost/views/screens/game_bingo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 

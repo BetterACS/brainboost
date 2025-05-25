@@ -1,5 +1,6 @@
 // import 'package:brainboost/screens/login.dart';
-import 'package:brainboost/services/auth_services.dart';
+import 'package:brainboost/controllers/auth_controller.dart';
+import 'package:provider/provider.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
@@ -172,6 +173,7 @@ class Signup extends StatelessWidget {
   }
 
   Widget _signup(BuildContext context) {
+    final authController = Provider.of<AuthController>(context, listen: false);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xff0D6EFD),
@@ -182,7 +184,7 @@ class Signup extends StatelessWidget {
         elevation: 0,
       ),
       onPressed: () async {
-        await AuthService().signup(
+      await authController.signup(
             email: _emailController.text,
             password: _passwordController.text,
             context: context);

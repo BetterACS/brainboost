@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
-import 'package:brainboost/component/avatar.dart';
+import 'package:brainboost/views/widgets/colors.dart';
+import 'package:brainboost/views/widgets/avatar.dart';
 import 'package:brainboost/main.dart';
 
 class ProfileContainer extends StatefulWidget {

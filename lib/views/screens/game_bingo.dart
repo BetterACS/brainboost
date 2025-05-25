@@ -1,7 +1,7 @@
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:brainboost/models/games.dart';
-import 'package:brainboost/component/bottom_slider.dart';
+import 'package:brainboost/views/widgets/bottom_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

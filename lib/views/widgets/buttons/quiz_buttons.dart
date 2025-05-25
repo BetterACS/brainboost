@@ -8,7 +8,7 @@
 ///   during quiz progression.
 
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/views/widgets/colors.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

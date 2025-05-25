@@ -1,7 +1,8 @@
-import 'package:brainboost/screens/login.dart';
-import 'package:brainboost/services/auth_services.dart';
+import 'package:brainboost/views/screens/login.dart';
+import 'package:brainboost/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class _CloudPainter extends CustomPainter {
   @override
@@ -33,6 +34,7 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authController = Provider.of<AuthController>(context, listen: false);
     final TextEditingController _emailController = TextEditingController();
     final TextEditingController _passwordController = TextEditingController();
     final size = MediaQuery.of(context).size;
@@ -133,7 +135,7 @@ class WelcomePage extends StatelessWidget {
                       ),
                       onPressed: () async {
                         try {
-                          await AuthService()
+                          await authController
                               .signInWithGoogle(context: context);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -143,7 +145,7 @@ class WelcomePage extends StatelessWidget {
                               action: SnackBarAction(
                                 label: 'submit',
                                 onPressed: () async {
-                                  await AuthService().signup(
+                                  await authController.signup(
                                     email: _emailController.text,
                                     password: _passwordController.text,
                                     context: context,

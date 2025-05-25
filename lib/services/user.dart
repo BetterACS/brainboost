@@ -265,13 +265,4 @@ class UserServices {
       return null;
     }
   }
-
-  Future<void> signOut() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      print("Error during sign out: $e");
-      throw e;
-    }
-  }
 }

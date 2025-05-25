@@ -1,9 +1,9 @@
-import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/views/widgets/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:brainboost/component/buttons/quiz_buttons.dart';
+import 'package:brainboost/views/widgets/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
 // import 'package:audioplayers/audioplayers.dart';
-import 'package:brainboost/component/bottom_slider.dart';
+import 'package:brainboost/views/widgets/bottom_slider.dart';
 
 class QuizScreen extends StatefulWidget {
   final GameQuizContent content;
