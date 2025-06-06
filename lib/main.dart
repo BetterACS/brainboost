@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
-// import 'package:brainboost/services/user.dart';
-// import 'package:brainboost/provider/language_provider.dart';
 import 'package:brainboost/core/language/notifier.dart';
 import 'package:brainboost/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -13,31 +10,27 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:brainboost/component/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter/services.dart';
-import 'package:watch_it/watch_it.dart';
 
 final getIt = GetIt.instance;
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  GetIt.instance
-      .registerLazySingleton<LanguageNotifier>(() => LanguageNotifier());
-  GetIt.instance.registerLazySingletonAsync<SharedPreferences>(
-    () => SharedPreferences.getInstance(),
-  );
-  await GetIt.instance.isReady<SharedPreferences>();
-
   runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    GetIt.instance
+        .registerLazySingleton<LanguageNotifier>(() => LanguageNotifier());
+    GetIt.instance.registerLazySingletonAsync<SharedPreferences>(
+      () => SharedPreferences.getInstance(),
+    );
+    await GetIt.instance.isReady<SharedPreferences>();
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
     runApp(const MyApp());
-  }, (Object error, StackTrace stackTrace) {
+  }, (error, stack) {
     print('runZonedGuarded: Caught error in my root zone. $error');
   });
 }
