@@ -1,5 +1,6 @@
 import 'package:brainboost/component/avatar.dart';
 import 'package:brainboost/component/colors.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 import 'package:brainboost/screens/welcomepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainboost/main.dart';
@@ -21,6 +22,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -62,7 +64,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = context.watch<ThemeProvider>().isDarkMode;
+    //   final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
+    //   final ThemeData currentTheme = Provider.of<ThemeProvider>(context).theme;
 
     return Scaffold(
       appBar: AppBar(
@@ -120,64 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Profile Header
-  Widget _buildProfileHeader(bool isDarkMode) {
-    return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.bottomRight,
-            children: [
-              const CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('assets/images/profile.jpg'),
-              ),
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: AppColors.buttonText,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.camera_alt,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          isProfileLoaded
-              ? Text(
-                  username,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                )
-              : const CircularProgressIndicator(),
-          const SizedBox(height: 4),
-          isProfileLoaded
-              ? Text(
-                  email,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                  ),
-                )
-              : const CircularProgressIndicator(),
-        ],
-      ),
-    );
-  }
+  // Profile Head
 
   // Options List
   Widget _buildOptionsList(BuildContext context, bool isDarkMode) {
@@ -224,37 +171,20 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildOption(
             icon: Icons.palette,
             title: AppLocalizations.of(context)!.theme,
-            trailing: ValueListenableBuilder<ThemeMode>(
-              valueListenable: themeNotifier,
-              builder: (context, currentTheme, child) {
-                return Text(
-                  currentTheme == ThemeMode.light
-                      ? AppLocalizations.of(context)!.lightOpen
-                      : AppLocalizations.of(context)!.darkOpen,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black,
-                    fontSize: 14,
-                  ),
-                );
-              },
+            trailing: Text(
+              isDarkMode
+                  ? AppLocalizations.of(context)!.lightOpen
+                  : AppLocalizations.of(context)!.darkOpen,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.white : Colors.black,
+                fontSize: 14,
+              ),
             ),
+            // },
+            // ),
             onTap: () async {
-              final isCurrentlyLight = themeNotifier.value == ThemeMode.light;
-              themeNotifier.value =
-                  isCurrentlyLight ? ThemeMode.dark : ThemeMode.light;
-
-              final user = FirebaseAuth.instance.currentUser;
-              if (user != null) {
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(user.email)
-                    .update({
-                  'Setting.Theme': isCurrentlyLight ? 'dark' : 'light',
-                });
-                print(
-                    'Theme saved to Firestore: ${isCurrentlyLight ? "dark" : "light"}');
-              }
+              context.read<ThemeProvider>().toggleTheme();
             },
             isDarkMode: isDarkMode,
           ),

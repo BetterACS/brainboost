@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:async';
 
 import 'package:brainboost/main.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 import 'package:brainboost/screens/game_bingo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +17,7 @@ import 'package:brainboost/services/games.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:brainboost/screens/game_bingo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'package:provider/provider.dart';
 
 class GameWrapper extends StatefulWidget {
   final List<GameData> games;
@@ -161,7 +162,7 @@ class _GameWrapperState extends State<GameWrapper>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  'assets/images/alert.png', 
+                  'assets/images/alert.png',
                   height: 100,
                   width: 100,
                 ),
@@ -177,7 +178,7 @@ class _GameWrapperState extends State<GameWrapper>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                   AppLocalizations.of(context)!.exitmodal1,
+                  AppLocalizations.of(context)!.exitmodal1,
                   style: TextStyle(
                     fontSize: 16,
                     color: AppColors.containerBackground, // Dark blue color
@@ -186,7 +187,7 @@ class _GameWrapperState extends State<GameWrapper>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                 AppLocalizations.of(context)!.exitmodal2,
+                  AppLocalizations.of(context)!.exitmodal2,
                   style: TextStyle(
                     fontSize: 16,
                     color: AppColors.containerBackground, // Dark blue color
@@ -204,7 +205,9 @@ class _GameWrapperState extends State<GameWrapper>
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          side: BorderSide(color: AppColors.containerBackground), // Dark blue color
+                          side: BorderSide(
+                              color: AppColors
+                                  .containerBackground), // Dark blue color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -212,7 +215,8 @@ class _GameWrapperState extends State<GameWrapper>
                         child: Text(
                           AppLocalizations.of(context)!.cancel,
                           style: TextStyle(
-                            color: AppColors.containerBackground, // Dark blue color
+                            color: AppColors
+                                .containerBackground, // Dark blue color
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -222,8 +226,8 @@ class _GameWrapperState extends State<GameWrapper>
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop(); 
-                          context.go(Routes.gamePage); 
+                          Navigator.of(context).pop();
+                          context.go(Routes.gamePage);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.errorIcon, // Red color
@@ -253,8 +257,7 @@ class _GameWrapperState extends State<GameWrapper>
 
   @override
   Widget build(BuildContext context) {
-        final currentTheme = Theme.of(context).brightness;
-    final bool isDarkMode = currentTheme == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
@@ -266,14 +269,16 @@ class _GameWrapperState extends State<GameWrapper>
         backgroundColor: AppColors.gameScreenBackground,
         appBar: AppBar(
           backgroundColor: isDarkMode
-                    ? AppColors.backgroundDarkmode
-                    : AppColors.gameScreenBackground,
+              ? AppColors.backgroundDarkmode
+              : AppColors.gameScreenBackground,
           elevation: 0,
           leading: BackButton(
-            color:  isDarkMode
-                    ? AppColors.white
-                    : Colors.black, // Using AppColors.textQuizOption instead of Colors.black
-            onPressed: () => showExitGameConfirmation(context), // Updated to show dialog
+            color: isDarkMode
+                ? AppColors.white
+                : Colors
+                    .black, // Using AppColors.textQuizOption instead of Colors.black
+            onPressed: () =>
+                showExitGameConfirmation(context), // Updated to show dialog
           ),
           title: ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -347,49 +352,46 @@ class GameScreenProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return ValueListenableBuilder<ThemeMode>(
-    valueListenable: themeNotifier,
-    builder: (context, currentTheme, child) {
-      bool isDarkMode = currentTheme == ThemeMode.dark;
+    final bool isDarkMode = context.watch<ThemeProvider>().isDarkMode;
 
-      return Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Stack(
-          children: [
-            Container(
-              width: width * progress,
-              height: height,
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? AppColors.textQuizNonSelectedOption
-                    : Colors.blue,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Opacity(
-                  opacity: 0.2,
-                  child: Container(
-                    width: width * progress / 1.2,
-                    height: height / 3,
-                    margin: const EdgeInsets.only(top: 3),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Stack(
+        children: [
+          Container(
+            width: width * progress,
+            height: height,
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? AppColors.textQuizNonSelectedOption
+                  : Colors.blue,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Opacity(
+                opacity: 0.2,
+                child: Container(
+                  width: width * progress / 1.2,
+                  height: height / 3,
+                  margin: const EdgeInsets.only(top: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
-      );
-    },
-  );
-}
+          ),
+        ],
+      ),
+    );
+    //   },
+    // );
+  }
 }

@@ -4,6 +4,8 @@ import 'package:brainboost/component/buttons/quiz_buttons.dart';
 import 'package:brainboost/models/games.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:brainboost/component/bottom_slider.dart';
+import 'package:brainboost/provider/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class QuizScreen extends StatefulWidget {
   final GameQuizContent content;
@@ -26,10 +28,10 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   bool hasCheckedAnswer = false;
   int score = 0;
 
-    // final player = AudioPlayer();
+  // final player = AudioPlayer();
 // await player.play(UrlSource('https://example.com/my-audio.wav'));
-  
-  // ความสูงของปุ่มและ padding รอบๆ 
+
+  // ความสูงของปุ่มและ padding รอบๆ
   final double buttonAreaHeight = 80.0;
 
   @override
@@ -77,7 +79,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     final backgroundColor =
         isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor;
     final textColor =
@@ -152,7 +154,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                                 },
                               ),
                             ),
-                            
+
                             // เพิ่ม padding ด้านล่างให้พอดีกับความสูงของปุ่มจะได้ไม่ซ้อนทับกัน
                             SizedBox(height: buttonAreaHeight),
                           ],

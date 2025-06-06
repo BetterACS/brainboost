@@ -10,6 +10,9 @@ import 'package:brainboost/services/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:brainboost/provider/theme_provider.dart';
+import 'package:brainboost/component/colors.dart';
 
 int _currentPage = 0;
 List<GamesType> games = [];
@@ -82,14 +85,15 @@ class _ResultsPageState extends State<ResultsPage> {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
         final currentScore = widget.correct;
-        DocumentReference gameDocRef = FirebaseFirestore.instance.doc(widget.gameReference!);
-        
+        DocumentReference gameDocRef =
+            FirebaseFirestore.instance.doc(widget.gameReference!);
+
         final updatedBestScore = await _historyService.updateGameScore(
           email: currentUser.email!,
           gameId: gameDocRef,
           newScore: currentScore,
         );
-        
+
         setState(() {
           bestScore = updatedBestScore;
           isNewBestScore = currentScore >= bestScore;
@@ -105,7 +109,7 @@ class _ResultsPageState extends State<ResultsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : const Color(0xFFF0F7FF),
@@ -119,7 +123,8 @@ class _ResultsPageState extends State<ResultsPage> {
               const SizedBox(height: 10),
               _buildCongratulationsText(context, isDarkMode),
               const SizedBox(height: 20),
-              _buildScoreRow(context, widget.correct, widget.wrong, widget.time, isDarkMode),
+              _buildScoreRow(context, widget.correct, widget.wrong, widget.time,
+                  isDarkMode),
               const SizedBox(height: 20),
               if (isLoading)
                 const CircularProgressIndicator()
@@ -153,8 +158,8 @@ class _ResultsPageState extends State<ResultsPage> {
                         'reference': widget.gameReference
                       });
                     },
-                    child:  Text(
-                       AppLocalizations.of(context)!.playagain,
+                    child: Text(
+                      AppLocalizations.of(context)!.playagain,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -253,7 +258,8 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 
-  Widget _buildScoreRow(BuildContext context, int correct, int wrong, String time, bool isDarkMode) {
+  Widget _buildScoreRow(BuildContext context, int correct, int wrong,
+      String time, bool isDarkMode) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [

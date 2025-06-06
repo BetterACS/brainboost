@@ -8,6 +8,8 @@ import 'package:brainboost/component/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:brainboost/provider/theme_provider.dart';
 
 class History extends StatefulWidget {
   @override
@@ -57,7 +59,7 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +94,8 @@ class _HistoryState extends State<History> with SingleTickerProviderStateMixin {
           ),
         ),
       ),
-      backgroundColor: isDarkMode ? Colors.black : AppColors.mainColor,
+      backgroundColor:
+          isDarkMode ? AppColors.backgroundDarkmode : AppColors.mainColor,
       body: TabBarView(
         controller: _tabController,
         physics:
